@@ -1,0 +1,264 @@
+{
+  "project": "oanim (open-animate)",
+  "tickets": [
+    {
+      "id": "OANIM-001",
+      "title": "Repo scaffolding + workspace config",
+      "description": "Root package.json, pnpm-workspace.yaml, tsconfig.base.json, .gitignore, LICENSE, git init",
+      "requirements": [
+        "pnpm workspace with packages/* and examples/*",
+        "TypeScript strict, ES2022 target, bundler moduleResolution",
+        "Apache 2.0 license",
+        "Git initialized with GitHub remote"
+      ],
+      "tests": [
+        "pnpm install succeeds",
+        "pnpm build succeeds from root"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-002",
+      "title": "@oanim/core animation presets",
+      "description": "Spring configs, easing presets, element animation helpers translated from Framer Motion to Remotion's frame-based API",
+      "requirements": [
+        "7 spring presets (snappy, bouncy, gentle, stiff, wobbly, smooth, poppy)",
+        "5 easing presets wrapping Remotion Easing API",
+        "8 element animations returning CSSProperties from {frame, fps, delay?, spring?}",
+        "springValue() and springInterpolate() helpers"
+      ],
+      "tests": [
+        "Package builds with tsup (ESM + CJS + DTS)",
+        "Types export correctly",
+        "Element animations return valid CSSProperties"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-003",
+      "title": "@oanim/core scene transition presets",
+      "description": "Custom TransitionPresentation implementations for @remotion/transitions TransitionSeries",
+      "requirements": [
+        "14 transitions: fadeBlur, scaleFade, clipCircle, clipPolygon, wipe, splitHorizontal, splitVertical, perspectiveFlip, morphExpand, zoomThrough, pushLeft, pushRight, slideLeft, slideRight",
+        "wipe() accepts direction option",
+        "All satisfy Remotion's TransitionPresentation<T extends Record<string, unknown>> constraint"
+      ],
+      "tests": [
+        "TypeScript compiles with no errors",
+        "Transitions work in TransitionSeries (verified in launch-video example)"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-004",
+      "title": "@oanim/core typography components",
+      "description": "Kinetic text components: AnimatedCharacters, TypewriterText, CountUp",
+      "requirements": [
+        "AnimatedCharacters: staggered per-character spring entrance",
+        "TypewriterText: character-by-character reveal with blinking cursor",
+        "CountUp: animated number counter with prefix/suffix/decimals"
+      ],
+      "tests": [
+        "Components render without errors in Remotion",
+        "Used in hello-world and launch-video examples"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-005",
+      "title": "@oanim/core UI components + design tokens",
+      "description": "Shared components (SafeArea, Background, GlowOrb, Terminal, Card, Badge, Grid, Vignette) and design tokens (colors, fonts, spacing)",
+      "requirements": [
+        "8 components with props documented via TypeScript interfaces",
+        "5 color palettes (dark, light, midnight, sunset, ocean)",
+        "Font stacks for heading, body, mono",
+        "Spacing scale (xs through 5xl)"
+      ],
+      "tests": [
+        "All components used in at least one example",
+        "Package builds and exports all components"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-006",
+      "title": "oanim init command",
+      "description": "Scaffold a new Remotion project with @oanim/core pre-configured",
+      "requirements": [
+        "Creates directory with package.json, tsconfig, src/ files, scene.json",
+        "Adds @oanim/core as dependency",
+        "Detects pnpm/npm/yarn and auto-installs",
+        "Generated project includes a working starter composition"
+      ],
+      "tests": [
+        "oanim init test-project creates valid project structure",
+        "Generated project builds and opens in remotion studio"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-007",
+      "title": "oanim render command",
+      "description": "Render composition to video using scene.json config with CLI overrides",
+      "requirements": [
+        "Reads scene.json for compositionId, render settings, props",
+        "CLI flags override scene.json: --fps, --res, --codec, --out, --props",
+        "Shells to npx remotion render with merged config",
+        "Shows output stats (file size, resolution, codec)"
+      ],
+      "tests": [
+        "oanim render in example project produces MP4",
+        "CLI flag overrides work"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-008",
+      "title": "oanim assets commands (fal.ai)",
+      "description": "AI-powered asset generation: gen-image, edit-image, remove-bg, upscale via fal.ai API",
+      "requirements": [
+        "gen-image: text prompt → image file via fal-ai/flux/schnell",
+        "edit-image: input image + prompt → edited image via fal-ai/flux/dev/image-to-image",
+        "remove-bg: input image → transparent PNG via fal-ai/birefnet",
+        "upscale: input image → 2x image via fal-ai/creative-upscaler",
+        "OANIM_FAL_KEY env var required, clear error message if missing"
+      ],
+      "tests": [
+        "Commands show correct --help output",
+        "Error message shown when OANIM_FAL_KEY not set",
+        "Live API test with valid key produces output files"
+      ],
+      "status": "done",
+      "notes": "Code complete, not tested against live fal.ai API"
+    },
+    {
+      "id": "OANIM-009",
+      "title": "Hello World example",
+      "description": "Minimal working Remotion project demonstrating @oanim/core presets",
+      "requirements": [
+        "Single-scene composition with animated text",
+        "Uses fadeUp, popIn, Background, SafeArea, GlowOrb, Badge, AnimatedCharacters",
+        "scene.json configured",
+        "Part of pnpm workspace"
+      ],
+      "tests": [
+        "npx remotion studio opens preview",
+        "oanim render produces MP4"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-010",
+      "title": "Launch Video example",
+      "description": "Full 4-scene product launch video using TransitionSeries + oanim transitions",
+      "requirements": [
+        "4 scenes: Hook, ProductHero, Features, CTA",
+        "Uses fadeBlur, scaleFade, clipCircle transitions",
+        "Demonstrates Terminal, Card, Badge, AnimatedCharacters, TypewriterText",
+        "15 seconds at 30fps (450 frames)"
+      ],
+      "tests": [
+        "npx remotion studio opens preview",
+        "oanim render produces MP4"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-011",
+      "title": "Agent skill",
+      "description": "SKILL.md + rules + example reference docs for agent workflow",
+      "requirements": [
+        "SKILL.md with overview, prerequisites, workflow",
+        "5 rule files: workflow, scene-config, composition-patterns, animation-cookbook, asset-generation",
+        "5 example references: launch-video, explainer, logo-reveal, meme-caption, investor-update"
+      ],
+      "tests": [
+        "All files present and well-structured",
+        "Animation cookbook covers all @oanim/core exports"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-012",
+      "title": "Additional working examples",
+      "description": "Runnable Remotion projects for explainer, logo-reveal, meme-caption, investor-update",
+      "requirements": [
+        "Each is a full Remotion project in examples/ with package.json, scene.json, src/",
+        "Explainer: numbered step scenes with wipe transitions",
+        "Logo reveal: 5s single-scene animation",
+        "Meme caption: vertical 1080x1920 social clip",
+        "Investor update: metrics with CountUp + Card components"
+      ],
+      "tests": [
+        "Each project builds and opens in remotion studio",
+        "Each renders to video via oanim render"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "OANIM-013",
+      "title": "Root README.md",
+      "description": "Public-facing README with quickstart, architecture overview, and package docs",
+      "requirements": [
+        "Project description and motivation",
+        "Quickstart (install, init, preview, render)",
+        "Architecture diagram",
+        "Link to @oanim/core API reference",
+        "Link to agent skill docs",
+        "Contributing section",
+        "License badge"
+      ],
+      "tests": [
+        "Renders correctly on GitHub"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "OANIM-014",
+      "title": "Tag v0.1.0 release",
+      "description": "Git tag and GitHub release for initial version",
+      "requirements": [
+        "All build passes",
+        "README complete",
+        "git tag v0.1.0",
+        "GitHub release with changelog"
+      ],
+      "tests": [
+        "Tag exists on remote",
+        "GitHub release page shows correctly"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "OANIM-015",
+      "title": "Live fal.ai API testing",
+      "description": "End-to-end test of all oanim assets subcommands with real API key",
+      "requirements": [
+        "gen-image produces valid PNG",
+        "edit-image modifies input image",
+        "remove-bg produces transparent PNG",
+        "upscale produces 2x resolution image"
+      ],
+      "tests": [
+        "All 4 commands produce valid output files",
+        "Error handling works for invalid inputs"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "OANIM-016",
+      "title": "End-to-end pipeline test",
+      "description": "Full oanim init → write composition → remotion studio → oanim render pipeline test",
+      "requirements": [
+        "oanim init creates working project",
+        "remotion studio opens without errors",
+        "oanim render produces playable MP4"
+      ],
+      "tests": [
+        "Scaffolded project renders successfully",
+        "Example projects render successfully"
+      ],
+      "status": "todo"
+    }
+  ]
+}
