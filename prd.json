@@ -374,6 +374,126 @@
       ],
       "status": "done",
       "notes": "cloud-render.ts in packages/cli/src/lib/. --cloud flag on render command. Requires auth + backend API to function."
+    },
+    {
+      "id": "OANIM-023",
+      "title": "Backend auth endpoints",
+      "description": "Backend API endpoints to support CLI auth flow: browser OAuth redirect and user info",
+      "requirements": [
+        "GET /api/v1/auth/cli/login?port={port} — Clerk OAuth redirect, callback to localhost:{port}/callback?token=...",
+        "GET /api/v1/auth/me — returns { id, email, created_at } from JWT/API key",
+        "API key creation/validation for programmatic access (ANIMATE_API_KEY)"
+      ],
+      "tests": [
+        "oanim login completes full OAuth flow and stores token",
+        "oanim whoami returns user info with stored token",
+        "ANIMATE_API_KEY env var authenticates API requests"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-024",
+      "title": "Backend cloud render endpoints",
+      "description": "Backend API endpoints to support oanim render --cloud: accept project upload, render in sandboxed infra, return MP4",
+      "requirements": [
+        "POST /api/v1/render — accepts project tarball + config, returns { job_id }",
+        "GET /api/v1/render/{job_id} — returns { status, progress, output_url?, error? }",
+        "GET /api/v1/render/{job_id}/download — streams rendered MP4",
+        "Sandboxed rendering environment (E2B or similar)",
+        "Usage metering per render job"
+      ],
+      "tests": [
+        "oanim render --cloud submits, polls, and downloads successfully",
+        "Progress updates reflect actual render progress",
+        "Large projects upload and render without timeout"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-025",
+      "title": "CLI unit tests",
+      "description": "Vitest tests for new CLI modules: config resolution, media gateway cost limits, provider adapter, HTTP client",
+      "requirements": [
+        "Config: test credential resolution chain (env > api_key > token > null)",
+        "Config: test YAML read/write with file permissions",
+        "Gateway: test cost limit enforcement (ANIMATE_MAX_USD_PER_RUN)",
+        "Gateway: test usage tracking accumulation",
+        "Provider: test FalProvider request formatting and response parsing",
+        "HTTP client: test auth header injection and error mapping"
+      ],
+      "tests": [
+        "pnpm test passes with all new tests",
+        "Coverage for config.ts, gateway.ts, providers/fal.ts, http.ts"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-026",
+      "title": "npm publish — @oanim/core and oanim CLI",
+      "description": "Publish packages to npm registry. Set up CI for automated releases.",
+      "requirements": [
+        "@oanim/core published with ESM + CJS + DTS",
+        "oanim CLI published with bin entry",
+        "npx oanim init works from fresh install",
+        "GitHub Actions workflow for publish on tag push"
+      ],
+      "tests": [
+        "npm install @oanim/core resolves and imports correctly",
+        "npx oanim --help works",
+        "npx oanim init scaffolds a working project"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-027",
+      "title": "Usage reporting — gateway metrics to platform API",
+      "description": "Send media gateway usage records to the platform API for metering, billing, and dashboard display",
+      "requirements": [
+        "Gateway sends usage records to POST /api/v1/usage after each operation",
+        "Graceful degradation — usage reporting failures don't block asset generation",
+        "Works with both API key and token auth",
+        "Backend endpoint aggregates usage per user/day"
+      ],
+      "tests": [
+        "Usage records sent after successful asset generation",
+        "Asset generation still works if usage API is unreachable",
+        "Dashboard shows usage history"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-028",
+      "title": "Additional media provider — Runway adapter",
+      "description": "Second MediaProvider implementation for Runway ML, demonstrating multi-provider routing in the gateway",
+      "requirements": [
+        "RunwayProvider implements MediaProvider interface",
+        "Gateway selects provider via --provider flag or config",
+        "oanim assets gen-image --provider runway works",
+        "Cost estimates for Runway models"
+      ],
+      "tests": [
+        "Runway adapter produces valid output",
+        "Provider selection flag works in CLI",
+        "Cost tracking works across providers"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-029",
+      "title": "API key management commands",
+      "description": "CLI commands to create, list, and revoke platform API keys for programmatic access",
+      "requirements": [
+        "oanim api-keys create --name <name> — creates key, displays once",
+        "oanim api-keys list — shows active keys with names and created dates",
+        "oanim api-keys revoke <id> — revokes a key with confirmation",
+        "Keys use animate_ prefix"
+      ],
+      "tests": [
+        "Created key authenticates API requests",
+        "Revoked key is rejected",
+        "List shows all active keys"
+      ],
+      "status": "planned"
     }
   ]
 }
