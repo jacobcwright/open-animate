@@ -1,0 +1,12 @@
+{
+  "name": "Product Launch",
+  "compositionId": "LaunchVideo",
+  "render": {
+    "fps": 30,
+    "width": 1920,
+    "height": 1080,
+    "codec": "h264",
+    "crf": 18
+  },
+  "props": {}
+}

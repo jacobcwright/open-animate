@@ -1,0 +1,17 @@
+{
+  "name": "oanim",
+  "private": true,
+  "version": "0.1.0",
+  "description": "React motion graphics via Remotion — animation presets, components, and CLI",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "pnpm -r build",
+    "clean": "pnpm -r clean",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  }
+}
