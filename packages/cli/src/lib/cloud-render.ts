@@ -1,12 +1,13 @@
-import { createReadStream, createWriteStream } from 'node:fs';
-import { readdir, stat } from 'node:fs/promises';
-import { join, relative } from 'node:path';
+import { createWriteStream } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import { Readable } from 'node:stream';
+import { execSync } from 'node:child_process';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import type { HttpClient } from './http';
 import type { SceneConfig } from './scene';
-
-const IGNORE_DIRS = new Set(['node_modules', '.git', 'out', 'dist', '.next']);
 
 interface RenderJob {
   job_id: string;
@@ -19,53 +20,55 @@ interface RenderStatus {
   error?: string;
 }
 
-async function collectFiles(dir: string, base: string = dir): Promise<Array<{ path: string; fullPath: string }>> {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files: Array<{ path: string; fullPath: string }> = [];
-
-  for (const entry of entries) {
-    if (IGNORE_DIRS.has(entry.name)) continue;
-    const fullPath = join(dir, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...(await collectFiles(fullPath, base)));
-    } else {
-      files.push({ path: relative(base, fullPath), fullPath });
-    }
-  }
-
-  return files;
+interface UploadResult {
+  storageKey: string;
 }
 
-async function createTarball(dir: string): Promise<Buffer> {
-  const files = await collectFiles(dir);
-  // Simple tar-like format: JSON manifest + base64 file contents
-  // The backend will unpack this
-  const manifest: Array<{ path: string; size: number; content: string }> = [];
+/**
+ * Bundle the project with Remotion, tar it, and upload to the API.
+ * Returns the S3 storage key for the tarball.
+ */
+async function bundleAndUpload(client: HttpClient): Promise<string> {
+  const tempDir = await mkdtemp(join(tmpdir(), 'oanim-bundle-'));
+  const bundleDir = join(tempDir, 'bundle');
+  const tarballPath = join(tempDir, 'bundle.tar.gz');
 
-  for (const file of files) {
-    const stats = await stat(file.fullPath);
-    const chunks: Buffer[] = [];
-    const stream = createReadStream(file.fullPath);
-    for await (const chunk of stream) {
-      chunks.push(chunk as Buffer);
-    }
-    const content = Buffer.concat(chunks).toString('base64');
-    manifest.push({ path: file.path, size: stats.size, content });
+  try {
+    // Run Remotion bundle
+    execSync(`npx remotion bundle --out-dir ${bundleDir}`, {
+      stdio: 'pipe',
+      cwd: process.cwd(),
+      timeout: 120_000,
+    });
+
+    // Create tarball from the bundle output
+    execSync(`tar -czf ${tarballPath} -C ${bundleDir} .`, {
+      stdio: 'pipe',
+      timeout: 30_000,
+    });
+
+    // Read tarball and upload
+    const tarballBuffer = await readFile(tarballPath);
+    const blob = new Blob([tarballBuffer], { type: 'application/gzip' });
+    const result = await client.uploadBlob<UploadResult>('/api/v1/render/upload', blob);
+
+    return result.storageKey;
+  } finally {
+    await rm(tempDir, { recursive: true, force: true }).catch(() => {});
   }
-
-  return Buffer.from(JSON.stringify(manifest));
 }
 
 export async function submitCloudRender(
   client: HttpClient,
   config: SceneConfig,
 ): Promise<string> {
-  const tarball = await createTarball(process.cwd());
+  // Bundle the project locally with Remotion, then upload
+  const storageKey = await bundleAndUpload(client);
 
   const job = await client.request<RenderJob>('POST', '/api/v1/render', {
     body: {
       config,
-      project: tarball.toString('base64'),
+      storageKey,
     },
   });
 

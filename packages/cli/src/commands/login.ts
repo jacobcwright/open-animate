@@ -32,9 +32,9 @@ function waitForCallback(port: number, timeoutMs = 120_000): Promise<string> {
 
     const server = createServer((req, res) => {
       const url = new URL(req.url ?? '/', `http://127.0.0.1:${port}`);
-      const token = url.searchParams.get('token');
+      const key = url.searchParams.get('key');
 
-      if (url.pathname === '/callback' && token) {
+      if (url.pathname === '/callback' && key) {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(
           '<html><body style="font-family:system-ui;text-align:center;padding:60px">' +
@@ -43,10 +43,10 @@ function waitForCallback(port: number, timeoutMs = 120_000): Promise<string> {
         );
         clearTimeout(timer);
         server.close();
-        resolve(token);
+        resolve(key);
       } else {
         res.writeHead(400, { 'Content-Type': 'text/plain' });
-        res.end('Missing token');
+        res.end('Missing key');
       }
     });
 
@@ -72,13 +72,13 @@ export const loginCommand = new Command('login')
       await open(loginUrl);
 
       spinner.text = 'Waiting for authentication (press Ctrl+C to cancel)...';
-      const token = await waitForCallback(port);
+      const apiKey = await waitForCallback(port);
 
       spinner.text = 'Verifying credentials...';
-      await saveCredentials({ token });
+      await saveCredentials({ api_key: apiKey });
 
       const client = new HttpClient();
-      client.setAuth(token);
+      client.setAuth(apiKey);
       const me = await client.request<{ email: string }>('GET', '/api/v1/auth/me');
       spinner.succeed(`Logged in as ${me.email}`);
     } catch (err) {

@@ -6,8 +6,9 @@ import { assetsCommand } from './commands/assets';
 import { loginCommand } from './commands/login';
 import { whoamiCommand } from './commands/whoami';
 import { logoutCommand } from './commands/logout';
+import { apiKeysCommand } from './commands/api-keys';
 
-const SKIP_BANNER = new Set(['init', 'login', 'logout', 'whoami']);
+const SKIP_BANNER = new Set(['init', 'login', 'logout', 'whoami', 'api-keys']);
 
 const program = new Command()
   .name('oanim')
@@ -25,5 +26,6 @@ program.addCommand(assetsCommand);
 program.addCommand(loginCommand);
 program.addCommand(whoamiCommand);
 program.addCommand(logoutCommand);
+program.addCommand(apiKeysCommand);
 
 program.parse();

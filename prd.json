@@ -389,7 +389,8 @@
         "oanim whoami returns user info with stored token",
         "ANIMATE_API_KEY env var authenticates API requests"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "Hono + Drizzle backend at packages/api/. Clerk OAuth → API key flow. jose JWKS verification. Replaced Convex with self-hostable stack in OANIM-030."
     },
     {
       "id": "OANIM-024",
@@ -407,7 +408,8 @@
         "Progress updates reflect actual render progress",
         "Large projects upload and render without timeout"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "Remotion Lambda via pg-boss worker. CLI bundles locally (npx remotion bundle), uploads tarball to S3, worker deploys site to S3 and calls renderMediaOnLambda(). Replaced Convex with self-hostable stack in OANIM-030."
     },
     {
       "id": "OANIM-025",
@@ -486,14 +488,39 @@
         "oanim api-keys create --name <name> — creates key, displays once",
         "oanim api-keys list — shows active keys with names and created dates",
         "oanim api-keys revoke <id> — revokes a key with confirmation",
-        "Keys use animate_ prefix"
+        "Keys use anim_ prefix"
       ],
       "tests": [
         "Created key authenticates API requests",
         "Revoked key is rejected",
         "List shows all active keys"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "CLI api-keys command with create/list/revoke subcommands. Backend: Drizzle apiKeys table with SHA-256 hashed keys, anim_ prefix, max 10 per user."
+    },
+    {
+      "id": "OANIM-030",
+      "title": "Replace Convex with Hono + Drizzle + pg-boss",
+      "description": "Replace vendor-locked Convex backend with self-hostable stack: Hono HTTP server, Drizzle ORM + Postgres, pg-boss job queue, S3 storage. Preserves all REST API endpoints and CLI compatibility.",
+      "requirements": [
+        "Hono server with same REST API shape as Convex HTTP router",
+        "Drizzle schema: users, apiKeys, renderJobs, loginStates (uuid PKs)",
+        "pg-boss render job worker (replaces Convex actions)",
+        "S3 for bundle tarballs + rendered MP4s (replaces Convex Storage)",
+        "Clerk JWT + API key auth middleware (jose/JWKS)",
+        "CLI cloud-render.ts sends storageKey instead of bundleStorageId",
+        "docker-compose.yml for local Postgres",
+        "drizzle-kit for migrations"
+      ],
+      "tests": [
+        "pnpm build succeeds",
+        "docker-compose up -d starts Postgres",
+        "drizzle-kit migrate creates tables",
+        "pnpm dev starts server on :8000",
+        "curl localhost:8000/api/v1/auth/me returns 401"
+      ],
+      "status": "done",
+      "notes": "Removed Convex dependency entirely. API package now fully self-hostable. Same REST endpoints, same CLI compatibility. pg-boss handles render jobs via Postgres (no Redis needed)."
     }
   ]
 }

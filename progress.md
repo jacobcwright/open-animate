@@ -149,3 +149,77 @@ Append-only log of work completed each session.
 - Updated `packages/cli/src/commands/render.ts` — `--cloud` flag: requires auth → upload → poll → download MP4
 
 **Build verified:** `pnpm build` and `tsc --noEmit` both succeed
+
+---
+
+## Session 6 — 2026-02-21 (early)
+
+### Backend API: Convex + Remotion Lambda (OANIM-023, OANIM-024, OANIM-029)
+
+**New package: `packages/api/` — Convex backend:**
+- `convex/schema.ts` — 4 tables: `users`, `apiKeys`, `renderJobs`, `loginStates` with indexes
+- `convex/auth.config.ts` — Clerk auth provider configuration
+- `convex/lib/security.ts` — `generateApiKey()` (anim_ prefix, SHA-256 hash), `hashApiKey()`, `verifyApiKey()`
+- `convex/lib/auth.ts` — `authenticateRequest()` (API key + Clerk JWT), `authenticateAndTrack()` (also updates lastUsedAt)
+- `convex/users.ts` — `findOrCreateByClerkId`, `getById`, `getByClerkId` mutations/queries
+- `convex/apiKeys.ts` — `create` (max 10 per user), `listByUser`, `deleteKey`, `verify`
+- `convex/loginStates.ts` — `create`, `getByState`, `remove`, `cleanupExpired`
+- `convex/renderJobs.ts` — `create`, `get`, `updateStatus`, `listByUser`
+- `convex/renderAction.ts` — Node action ("use node"): downloads tarball from Convex storage, extracts, uploads to S3, calls `renderMediaOnLambda()`, polls progress, stores MP4 in Convex storage
+- `convex/crons.ts` — cleanup expired loginStates every 15 minutes
+- `convex/http.ts` — Hono router with all REST endpoints:
+  - Auth: `GET /api/v1/auth/cli/login`, `/sign-in` (Clerk widget HTML), `/callback` (JWT verify via jose + JWKS, create user, generate API key, redirect to CLI), `/me`
+  - API Keys: `GET/POST /api/v1/api-keys`, `DELETE /api/v1/api-keys/:keyId`
+  - Render: `POST /api/v1/render/upload`, `POST /api/v1/render`, `GET /api/v1/render/:jobId`, `GET /api/v1/render/:jobId/download`
+
+**CLI modifications:**
+- `login.ts` — callback now receives `?key=` param, saves as `api_key` (not `token`) in credentials.yaml
+- `http.ts` — handles 204 No Content, added `uploadBlob()` method for tarball uploads
+- `cloud-render.ts` — rewritten: runs `npx remotion bundle`, tars output, uploads to `/api/v1/render/upload`, then submits render job with `bundleStorageId`
+- New `commands/api-keys.ts` — `oanim api-keys create --name <name>`, `list`, `revoke <id>`
+- `index.ts` — registered `apiKeysCommand`, added `'api-keys'` to SKIP_BANNER set
+
+**Build verified:** `pnpm build` succeeds
+
+---
+
+## Session 7 — 2026-02-21
+
+### Replace Convex with Hono + Drizzle + pg-boss + Remotion Lambda (OANIM-030)
+
+**Motivation:** Convex creates vendor lock-in that conflicts with the open-core (Supabase model) vision. Users need to self-host. Replaced with standard, self-hostable infra.
+
+**Deleted:** Entire `packages/api/convex/` directory (Convex schema, mutations, queries, actions, HTTP router)
+
+**New `packages/api/` stack:**
+- **Hono** HTTP server with `@hono/node-server` (same REST API shape)
+- **Drizzle ORM** + PostgreSQL (4 tables: users, apiKeys, renderJobs, loginStates)
+- **pg-boss** job queue (same Postgres, render job processing)
+- **S3** for bundle tarballs + rendered MP4s (replaces Convex Storage)
+- **Remotion Lambda** for cloud rendering (unchanged)
+
+**New file structure:**
+- `src/db/schema.ts` — Drizzle tables with uuid PKs, enums, indexes
+- `src/db/index.ts` — pg Pool + drizzle instance
+- `src/lib/security.ts` — generateApiKey, hashApiKey, verifyApiKey (ported from Convex)
+- `src/lib/auth.ts` — Hono middleware: API key + Clerk JWT (jose/JWKS)
+- `src/lib/s3.ts` — S3 client + upload/presign/download/delete helpers + uploadDirToS3
+- `src/lib/boss.ts` — pg-boss init
+- `src/routes/auth.ts` — 3 endpoints: `/cli/login` (serves Clerk sign-in HTML directly), `/cli/callback`, `/me`
+- `src/routes/api-keys.ts` — GET, POST, DELETE /api/v1/api-keys
+- `src/routes/render.ts` — POST /upload, POST /, GET /:jobId, GET /:jobId/download
+- `src/workers/render.ts` — pg-boss handler: S3 → Remotion Lambda → poll → update DB
+- `src/index.ts` — Hono app + pg-boss start + serve
+- `docker-compose.yml` — Postgres 15
+- `drizzle.config.ts` — Drizzle Kit config
+- `.env.example` — all required env vars
+
+**CLI changes:**
+- `cloud-render.ts` — `storageId` → `storageKey`, `bundleStorageId` → `storageKey` in request body
+
+**Endpoints preserved (same shape):**
+- Auth: `GET /api/v1/auth/cli/login`, `/cli/callback`, `/me`
+- API Keys: `GET/POST /api/v1/api-keys`, `DELETE /api/v1/api-keys/:keyId`
+- Render: `POST /upload`, `POST /render`, `GET /:jobId`, `GET /:jobId/download`
+
+**Build verified:** `pnpm build` succeeds (all 3 packages: core, cli, api)
