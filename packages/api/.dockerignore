@@ -1,0 +1,11 @@
+node_modules
+dist
+src
+.env
+.env.*
+.git
+*.md
+docker-compose.yml
+drizzle.config.ts
+tsconfig.json
+tsup.config.ts

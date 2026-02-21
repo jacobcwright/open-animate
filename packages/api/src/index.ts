@@ -2,10 +2,12 @@ import 'dotenv/config';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { authRoutes } from './routes/auth.js';
 import { apiKeysRoutes } from './routes/api-keys.js';
 import { renderRoutes } from './routes/render.js';
 import { usageRoutes } from './routes/usage.js';
+import { db } from './db/index.js';
 import { startBoss } from './lib/boss.js';
 import { registerRenderWorker } from './workers/render.js';
 
@@ -25,6 +27,10 @@ app.route('/api/v1/usage', usageRoutes);
 const port = parseInt(process.env.PORT ?? '8000', 10);
 
 async function main() {
+  // Run database migrations
+  await migrate(db, { migrationsFolder: './drizzle' });
+  console.log('[drizzle] migrations applied');
+
   // Start pg-boss and register workers
   await startBoss();
   await registerRenderWorker();

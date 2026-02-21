@@ -7,4 +7,11 @@ export default defineConfig({
   outDir: 'dist',
   clean: true,
   sourcemap: true,
+  external: [
+    'pg',
+    'pg-boss',
+    '@aws-sdk/client-s3',
+    '@aws-sdk/s3-request-presigner',
+    '@remotion/lambda',
+  ],
 });

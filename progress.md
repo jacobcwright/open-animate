@@ -226,7 +226,7 @@ Append-only log of work completed each session.
 
 ---
 
-## Session 8 — 2026-02-21
+## Session 8 — 2026-02-21 (early)
 
 ### Usage reporting — gateway metrics to platform API (OANIM-027)
 
@@ -264,5 +264,34 @@ Append-only log of work completed each session.
 - Gateway checks balance before each operation (fetched once, tracked locally)
 - Clear error: "Insufficient credits: $X remaining, but this operation costs ~$Y"
 - Graceful degradation: unauthenticated users and network errors silently skipped
+
+**Build verified:** `pnpm build` succeeds
+
+---
+
+## Session 9 — 2026-02-21
+
+### Deployment artifacts for API server (OANIM-031)
+
+**Auto-migrate on startup:**
+- Added `drizzle-orm/node-postgres/migrator` import to `packages/api/src/index.ts`
+- `migrate(db, { migrationsFolder: './drizzle' })` runs before pg-boss starts
+- Server self-migrates on deploy — no separate migration step needed
+
+**Drizzle migrations generated:**
+- Ran `pnpm db:generate` → `drizzle/0000_illegal_kang.sql`
+- Creates all 5 tables (users, api_keys, render_jobs, usage_records, login_states), enum, indexes, FKs
+- Migration meta files in `drizzle/meta/`
+
+**Dockerfile (multi-stage):**
+- Build stage: Node 20 alpine, pnpm, `pnpm install --frozen-lockfile`, `pnpm build`
+- Runtime stage: Node 20 alpine, prod-only `node_modules`, `dist/`, `drizzle/`
+- CMD: `node dist/index.js`, exposes port 8000
+
+**tsup externals:**
+- Added `external` array to `tsup.config.ts`: pg, pg-boss, @aws-sdk/*, @remotion/lambda
+- These native/binary deps load from `node_modules` at runtime instead of being bundled
+
+**.dockerignore:** Excludes node_modules, dist, src, .env, .git, config files
 
 **Build verified:** `pnpm build` succeeds

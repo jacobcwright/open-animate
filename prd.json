@@ -547,7 +547,8 @@
         "oanim api-keys create --name test creates and returns a key",
         "oanim render --cloud submits, polls, and downloads MP4"
       ],
-      "status": "planned"
+      "status": "in-progress",
+      "notes": "Code artifacts done: auto-migrate on startup, Drizzle migrations generated, Dockerfile + .dockerignore, tsup externals. Manual infra steps remain: Clerk app, S3 bucket, IAM, Porter deploy, DNS."
     },
     {
       "id": "OANIM-032",
