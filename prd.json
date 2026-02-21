@@ -461,7 +461,8 @@
         "Asset generation still works if usage API is unreachable",
         "Dashboard shows usage history"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "usageRecords table in Drizzle schema. POST /api/v1/usage bulk-inserts, GET /api/v1/usage returns daily aggregations. Gateway fire-and-forget reports after each track() with graceful degradation."
     },
     {
       "id": "OANIM-028",
@@ -521,6 +522,86 @@
       ],
       "status": "done",
       "notes": "Removed Convex dependency entirely. API package now fully self-hostable. Same REST endpoints, same CLI compatibility. pg-boss handles render jobs via Postgres (no Redis needed)."
+    },
+    {
+      "id": "OANIM-031",
+      "title": "Provision infrastructure and deploy API server",
+      "description": "Set up all required cloud services, configure env vars, deploy the Hono API server, and verify the full CLI→API flow end-to-end.",
+      "requirements": [
+        "Clerk: create application, configure OAuth redirect URIs, get CLERK_DOMAIN + CLERK_PUBLISHABLE_KEY",
+        "AWS S3: create oanim-renders bucket with appropriate CORS policy",
+        "AWS IAM: create credentials scoped to S3 bucket + Lambda invocation",
+        "Remotion Lambda: deploy render function via npx remotion lambda deploy, get REMOTION_FUNCTION_NAME",
+        "Postgres: provision managed instance (Neon, Supabase, RDS, or similar)",
+        "Run drizzle-kit migrate against production DB",
+        "Deploy Hono API server to hosting provider (Fly.io, Railway, or similar)",
+        "Set all env vars (DATABASE_URL, CLERK_DOMAIN, CLERK_PUBLISHABLE_KEY, AWS creds, S3_BUCKET, REMOTION_FUNCTION_NAME)",
+        "Update CLI default API URL (ANIMATE_API_URL / config) to point to deployed server",
+        "E2E verification: oanim login → oanim whoami → oanim api-keys create → oanim render --cloud"
+      ],
+      "tests": [
+        "curl https://<api-domain>/health returns { ok: true }",
+        "curl https://<api-domain>/api/v1/auth/me returns 401",
+        "oanim login opens browser and completes OAuth flow",
+        "oanim whoami returns user info",
+        "oanim api-keys create --name test creates and returns a key",
+        "oanim render --cloud submits, polls, and downloads MP4"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-032",
+      "title": "Headless auth — oanim login --token",
+      "description": "Allow agents and CI environments to authenticate without a browser by passing an API key directly via --token flag",
+      "requirements": [
+        "oanim login --token <anim_xxx> saves key to credentials.yaml",
+        "Verifies key by calling GET /api/v1/auth/me before saving",
+        "Shows user email on success, clear error on invalid key",
+        "Browser OAuth flow remains the default (no --token)"
+      ],
+      "tests": [
+        "oanim login --token anim_validkey saves and shows email",
+        "oanim login --token anim_badkey shows auth error",
+        "oanim login (no flag) still opens browser"
+      ],
+      "status": "done",
+      "notes": "Added --token flag to login command. Verifies key via /auth/me before saving. Agents use: oanim login --token anim_xxx"
+    },
+    {
+      "id": "OANIM-033",
+      "title": "Free credit seeding on account creation",
+      "description": "New users get $5.00 free credits on account creation. Backend tracks credit balance per user, returned in /auth/me response.",
+      "requirements": [
+        "creditBalanceUsd column on users table (default $5.00)",
+        "Set to $5.00 on user creation in auth callback",
+        "GET /api/v1/auth/me includes creditBalanceUsd in response",
+        "POST /api/v1/usage deducts from credit balance"
+      ],
+      "tests": [
+        "New user has $5.00 credit balance",
+        "Usage posting deducts from balance",
+        "/auth/me shows current balance"
+      ],
+      "status": "done",
+      "notes": "creditBalanceUsd column on users (default $5.00). POST /usage deducts from balance. /auth/me includes credit_balance_usd."
+    },
+    {
+      "id": "OANIM-034",
+      "title": "Credit limit enforcement in gateway",
+      "description": "Gateway checks remaining credit balance before operations. Blocks with helpful error when credits exhausted.",
+      "requirements": [
+        "GET /api/v1/usage/balance endpoint returns remaining credits",
+        "Gateway checks balance before each operation (if authenticated)",
+        "Clear error message when credits exhausted with upgrade URL",
+        "Unauthenticated users unaffected (direct ANIMATE_FAL_KEY still works)"
+      ],
+      "tests": [
+        "Operations blocked when balance is $0",
+        "Error message includes upgrade instructions",
+        "Direct fal.ai key users unaffected"
+      ],
+      "status": "done",
+      "notes": "GET /usage/balance endpoint. Gateway fetches balance once, tracks locally, blocks when insufficient. Graceful degradation for unauthenticated/offline."
     }
   ]
 }

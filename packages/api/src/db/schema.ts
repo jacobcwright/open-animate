@@ -5,6 +5,7 @@ import {
   timestamp,
   integer,
   jsonb,
+  numeric,
   pgEnum,
   uniqueIndex,
   index,
@@ -23,6 +24,9 @@ export const users = pgTable(
     id: uuid('id').defaultRandom().primaryKey(),
     clerkId: text('clerk_id').notNull(),
     email: text('email').notNull(),
+    creditBalanceUsd: numeric('credit_balance_usd', { precision: 10, scale: 4 })
+      .notNull()
+      .default('5.0000'),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [uniqueIndex('users_clerk_id_idx').on(t.clerkId), uniqueIndex('users_email_idx').on(t.email)],
@@ -62,6 +66,22 @@ export const renderJobs = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [index('render_jobs_user_id_idx').on(t.userId)],
+);
+
+export const usageRecords = pgTable(
+  'usage_records',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    provider: text('provider').notNull(),
+    model: text('model').notNull(),
+    operation: text('operation').notNull(),
+    estimatedCostUsd: numeric('estimated_cost_usd', { precision: 10, scale: 6 }).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [index('usage_records_user_created_idx').on(t.userId, t.createdAt)],
 );
 
 export const loginStates = pgTable(

@@ -8,6 +8,7 @@ export type AuthUser = {
   id: string;
   clerkId: string;
   email: string;
+  creditBalanceUsd: string;
   createdAt: Date;
 };
 

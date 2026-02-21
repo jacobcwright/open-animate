@@ -5,6 +5,7 @@ import { serve } from '@hono/node-server';
 import { authRoutes } from './routes/auth.js';
 import { apiKeysRoutes } from './routes/api-keys.js';
 import { renderRoutes } from './routes/render.js';
+import { usageRoutes } from './routes/usage.js';
 import { startBoss } from './lib/boss.js';
 import { registerRenderWorker } from './workers/render.js';
 
@@ -19,6 +20,7 @@ app.get('/health', (c) => c.json({ ok: true }));
 app.route('/api/v1/auth', authRoutes);
 app.route('/api/v1/api-keys', apiKeysRoutes);
 app.route('/api/v1/render', renderRoutes);
+app.route('/api/v1/usage', usageRoutes);
 
 const port = parseInt(process.env.PORT ?? '8000', 10);
 

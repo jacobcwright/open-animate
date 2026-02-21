@@ -223,3 +223,46 @@ Append-only log of work completed each session.
 - Render: `POST /upload`, `POST /render`, `GET /:jobId`, `GET /:jobId/download`
 
 **Build verified:** `pnpm build` succeeds (all 3 packages: core, cli, api)
+
+---
+
+## Session 8 — 2026-02-21
+
+### Usage reporting — gateway metrics to platform API (OANIM-027)
+
+**DB schema:**
+- Added `usageRecords` table to `packages/api/src/db/schema.ts` — uuid PK, userId FK, provider, model, operation, estimatedCostUsd (numeric 10,6), createdAt
+- Index on `(userId, createdAt)` for aggregation queries
+
+**API routes (`packages/api/src/routes/usage.ts`):**
+- `POST /api/v1/usage` (requireAuth) — bulk-insert usage records, returns `{ inserted: N }`
+- `GET /api/v1/usage?days=30` (requireAuth) — daily-aggregated usage with totalCostUsd
+
+**CLI gateway reporting (`packages/cli/src/lib/gateway.ts`):**
+- `reportUsage()` fires after each `track()` call — fire-and-forget POST to `/api/v1/usage`
+- Graceful degradation: skips if not logged in (`getAuth()` returns null), silently ignores API errors
+- Asset generation works identically with or without auth
+
+**Build verified:** `pnpm build` succeeds
+
+### Agent-native onboarding (OANIM-032, OANIM-033, OANIM-034)
+
+**Headless auth — `oanim login --token` (OANIM-032):**
+- Added `--token <key>` option to `packages/cli/src/commands/login.ts`
+- Verifies key via `GET /api/v1/auth/me` before saving to credentials.yaml
+- Agents/CI can authenticate without a browser: `oanim login --token anim_xxx`
+- Browser OAuth remains the default when no `--token` flag is passed
+
+**Free credit seeding (OANIM-033):**
+- Added `creditBalanceUsd` column to `users` table (numeric 10,4, default `$5.00`)
+- New users automatically get $5.00 free credits on account creation
+- `GET /api/v1/auth/me` now includes `credit_balance_usd` in response
+- `POST /api/v1/usage` deducts from credit balance using `GREATEST(balance - cost, 0)`
+
+**Credit limit enforcement (OANIM-034):**
+- Added `GET /api/v1/usage/balance` endpoint returning remaining credits
+- Gateway checks balance before each operation (fetched once, tracked locally)
+- Clear error: "Insufficient credits: $X remaining, but this operation costs ~$Y"
+- Graceful degradation: unauthenticated users and network errors silently skipped
+
+**Build verified:** `pnpm build` succeeds

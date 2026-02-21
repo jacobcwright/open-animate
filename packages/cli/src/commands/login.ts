@@ -60,10 +60,23 @@ function waitForCallback(port: number, timeoutMs = 120_000): Promise<string> {
 
 export const loginCommand = new Command('login')
   .description('Authenticate with the oanim platform')
-  .action(async () => {
+  .option('--token <key>', 'Authenticate with an API key (for agents and CI)')
+  .action(async (opts: { token?: string }) => {
     const spinner = ora('Starting login...').start();
 
     try {
+      if (opts.token) {
+        // Headless auth — verify the key then save
+        spinner.text = 'Verifying API key...';
+        const client = new HttpClient();
+        client.setAuth(opts.token);
+        const me = await client.request<{ email: string }>('GET', '/api/v1/auth/me');
+        await saveCredentials({ api_key: opts.token });
+        spinner.succeed(`Logged in as ${me.email}`);
+        return;
+      }
+
+      // Browser OAuth flow
       const port = await findAvailablePort();
       const apiUrl = await getApiUrl();
       const loginUrl = `${apiUrl}/api/v1/auth/cli/login?port=${port}`;

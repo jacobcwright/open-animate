@@ -191,6 +191,7 @@ auth.get('/me', requireAuth, async (c) => {
   return c.json({
     id: user.id,
     email: user.email,
+    credit_balance_usd: parseFloat(user.creditBalanceUsd),
     created_at: user.createdAt.toISOString(),
   });
 });
