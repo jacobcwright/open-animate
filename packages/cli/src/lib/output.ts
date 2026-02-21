@@ -17,7 +17,7 @@ export function keyValue(pairs: Record<string, string | number>): void {
 
 export function banner(): void {
   console.log(
-    chalk.bold.hex('#6366f1')('oanim') + chalk.dim(' — motion graphics CLI'),
+    chalk.bold.hex('#FF8000')('oanim') + chalk.dim(' — motion graphics CLI'),
   );
   console.log();
 }
@@ -34,7 +34,7 @@ const SPLASH_ART = `
 ██   ██ ██  ██ ██ ██ ██  ██  ██ ██   ██    ██    ██
 ██   ██ ██   ████ ██ ██      ██ ██   ██    ██    ███████`.slice(1); // remove leading newline
 
-const brand = gradient(['#6366f1', '#8b5cf6', '#d946ef']);
+const brand = gradient(['#FF8000', '#FFB800', '#FF6000']);
 
 export function splashBanner(): void {
   console.log(brand.multiline(SPLASH_ART));
