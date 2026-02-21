@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import gradient from 'gradient-string';
 
 export const log = {
   info: (msg: string) => console.log(chalk.blue('ℹ'), msg),
@@ -21,18 +22,22 @@ export function banner(): void {
   console.log();
 }
 
+const SPLASH_ART = `
+             ██████  ██████  ███████ ███    ██
+            ██    ██ ██   ██ ██      ████   ██
+            ██    ██ ██████  █████   ██ ██  ██
+            ██    ██ ██      ██      ██  ██ ██
+             ██████  ██      ███████ ██   ████
+ █████  ███    ██ ██ ███    ███  █████  ████████ ███████
+██   ██ ████   ██ ██ ████  ████ ██   ██    ██    ██
+███████ ██ ██  ██ ██ ██ ████ ██ ███████    ██    █████
+██   ██ ██  ██ ██ ██ ██  ██  ██ ██   ██    ██    ██
+██   ██ ██   ████ ██ ██      ██ ██   ██    ██    ███████`.slice(1); // remove leading newline
+
+const brand = gradient(['#6366f1', '#8b5cf6', '#d946ef']);
+
 export function splashBanner(): void {
-  const lines = [
-    '   ██████   █████  ███    ██ ██ ███    ███',
-    '  ██    ██ ██   ██ ████   ██ ██ ████  ████',
-    '  ██    ██ ███████ ██ ██  ██ ██ ██ ████ ██',
-    '  ██    ██ ██   ██ ██  ██ ██ ██ ██  ██  ██',
-    '   ██████  ██   ██ ██   ████ ██ ██      ██',
-  ];
-  const colors = ['#6366f1', '#6d64f2', '#7768f3', '#826cf5', '#8b5cf6'];
-  lines.forEach((line, i) => {
-    console.log(chalk.hex(colors[i])(line));
-  });
+  console.log(brand.multiline(SPLASH_ART));
   console.log();
   console.log(chalk.dim('  motion graphics CLI + animation presets'));
   console.log();
