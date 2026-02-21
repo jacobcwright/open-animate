@@ -129,7 +129,7 @@
         "Live API test with valid key produces output files"
       ],
       "status": "done",
-      "notes": "Code complete, not tested against live fal.ai API"
+      "notes": "All 4 commands tested live — fixed response parsing for birefnet/creative-upscaler (image vs images)"
     },
     {
       "id": "OANIM-009",
@@ -193,7 +193,8 @@
         "Each project builds and opens in remotion studio",
         "Each renders to video via oanim render"
       ],
-      "status": "todo"
+      "status": "done",
+      "notes": "4 examples: logo-reveal, meme-caption, explainer, investor-update"
     },
     {
       "id": "OANIM-013",
@@ -211,7 +212,7 @@
       "tests": [
         "Renders correctly on GitHub"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "OANIM-014",
@@ -227,7 +228,7 @@
         "Tag exists on remote",
         "GitHub release page shows correctly"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "OANIM-015",
@@ -243,7 +244,8 @@
         "All 4 commands produce valid output files",
         "Error handling works for invalid inputs"
       ],
-      "status": "todo"
+      "status": "done",
+      "notes": "All 4 commands verified live. Fixed response parsing bug (birefnet/creative-upscaler return image not images)."
     },
     {
       "id": "OANIM-016",
@@ -258,7 +260,8 @@
         "Scaffolded project renders successfully",
         "Example projects render successfully"
       ],
-      "status": "todo"
+      "status": "done",
+      "notes": "oanim init scaffolds correctly, pnpm build succeeds with all 6 examples in workspace"
     }
   ]
 }

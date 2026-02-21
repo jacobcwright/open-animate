@@ -1,0 +1,12 @@
+{
+  "name": "Meme Caption",
+  "compositionId": "MemeCaption",
+  "render": {
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "codec": "h264",
+    "crf": 18
+  },
+  "props": {}
+}

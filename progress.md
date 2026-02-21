@@ -41,3 +41,38 @@ Append-only log of work completed each session.
 **Build verified:** `pnpm install && pnpm build` succeeds, `oanim --help` works, types generated.
 
 **Pushed** initial commit to `github.com/jacobcwright/open-animate` on `main`.
+
+---
+
+## Session 2 — 2026-02-21
+
+### Finalize remaining tickets (OANIM-012 through OANIM-016)
+
+**4 additional examples (OANIM-012):**
+- `examples/logo-reveal` — 5s single-scene, showcases popIn with bouncy spring + GlowOrb
+- `examples/meme-caption` — 6s vertical 1080x1920, showcases fadeDown + vertical format
+- `examples/explainer` — 20s 4-scene with wipe transitions, reusable Step component + Grid
+- `examples/investor-update` — 15s 3-scene with scaleFade transitions, CountUp + Card stagger, palettes.ocean
+
+**Bug fix — fal.ai response parsing:**
+- `birefnet` and `creative-upscaler` return `{ image: { url } }` not `{ images: [{ url }] }`
+- Added `getImageUrl()` helper to handle both response shapes
+- All 4 asset commands now work: gen-image, edit-image, remove-bg, upscale
+
+**Live fal.ai testing (OANIM-015):**
+- gen-image: 1024x576 JPEG from text prompt
+- edit-image: modified input image with prompt
+- remove-bg: RGBA PNG with transparent background
+- upscale: 2048x1152 (2x the 1024x576 input)
+- Error handling verified (missing OANIM_FAL_KEY)
+
+**E2E pipeline test (OANIM-016):**
+- `oanim init test-project` scaffolds package.json, scene.json, tsconfig.json, src/{index.ts, Root.tsx, MyComp.tsx}
+- `pnpm install && pnpm build` succeeds with all 6 examples in workspace
+
+**README.md (OANIM-013):**
+- Badge, quickstart, architecture, @oanim/core highlights, CLI commands table, examples list, agent skill section
+
+**v0.1.0 release (OANIM-014):**
+- All 16/16 tickets done
+- Tagged v0.1.0, pushed to GitHub with release

@@ -12,7 +12,14 @@ function getApiKey(): string {
 }
 
 interface FalResult {
-  images: Array<{ url: string }>;
+  images?: Array<{ url: string }>;
+  image?: { url: string };
+}
+
+function getImageUrl(result: FalResult): string {
+  if (result.images?.[0]?.url) return result.images[0].url;
+  if (result.image?.url) return result.image.url;
+  throw new Error('Unexpected fal.ai response: no image URL found');
 }
 
 async function falRequest(
@@ -53,7 +60,7 @@ export async function generateImage(
     image_size: 'landscape_16_9',
     num_images: 1,
   });
-  await downloadImage(result.images[0].url, outPath);
+  await downloadImage(getImageUrl(result), outPath);
 }
 
 export async function editImage(
@@ -71,7 +78,7 @@ export async function editImage(
     prompt,
     num_images: 1,
   });
-  await downloadImage(result.images[0].url, outPath);
+  await downloadImage(getImageUrl(result), outPath);
 }
 
 export async function removeBackground(
@@ -86,7 +93,7 @@ export async function removeBackground(
   const result = await falRequest('fal-ai/birefnet', {
     image_url: `data:image/${ext};base64,${base64}`,
   });
-  await downloadImage(result.images[0].url, outPath);
+  await downloadImage(getImageUrl(result), outPath);
 }
 
 export async function upscaleImage(
@@ -102,5 +109,5 @@ export async function upscaleImage(
     image_url: `data:image/${ext};base64,${base64}`,
     scale: 2,
   });
-  await downloadImage(result.images[0].url, outPath);
+  await downloadImage(getImageUrl(result), outPath);
 }
