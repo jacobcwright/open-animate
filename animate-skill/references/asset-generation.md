@@ -7,7 +7,7 @@ Generate images for your videos using fal.ai via the oanim CLI.
 1. Get a fal.ai API key at https://fal.ai/dashboard/keys
 2. Set the environment variable:
 ```bash
-export OANIM_FAL_KEY=your-key-here
+export ANIMATE_FAL_KEY=your-key-here
 ```
 
 ## Commands

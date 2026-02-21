@@ -26,7 +26,7 @@ oanim/
 ├── packages/
 │   ├── core/       @oanim/core — animation presets + components
 │   └── cli/        oanim CLI (init, render, assets)
-├── skill/          Agent skill (SKILL.md + rules + examples)
+├── animate-skill/ Agent skill (SKILL.md + references + templates)
 └── examples/       6 working Remotion projects
 ```
 
@@ -105,19 +105,19 @@ const colors = palettes.midnight;
 | Command | Description |
 |---|---|
 | `oanim init [name]` | Scaffold a Remotion project with @oanim/core |
-| `oanim render` | Render composition using scene.json config |
+| `oanim render` | Render composition using animate.json config |
 | `oanim assets gen-image` | Generate image from text prompt (fal.ai) |
 | `oanim assets edit-image` | Edit image with text prompt (fal.ai) |
 | `oanim assets remove-bg` | Remove image background (fal.ai) |
 | `oanim assets upscale` | 2x upscale image (fal.ai) |
 
-Asset commands require `OANIM_FAL_KEY` env var. Get a key at [fal.ai](https://fal.ai/dashboard/keys).
+Asset commands require `ANIMATE_FAL_KEY` env var. Get a key at [fal.ai](https://fal.ai/dashboard/keys).
 
 ## Agent Skill
 
-The `skill/` directory contains an agent skill that teaches AI agents how to compose motion graphics using oanim. It includes workflow rules, composition patterns, an animation cookbook, and example references.
+The `animate-skill/` directory contains an agent skill that teaches AI agents how to compose motion graphics using oanim. It includes workflow rules, composition patterns, an animation cookbook, and example references.
 
-See [`skill/SKILL.md`](skill/SKILL.md) for details.
+See [`animate-skill/SKILL.md`](animate-skill/SKILL.md) for details.
 
 ## Examples
 

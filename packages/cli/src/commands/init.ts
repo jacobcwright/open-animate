@@ -157,9 +157,9 @@ export const initCommand = new Command('init')
       await writeFile(join(projectDir, 'src', 'Root.tsx'), ROOT_TSX);
       await writeFile(join(projectDir, 'src', 'MyComp.tsx'), MY_COMP_TSX);
 
-      // Write scene.json
+      // Write animate.json
       await writeFile(
-        join(projectDir, 'scene.json'),
+        join(projectDir, 'animate.json'),
         JSON.stringify(DEFAULT_SCENE, null, 2) + '\n',
       );
 

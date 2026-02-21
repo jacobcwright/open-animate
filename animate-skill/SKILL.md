@@ -41,7 +41,7 @@ Use the animation presets for fast, premium results:
 import { fadeUp, popIn, Background, SafeArea, palettes } from '@oanim/core';
 ```
 
-See `rules/animation-cookbook.md` for the full presets reference.
+See `references/animation-cookbook.md` for the full presets reference.
 
 ### 3. Preview in Remotion Studio
 ```bash
@@ -70,18 +70,18 @@ oanim assets gen-image --prompt "dark gradient abstract" --out public/bg.png
 | Rendering to video | `oanim render` |
 | AI asset generation | `oanim assets` |
 
-## Rules
+## References
 
-- `rules/workflow.md` — Step-by-step agent workflow
-- `rules/scene-config.md` — scene.json schema reference
-- `rules/composition-patterns.md` — Multi-scene composition architecture
-- `rules/animation-cookbook.md` — Full `@oanim/core` presets reference
-- `rules/asset-generation.md` — fal.ai integration guide
+- `references/workflow.md` — Step-by-step agent workflow
+- `references/scene-config.md` — animate.json schema reference
+- `references/composition-patterns.md` — Multi-scene composition architecture
+- `references/animation-cookbook.md` — Full `@oanim/core` presets reference
+- `references/asset-generation.md` — fal.ai integration guide
 
-## Examples
+## Templates
 
-- `examples/launch-video.md` — Full 4-scene product launch
-- `examples/explainer.md` — Step-based explainer video
-- `examples/logo-reveal.md` — Logo animation
-- `examples/meme-caption.md` — Quick social clip
-- `examples/investor-update.md` — Metrics + charts
+- `templates/launch-video.md` — Full 4-scene product launch
+- `templates/explainer.md` — Step-based explainer video
+- `templates/logo-reveal.md` — Logo animation
+- `templates/meme-caption.md` — Quick social clip
+- `templates/investor-update.md` — Metrics + charts

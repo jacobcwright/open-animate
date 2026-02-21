@@ -1,10 +1,10 @@
 import { writeFile } from 'node:fs/promises';
 
 function getApiKey(): string {
-  const key = process.env.OANIM_FAL_KEY;
+  const key = process.env.ANIMATE_FAL_KEY;
   if (!key) {
     throw new Error(
-      'OANIM_FAL_KEY environment variable is required for asset generation.\n' +
+      'ANIMATE_FAL_KEY environment variable is required for asset generation.\n' +
         'Get a key at https://fal.ai/dashboard/keys',
     );
   }

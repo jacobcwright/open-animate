@@ -2,7 +2,7 @@
 
 A 5-8 second captioned clip for social media (vertical 1080x1920).
 
-## scene.json
+## animate.json
 
 ```json
 {

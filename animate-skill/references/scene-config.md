@@ -1,6 +1,6 @@
-# scene.json Reference
+# animate.json Reference
 
-Every oanim project has a `scene.json` at the root that configures rendering.
+Every oanim project has an `animate.json` at the root that configures rendering.
 
 ## Schema
 

@@ -7,7 +7,7 @@ import { loadScene } from '../lib/scene';
 import { log, keyValue } from '../lib/output';
 
 export const renderCommand = new Command('render')
-  .description('Render a composition to video using scene.json config')
+  .description('Render a composition to video using animate.json config')
   .option('--out <path>', 'output file path')
   .option('--fps <n>', 'frames per second', parseInt)
   .option('--res <WxH>', 'resolution (e.g. 1920x1080)')
@@ -21,8 +21,8 @@ export const renderCommand = new Command('render')
     try {
       scene = await loadScene('.');
     } catch {
-      spinner.fail('No scene.json found in current directory');
-      log.dim('Run "oanim init" to scaffold a project, or create scene.json manually.');
+      spinner.fail('No animate.json found in current directory');
+      log.dim('Run "oanim init" to scaffold a project, or create animate.json manually.');
       process.exit(1);
     }
 

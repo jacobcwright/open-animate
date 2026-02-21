@@ -279,6 +279,97 @@
         "pnpm build succeeds"
       ],
       "status": "done"
+    },
+    {
+      "id": "OANIM-018",
+      "title": "Restructure repo for platform evolution",
+      "description": "Rename scene.json → animate.json, OANIM_FAL_KEY → ANIMATE_FAL_KEY, skill/ → animate-skill/ with references/ + templates/ subdirs, rewrite CLAUDE.md with platform vision",
+      "requirements": [
+        "CLI reads animate.json instead of scene.json",
+        "CLI reads ANIMATE_FAL_KEY instead of OANIM_FAL_KEY",
+        "skill/ renamed to animate-skill/ with references/ and templates/ subdirs",
+        "All 6 example scene.json renamed to animate.json",
+        "CLAUDE.md rewritten with platform vision, naming conventions, planned packages",
+        "prd.json updated with platform evolution tickets",
+        "README.md updated with new naming",
+        "pnpm build succeeds"
+      ],
+      "tests": [
+        "pnpm build passes",
+        "No stale scene.json or OANIM_FAL_KEY references in source"
+      ],
+      "status": "done"
+    },
+    {
+      "id": "OANIM-019",
+      "title": "Auth flow — oanim login",
+      "description": "Browser-based OAuth login: oanim login opens browser, completes Clerk OAuth, stores credentials in ~/.oanim/credentials.yaml",
+      "requirements": [
+        "oanim login command opens browser for Clerk OAuth",
+        "Local HTTP callback server receives token",
+        "Credentials stored in ~/.oanim/credentials.yaml",
+        "oanim whoami shows current user",
+        "oanim logout clears credentials"
+      ],
+      "tests": [
+        "oanim login completes OAuth flow and stores credentials",
+        "oanim whoami displays user info",
+        "oanim logout clears stored credentials"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-020",
+      "title": "Media gateway — multi-provider routing",
+      "description": "packages/gateway/ — abstraction layer routing asset generation requests across providers (fal.ai first, then Runway, etc.) with usage metering and cost controls",
+      "requirements": [
+        "Provider adapter interface (generate, edit, removeBackground, upscale)",
+        "fal.ai adapter (migrate existing fal.ts logic)",
+        "Usage metering per request (provider, model, cost)",
+        "Cost controls via ANIMATE_MAX_USD_PER_RUN env var",
+        "CLI oanim assets routes through gateway"
+      ],
+      "tests": [
+        "fal.ai adapter produces same results as direct integration",
+        "Cost limit stops execution when exceeded",
+        "Usage metrics recorded per request"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-021",
+      "title": "API key resolution chain",
+      "description": "Implement credential resolution: explicit param > ANIMATE_API_KEY env > ~/.oanim/credentials.yaml > direct provider key fallback (ANIMATE_FAL_KEY)",
+      "requirements": [
+        "Resolution chain: explicit param → ANIMATE_API_KEY env → credentials file → provider key fallback",
+        "Works for both CLI and SDK usage",
+        "Clear error messages when no credentials found",
+        "Shared module in packages/auth/"
+      ],
+      "tests": [
+        "Each level of the resolution chain works",
+        "Fallback to direct provider key preserves backward compat",
+        "Error message guides user to oanim login or env var setup"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-022",
+      "title": "Cloud rendering — oanim render --cloud",
+      "description": "Send composition to hosted rendering infrastructure, stream back MP4. Requires auth (OANIM-019) and API key resolution (OANIM-021)",
+      "requirements": [
+        "oanim render --cloud flag sends job to cloud API",
+        "Streaming progress updates during render",
+        "Downloads final MP4 to local --out path",
+        "Falls back to local render on auth failure with clear message",
+        "Usage metering for cloud render minutes"
+      ],
+      "tests": [
+        "Cloud render produces same output as local render",
+        "Progress streaming works",
+        "Auth failure shows helpful error"
+      ],
+      "status": "planned"
     }
   ]
 }

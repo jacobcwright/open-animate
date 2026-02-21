@@ -18,7 +18,7 @@ export const sceneSchema = z.object({
 export type SceneConfig = z.infer<typeof sceneSchema>;
 
 export async function loadScene(dir: string = '.'): Promise<SceneConfig> {
-  const filePath = resolve(dir, 'scene.json');
+  const filePath = resolve(dir, 'animate.json');
   const raw = await readFile(filePath, 'utf-8');
   return sceneSchema.parse(JSON.parse(raw));
 }

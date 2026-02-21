@@ -88,3 +88,31 @@ Append-only log of work completed each session.
 - Modified `preAction` hook in `packages/cli/src/index.ts` to skip the small banner when running `init` (splash handles it)
 - Added ASCII art code block to top of `skill/SKILL.md`
 - Build verified: `pnpm build` succeeds
+
+---
+
+## Session 4 — 2026-02-21
+
+### Restructure repo for platform evolution (OANIM-018)
+
+**CLI source updates (Phase 1):**
+- `packages/cli/src/lib/scene.ts` — reads `animate.json` instead of `scene.json`
+- `packages/cli/src/lib/fal.ts` — `OANIM_FAL_KEY` → `ANIMATE_FAL_KEY`
+- `packages/cli/src/commands/init.ts` — writes `animate.json` instead of `scene.json`
+- `packages/cli/src/commands/render.ts` — description + error messages reference `animate.json`
+
+**Example renames (Phase 2):**
+- All 6 `examples/*/scene.json` → `examples/*/animate.json` via `git mv`
+
+**Skill directory restructure (Phase 3):**
+- `skill/` → `animate-skill/`
+- `animate-skill/rules/` → `animate-skill/references/`
+- `animate-skill/examples/` → `animate-skill/templates/`
+- Updated all internal .md references (path refs, scene.json → animate.json, OANIM_FAL_KEY → ANIMATE_FAL_KEY)
+
+**Root documentation (Phase 4):**
+- `CLAUDE.md` — comprehensive rewrite with platform vision (open-core model, media gateway, auth, cloud rendering), naming conventions table, planned packages (gateway, auth)
+- `prd.json` — added OANIM-018 (done) + 4 platform tickets: OANIM-019 (auth), OANIM-020 (media gateway), OANIM-021 (API key resolution), OANIM-022 (cloud rendering)
+- `README.md` — updated all references: scene.json → animate.json, OANIM_FAL_KEY → ANIMATE_FAL_KEY, skill/ → animate-skill/
+
+**Build verified:** `pnpm build` succeeds

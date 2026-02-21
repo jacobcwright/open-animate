@@ -15,11 +15,13 @@
 
 5. **Test against real Remotion.** When adding or modifying @oanim/core components, verify they work in at least one example project (`examples/hello-world` or `examples/launch-video`) by checking `npx remotion studio` opens.
 
-6. **Keep the CLI thin.** The `oanim` CLI wraps Remotion's own tooling — it does not reimplement rendering. `oanim render` shells to `npx remotion render` with config from `scene.json`.
+6. **Keep the CLI thin.** The `oanim` CLI wraps Remotion's own tooling — it does not reimplement rendering. `oanim render` shells to `npx remotion render` with config from `animate.json`.
 
 7. **No JSX in .ts files.** Remotion components use React.createElement() in `.ts` files or JSX in `.tsx` files. The core package uses `React.createElement()` throughout for maximum compatibility. Keep this consistent.
 
 8. **Workspace topology matters.** Both `packages/*` and `examples/*` are in the pnpm workspace. Examples reference `@oanim/core` as `workspace:*`. This means `pnpm install` at root links them automatically.
+
+---
 
 ## What is oanim
 
@@ -27,17 +29,50 @@ Open-source CLI + component library + agent skill for creating React motion grap
 
 **Key architecture:** Remotion skills teach the agent *how to write Remotion code*. oanim teaches the agent *how to compose premium motion graphics quickly* via a presets library, shared components, and a workflow CLI.
 
+## Platform Vision
+
+oanim is evolving into an **open-core platform** (Supabase model — all open source, monetize via hosted cloud). Users can self-host everything for free or use the hosted version and pay.
+
+### Current state (v0.1)
+- **@oanim/core** — animation presets, transitions, typography, UI components, design tokens
+- **oanim CLI** — `init`, `render`, `assets` (fal.ai direct)
+- **animate-skill/** — agent skill with references + templates
+- **6 working examples** — hello-world, launch-video, logo-reveal, meme-caption, explainer, investor-update
+
+### Planned platform additions
+- **Auth:** `oanim login` → browser OAuth → `~/.oanim/credentials.yaml`. API key resolution: explicit param > `ANIMATE_API_KEY` env > credentials file > direct provider key fallback.
+- **Media gateway:** Multi-provider routing (fal.ai first, Runway, future providers). Usage metering, cost controls (`ANIMATE_MAX_USD_PER_RUN`). Like Vercel AI Gateway but for media generation.
+- **Cloud rendering:** `oanim render --cloud` sends composition to hosted infra, streams back MP4.
+
+## Naming Conventions (locked)
+
+| Thing | Name |
+|-------|------|
+| Binary | `oanim` |
+| Core package | `@oanim/core` |
+| CLI package | `oanim` |
+| Config file | `animate.json` |
+| fal.ai env var | `ANIMATE_FAL_KEY` |
+| Platform API key (future) | `ANIMATE_API_KEY` |
+| Repo | `jacobcwright/open-animate` |
+| License | Apache 2.0 |
+
 ## Repo Layout
 
 ```
 open-animate/
   packages/
-    core/       # @oanim/core — animation presets + components for Remotion
-    cli/        # oanim CLI (bin: oanim)
-  skill/        # Agent skill (SKILL.md + rules + examples)
-  examples/     # Working example Remotion projects
-  progress.md   # Append-only session log
-  prd.json      # Ticket tracker (title, description, requirements, tests, status)
+    core/           # @oanim/core — animation presets + components for Remotion
+    cli/            # oanim CLI (bin: oanim)
+    gateway/        # (planned) media gateway — multi-provider routing
+    auth/           # (planned) shared auth module (Clerk OAuth)
+  animate-skill/
+    SKILL.md        # Agent skill entry point
+    references/     # workflow, scene-config, animation-cookbook, etc.
+    templates/      # launch-video, explainer, logo-reveal, etc.
+  examples/         # Working Remotion projects (6 currently)
+  progress.md       # Append-only session log
+  prd.json          # Ticket tracker (title, description, requirements, tests, status)
 ```
 
 ## Build & Dev
@@ -79,5 +114,5 @@ oanim render              # render to MP4
 
 ### oanim CLI
 - `oanim init [name]` — scaffold Remotion project with @oanim/core
-- `oanim render` — render using scene.json config
+- `oanim render` — render using animate.json config
 - `oanim assets` — AI asset generation via fal.ai (gen-image, edit-image, remove-bg, upscale)
