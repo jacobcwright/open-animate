@@ -602,6 +602,26 @@
       ],
       "status": "done",
       "notes": "GET /usage/balance endpoint. Gateway fetches balance once, tracks locally, blocks when insufficient. Graceful degradation for unauthenticated/offline."
+    },
+    {
+      "id": "OANIM-035",
+      "title": "Documentation site",
+      "description": "Mint docs site covering quickstart, CLI reference, @oanim/core API, agent skill usage, platform features (auth, credits, cloud rendering), and self-hosting guide",
+      "requirements": [
+        "Quickstart guide: install → init → preview → render",
+        "CLI reference: all commands with flags and examples",
+        "@oanim/core API: presets, transitions, typography, UI components, design tokens",
+        "Agent skill docs: how to use animate-skill with Claude/Openclaw",
+        "Platform docs: auth flow (browser + headless), API keys, free credits, usage/billing",
+        "Cloud rendering guide: oanim render --cloud",
+        "Self-hosting guide: docker-compose, env vars, Clerk setup, S3, Remotion Lambda"
+      ],
+      "tests": [
+        "mint dev serves docs locally",
+        "All pages render without errors",
+        "Code examples are accurate and tested"
+      ],
+      "status": "planned"
     }
   ]
 }
