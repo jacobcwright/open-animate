@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import ora from 'ora';
-import { generateImage, editImage, removeBackground, upscaleImage } from '../lib/fal';
+import { MediaGateway } from '../lib/gateway';
 import { log } from '../lib/output';
 
 export const assetsCommand = new Command('assets')
@@ -14,7 +14,8 @@ assetsCommand
   .action(async (opts) => {
     const spinner = ora('Generating image...').start();
     try {
-      await generateImage(opts.prompt, opts.out);
+      const gw = new MediaGateway();
+      await gw.generateImage(opts.prompt, opts.out);
       spinner.succeed(`Image saved to ${opts.out}`);
     } catch (err) {
       spinner.fail('Image generation failed');
@@ -32,7 +33,8 @@ assetsCommand
   .action(async (opts) => {
     const spinner = ora('Editing image...').start();
     try {
-      await editImage(opts.in, opts.prompt, opts.out);
+      const gw = new MediaGateway();
+      await gw.editImage(opts.in, opts.prompt, opts.out);
       spinner.succeed(`Edited image saved to ${opts.out}`);
     } catch (err) {
       spinner.fail('Image editing failed');
@@ -49,7 +51,8 @@ assetsCommand
   .action(async (opts) => {
     const spinner = ora('Removing background...').start();
     try {
-      await removeBackground(opts.in, opts.out);
+      const gw = new MediaGateway();
+      await gw.removeBackground(opts.in, opts.out);
       spinner.succeed(`Image saved to ${opts.out}`);
     } catch (err) {
       spinner.fail('Background removal failed');
@@ -66,7 +69,8 @@ assetsCommand
   .action(async (opts) => {
     const spinner = ora('Upscaling image...').start();
     try {
-      await upscaleImage(opts.in, opts.out);
+      const gw = new MediaGateway();
+      await gw.upscaleImage(opts.in, opts.out);
       spinner.succeed(`Upscaled image saved to ${opts.out}`);
     } catch (err) {
       spinner.fail('Upscaling failed');

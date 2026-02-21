@@ -316,7 +316,8 @@
         "oanim whoami displays user info",
         "oanim logout clears stored credentials"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "login opens browser OAuth, whoami calls /api/v1/auth/me, logout clears ~/.oanim/credentials.yaml. login/whoami require backend to fully work."
     },
     {
       "id": "OANIM-020",
@@ -334,7 +335,8 @@
         "Cost limit stops execution when exceeded",
         "Usage metrics recorded per request"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "MediaGateway wraps FalProvider adapter. Cost tracking + ANIMATE_MAX_USD_PER_RUN limit. assets.ts refactored to use gateway."
     },
     {
       "id": "OANIM-021",
@@ -351,7 +353,8 @@
         "Fallback to direct provider key preserves backward compat",
         "Error message guides user to oanim login or env var setup"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "config.ts in packages/cli/src/lib/. Resolution: ANIMATE_API_KEY env → credentials.yaml api_key → credentials.yaml token → null."
     },
     {
       "id": "OANIM-022",
@@ -369,7 +372,8 @@
         "Progress streaming works",
         "Auth failure shows helpful error"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "cloud-render.ts in packages/cli/src/lib/. --cloud flag on render command. Requires auth + backend API to function."
     }
   ]
 }

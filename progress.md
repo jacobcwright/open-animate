@@ -116,3 +116,36 @@ Append-only log of work completed each session.
 - `README.md` — updated all references: scene.json → animate.json, OANIM_FAL_KEY → ANIMATE_FAL_KEY, skill/ → animate-skill/
 
 **Build verified:** `pnpm build` succeeds
+
+---
+
+## Session 5 — 2026-02-21
+
+### Platform features: OANIM-019 through OANIM-022
+
+**Credential storage + API key resolution (OANIM-021):**
+- New `packages/cli/src/lib/config.ts` — reads/writes `~/.oanim/credentials.yaml` (0o600) and `~/.oanim/config.yaml`
+- `getAuth()` resolution chain: `ANIMATE_API_KEY` env → `credentials.yaml` api_key → `credentials.yaml` token → null
+- `getApiUrl()`: `ANIMATE_API_URL` env → config file → `https://api.oanim.dev`
+- Added `yaml@^2.3.0` dependency
+
+**Media gateway + fal.ai provider adapter (OANIM-020):**
+- New `packages/cli/src/lib/providers/types.ts` — `MediaProvider` interface (generateImage, editImage, removeBackground, upscale)
+- New `packages/cli/src/lib/providers/fal.ts` — `FalProvider` class extracted from old `lib/fal.ts`
+- New `packages/cli/src/lib/gateway.ts` — `MediaGateway` orchestrator with cost tracking + `ANIMATE_MAX_USD_PER_RUN` limit
+- Updated `packages/cli/src/commands/assets.ts` to use `MediaGateway` instead of direct fal.ts imports
+- Deleted `packages/cli/src/lib/fal.ts` (replaced by providers/fal.ts + gateway.ts)
+
+**Auth commands (OANIM-019):**
+- New `packages/cli/src/lib/http.ts` — `HttpClient` class for platform API calls
+- New `packages/cli/src/commands/login.ts` — browser OAuth: find port → start callback server → open browser → save token
+- New `packages/cli/src/commands/whoami.ts` — display current user via `GET /api/v1/auth/me`
+- New `packages/cli/src/commands/logout.ts` — clear stored credentials
+- Updated `packages/cli/src/index.ts` — registered 3 new commands, skip banner for login/logout/whoami
+- Added `open@^10.0.0` dependency
+
+**Cloud rendering (OANIM-022):**
+- New `packages/cli/src/lib/cloud-render.ts` — submit, poll, download, waitForRender with progress callback
+- Updated `packages/cli/src/commands/render.ts` — `--cloud` flag: requires auth → upload → poll → download MP4
+
+**Build verified:** `pnpm build` and `tsc --noEmit` both succeed
