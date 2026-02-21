@@ -20,3 +20,20 @@ export function banner(): void {
   );
   console.log();
 }
+
+export function splashBanner(): void {
+  const lines = [
+    '   ██████   █████  ███    ██ ██ ███    ███',
+    '  ██    ██ ██   ██ ████   ██ ██ ████  ████',
+    '  ██    ██ ███████ ██ ██  ██ ██ ██ ████ ██',
+    '  ██    ██ ██   ██ ██  ██ ██ ██ ██  ██  ██',
+    '   ██████  ██   ██ ██   ████ ██ ██      ██',
+  ];
+  const colors = ['#6366f1', '#6d64f2', '#7768f3', '#826cf5', '#8b5cf6'];
+  lines.forEach((line, i) => {
+    console.log(chalk.hex(colors[i])(line));
+  });
+  console.log();
+  console.log(chalk.dim('  motion graphics CLI + animation presets'));
+  console.log();
+}

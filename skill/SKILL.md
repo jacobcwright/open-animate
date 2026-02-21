@@ -1,3 +1,11 @@
+```
+   ██████   █████  ███    ██ ██ ███    ███
+  ██    ██ ██   ██ ████   ██ ██ ████  ████
+  ██    ██ ███████ ██ ██  ██ ██ ██ ████ ██
+  ██    ██ ██   ██ ██  ██ ██ ██ ██  ██  ██
+   ██████  ██   ██ ██   ████ ██ ██      ██
+```
+
 # oanim — Motion Graphics Agent Skill
 
 Create professional React motion graphics using Remotion + `@oanim/core` animation presets.

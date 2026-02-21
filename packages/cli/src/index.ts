@@ -8,7 +8,11 @@ const program = new Command()
   .name('oanim')
   .version('0.1.0')
   .description('Motion graphics CLI — animation presets + Remotion workflow')
-  .hook('preAction', () => banner());
+  .hook('preAction', (_thisCommand, actionCommand) => {
+    if (actionCommand.name() !== 'init') {
+      banner();
+    }
+  });
 
 program.addCommand(initCommand);
 program.addCommand(renderCommand);

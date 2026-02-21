@@ -44,7 +44,7 @@ Append-only log of work completed each session.
 
 ---
 
-## Session 2 — 2026-02-21
+## Session 2 — 2026-02-21 (early)
 
 ### Finalize remaining tickets (OANIM-012 through OANIM-016)
 
@@ -76,3 +76,15 @@ Append-only log of work completed each session.
 **v0.1.0 release (OANIM-014):**
 - All 16/16 tickets done
 - Tagged v0.1.0, pushed to GitHub with release
+
+---
+
+## Session 3 — 2026-02-21
+
+### ASCII art branding (OANIM-017)
+
+- Added `splashBanner()` to `packages/cli/src/lib/output.ts` — 5-line block ASCII art "oanim" with indigo→violet chalk hex gradient
+- Called `splashBanner()` at start of `oanim init` action in `packages/cli/src/commands/init.ts`
+- Modified `preAction` hook in `packages/cli/src/index.ts` to skip the small banner when running `init` (splash handles it)
+- Added ASCII art code block to top of `skill/SKILL.md`
+- Build verified: `pnpm build` succeeds

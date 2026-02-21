@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { execSync } from 'node:child_process';
 import ora from 'ora';
-import { log, keyValue } from '../lib/output';
+import { log, keyValue, splashBanner } from '../lib/output';
 
 const DEFAULT_SCENE = {
   name: 'My Video',
@@ -96,6 +96,7 @@ export const initCommand = new Command('init')
   .argument('[name]', 'project name', 'my-video')
   .description('Scaffold a new Remotion project with oanim presets')
   .action(async (name: string) => {
+    splashBanner();
     const projectDir = resolve(process.cwd(), name);
 
     const spinner = ora('Scaffolding project...').start();

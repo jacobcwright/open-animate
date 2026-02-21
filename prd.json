@@ -262,6 +262,23 @@
       ],
       "status": "done",
       "notes": "oanim init scaffolds correctly, pnpm build succeeds with all 6 examples in workspace"
+    },
+    {
+      "id": "OANIM-017",
+      "title": "ASCII art branding for CLI init + skill",
+      "description": "Add splash ASCII art banner shown during oanim init, and in SKILL.md header",
+      "requirements": [
+        "splashBanner() with block-style ASCII art and indigo→violet gradient",
+        "Shown at start of oanim init only",
+        "Global preAction banner skipped for init command",
+        "ASCII art code block added to top of SKILL.md"
+      ],
+      "tests": [
+        "oanim init shows splash banner",
+        "oanim --help / oanim render show small banner only",
+        "pnpm build succeeds"
+      ],
+      "status": "done"
     }
   ]
 }
