@@ -18,14 +18,27 @@ app.use('*', cors());
 // Health check
 app.get('/health', (c) => c.json({ ok: true }));
 
-// Diagnostic: query pg-boss queue state
+// Diagnostic: query pg-boss queue state + test send
 app.get('/debug/queue', async (c) => {
   try {
     const boss = (await import('./lib/boss.js')).getBoss();
-    const counts = await boss.getQueueSize('render');
-    return c.json({ render_queue: counts });
+    const sizeBefore = await boss.getQueueSize('render');
+
+    // Send a test job
+    const testId = await boss.send('render-test', { test: true });
+
+    const sizeAfter = await boss.getQueueSize('render');
+    const testSize = await boss.getQueueSize('render-test');
+
+    return c.json({
+      render_queue: sizeBefore,
+      render_queue_after_test: sizeAfter,
+      test_queue: testSize,
+      test_job_id: testId,
+      boss_started: !!(boss as Record<string, unknown>).started,
+    });
   } catch (err: unknown) {
-    return c.json({ error: String(err) });
+    return c.json({ error: String(err), stack: (err as Error).stack });
   }
 });
 
