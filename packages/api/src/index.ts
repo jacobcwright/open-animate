@@ -24,17 +24,19 @@ app.get('/debug/queue', async (c) => {
     const boss = getBoss();
     const sizeBefore = await boss.getQueueSize('render');
 
-    // Send a test job
-    const testId = await boss.send('render-test', { test: true });
+    // Send a test job to the RENDER queue (which was created on startup)
+    const testId = await boss.send('render', { jobId: 'debug-test', test: true });
 
     const sizeAfter = await boss.getQueueSize('render');
-    const testSize = await boss.getQueueSize('render-test');
+
+    // List available queues
+    const queues = await boss.getQueues();
 
     return c.json({
-      render_queue: sizeBefore,
-      render_queue_after_test: sizeAfter,
-      test_queue: testSize,
-      test_job_id: testId,
+      render_queue_before: sizeBefore,
+      render_queue_after: sizeAfter,
+      test_send_result: testId,
+      queues,
     });
   } catch (err: unknown) {
     return c.json({ error: String(err), stack: (err as Error).stack });
