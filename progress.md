@@ -295,3 +295,68 @@ Append-only log of work completed each session.
 **.dockerignore:** Excludes node_modules, dist, src, .env, .git, config files
 
 **Build verified:** `pnpm build` succeeds
+
+---
+
+## Session 10 — 2026-02-22
+
+### E2E Verification of oanim API (api.oanim.dev)
+
+Full end-to-end testing of the deployed API on Porter. API is live at `https://api.oanim.dev`.
+
+**Phase 1 — Setup:**
+- Built all packages (`pnpm build` succeeds)
+- Linked CLI globally via `npm link` (pnpm link had PNPM_HOME issues)
+- `oanim --help` works
+
+**Phase 2 — Auth flow (3 bugs found and fixed):**
+
+Bug 1: **Clerk OAuth redirect to root (404).** `afterSignInUrl` is deprecated in Clerk v5+. The `@clerk/clerk-js@latest` script ignored it and redirected to `/` (the origin root), which returned 404.
+- Fix: Replaced `afterSignInUrl` with `forceRedirectUrl` (modern Clerk API)
+- Fix: Added client-side token bridge page — when callback receives no token, serves HTML that loads Clerk, extracts JWT from active session, and re-submits to the same URL with `?token=`
+
+Bug 2: **`http://` callback URLs behind reverse proxy.** `new URL(c.req.url).origin` returned `http://api.oanim.dev` because TLS terminates at Porter's load balancer.
+- Fix: Derive base URL from `c.req.header('host')` with hardcoded `https://`
+
+Bug 3: **Empty email in user record.** Clerk JWTs don't include email in standard claims (`sub` only). The code tried `payload.email` and `payload.primary_email_address` which were both undefined.
+- Fix: Extract email client-side from `window.Clerk.user.primaryEmailAddress.emailAddress` and pass as `&email=` query param to callback
+
+All 3 fixes committed and deployed: `4bd797a`, `30bf880`
+
+**Phase 3 — Auth verification (PASS):**
+- `oanim login` — opens browser, Clerk sign-in, API key saved to `~/.oanim/credentials.yaml`
+- `oanim whoami` — shows email, credits ($5.00), ID, member since date
+- `curl /api/v1/auth/me` with saved key — returns JSON with id, email, credit_balance_usd, created_at
+- Credentials file has `api_key: anim_...` format
+
+Note: Also added `credit_balance_usd` to whoami output (was missing).
+
+**Phase 4 — API key management (PASS):**
+- `oanim api-keys create --name "test-key"` — displays key with `anim_` prefix
+- `oanim api-keys list` — shows all keys (2 CLI login + 1 test)
+- `curl /api/v1/auth/me` with test key — authenticated successfully
+- `oanim api-keys revoke {id}` — revoked test key
+- `curl` with revoked key — returns 401 `{"error":"Not authenticated"}`
+
+**Phase 5 — Usage endpoints (PASS):**
+- `GET /api/v1/usage?days=30` — `{"usage":[],"totalCostUsd":0}` (no usage yet)
+- `GET /api/v1/usage/balance` — `{"creditBalanceUsd":5}`
+
+**Phase 6 — Cloud rendering (BLOCKED — pg-boss worker not processing jobs):**
+- Upload + job creation works: `POST /render/upload` returns storageKey, `POST /render` returns job_id
+- Job stays at `status: "queued"` indefinitely — pg-boss worker never picks it up
+- Porter logs confirm worker registered: `[pg-boss] started` → `[worker] render worker registered` → `[oanim-api] listening`
+- No worker error logs appear — the worker handler is never invoked
+- Tested with 2 separate jobs across 2 deploys (v11, v12) — same result
+- Added diagnostic endpoint (`GET /debug/queue`) and verbose worker logging, deployed as v13
+- Investigation ongoing
+
+**Phase 7 — Cleanup (not started, blocked on Phase 6):**
+- `oanim logout` / `oanim whoami` verification deferred
+
+### Summary
+- Auth: PASS (after 3 bug fixes)
+- API Keys: PASS
+- Usage: PASS
+- Cloud Rendering: BLOCKED (pg-boss worker issue)
+- 3 commits pushed: Clerk OAuth fix, email + credits fix, debug logging

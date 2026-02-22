@@ -76,7 +76,7 @@ oanim assets gen-image --prompt "dark gradient abstract" --out public/bg.png
 - `references/scene-config.md` — animate.json schema reference
 - `references/composition-patterns.md` — Multi-scene composition architecture
 - `references/animation-cookbook.md` — Full `@oanim/core` presets reference
-- `references/asset-generation.md` — fal.ai integration guide
+- `references/asset-generation.md` — AI asset generation guide
 
 ## Templates
 

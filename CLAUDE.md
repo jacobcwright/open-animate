@@ -35,13 +35,13 @@ oanim is evolving into an **open-core platform** (Supabase model — all open so
 
 ### Current state (v0.1)
 - **@oanim/core** — animation presets, transitions, typography, UI components, design tokens
-- **oanim CLI** — `init`, `render`, `assets` (fal.ai direct)
+- **oanim CLI** — `init`, `render`, `assets` (via platform media gateway)
 - **animate-skill/** — agent skill with references + templates
 - **6 working examples** — hello-world, launch-video, logo-reveal, meme-caption, explainer, investor-update
 
 ### Planned platform additions
 - **Auth:** `oanim login` → browser OAuth → `~/.oanim/credentials.yaml`. API key resolution: explicit param > `ANIMATE_API_KEY` env > credentials file > direct provider key fallback.
-- **Media gateway:** Multi-provider routing (fal.ai first, Runway, future providers). Usage metering, cost controls (`ANIMATE_MAX_USD_PER_RUN`). Like Vercel AI Gateway but for media generation.
+- **Media gateway:** Multi-provider routing (fal.ai backend, Runway, future providers). Usage metering, cost controls (`ANIMATE_MAX_USD_PER_RUN`). Like Vercel AI Gateway but for media generation.
 - **Cloud rendering:** `oanim render --cloud` sends composition to hosted infra, streams back MP4.
 
 ## Naming Conventions (locked)
@@ -52,8 +52,8 @@ oanim is evolving into an **open-core platform** (Supabase model — all open so
 | Core package | `@oanim/core` |
 | CLI package | `oanim` |
 | Config file | `animate.json` |
-| fal.ai env var | `ANIMATE_FAL_KEY` |
-| Platform API key (future) | `ANIMATE_API_KEY` |
+| Direct provider key (optional) | `ANIMATE_FAL_KEY` |
+| Platform API key | `ANIMATE_API_KEY` |
 | Repo | `jacobcwright/open-animate` |
 | License | Apache 2.0 |
 
@@ -115,4 +115,4 @@ oanim render              # render to MP4
 ### oanim CLI
 - `oanim init [name]` — scaffold Remotion project with @oanim/core
 - `oanim render` — render using animate.json config
-- `oanim assets` — AI asset generation via fal.ai (gen-image, edit-image, remove-bg, upscale)
+- `oanim assets` — AI asset generation (gen-image, edit-image, remove-bg, upscale)

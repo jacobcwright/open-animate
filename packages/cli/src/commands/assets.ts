@@ -1,10 +1,21 @@
 import { Command } from 'commander';
 import ora from 'ora';
 import { MediaGateway } from '../lib/gateway';
+import { getAuth } from '../lib/config';
 import { log } from '../lib/output';
 
+async function requireAuth(): Promise<void> {
+  if (process.env.ANIMATE_FAL_KEY) return; // direct provider key — skip auth check
+  const auth = await getAuth();
+  if (!auth) {
+    throw new Error(
+      'Not authenticated. Run "oanim login" to sign in, or set ANIMATE_API_KEY.',
+    );
+  }
+}
+
 export const assetsCommand = new Command('assets')
-  .description('AI-powered asset generation via fal.ai');
+  .description('AI-powered asset generation');
 
 assetsCommand
   .command('gen-image')
@@ -14,6 +25,7 @@ assetsCommand
   .action(async (opts) => {
     const spinner = ora('Generating image...').start();
     try {
+      await requireAuth();
       const gw = new MediaGateway();
       await gw.generateImage(opts.prompt, opts.out);
       spinner.succeed(`Image saved to ${opts.out}`);
@@ -33,6 +45,7 @@ assetsCommand
   .action(async (opts) => {
     const spinner = ora('Editing image...').start();
     try {
+      await requireAuth();
       const gw = new MediaGateway();
       await gw.editImage(opts.in, opts.prompt, opts.out);
       spinner.succeed(`Edited image saved to ${opts.out}`);
@@ -51,6 +64,7 @@ assetsCommand
   .action(async (opts) => {
     const spinner = ora('Removing background...').start();
     try {
+      await requireAuth();
       const gw = new MediaGateway();
       await gw.removeBackground(opts.in, opts.out);
       spinner.succeed(`Image saved to ${opts.out}`);
@@ -69,6 +83,7 @@ assetsCommand
   .action(async (opts) => {
     const spinner = ora('Upscaling image...').start();
     try {
+      await requireAuth();
       const gw = new MediaGateway();
       await gw.upscaleImage(opts.in, opts.out);
       spinner.succeed(`Upscaled image saved to ${opts.out}`);

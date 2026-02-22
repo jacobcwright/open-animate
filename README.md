@@ -37,7 +37,7 @@ oanim init → scaffold Remotion project with @oanim/core
          → compose scenes using presets + components
          → npx remotion studio (preview)
          → oanim render (export MP4)
-         → oanim assets (AI image generation via fal.ai)
+         → oanim assets (AI image generation)
 ```
 
 ## @oanim/core
@@ -106,12 +106,12 @@ const colors = palettes.midnight;
 |---|---|
 | `oanim init [name]` | Scaffold a Remotion project with @oanim/core |
 | `oanim render` | Render composition using animate.json config |
-| `oanim assets gen-image` | Generate image from text prompt (fal.ai) |
-| `oanim assets edit-image` | Edit image with text prompt (fal.ai) |
-| `oanim assets remove-bg` | Remove image background (fal.ai) |
-| `oanim assets upscale` | 2x upscale image (fal.ai) |
+| `oanim assets gen-image` | Generate image from text prompt |
+| `oanim assets edit-image` | Edit image with text prompt |
+| `oanim assets remove-bg` | Remove image background |
+| `oanim assets upscale` | 2x upscale image |
 
-Asset commands require `ANIMATE_FAL_KEY` env var. Get a key at [fal.ai](https://fal.ai/dashboard/keys).
+Asset commands require authentication. Run `oanim login` to sign in.
 
 ## Agent Skill
 

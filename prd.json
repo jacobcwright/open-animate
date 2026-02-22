@@ -548,7 +548,7 @@
         "oanim render --cloud submits, polls, and downloads MP4"
       ],
       "status": "in-progress",
-      "notes": "Code artifacts done: auto-migrate on startup, Drizzle migrations generated, Dockerfile + .dockerignore, tsup externals. Manual infra steps remain: Clerk app, S3 bucket, IAM, Porter deploy, DNS."
+      "notes": "Deployed on Porter (api.oanim.dev). Infra: RDS Postgres, S3 (oanim-renders), Clerk (factual-aphid-42), Remotion Lambda. E2E results: health OK, auth PASS (after 3 bug fixes), API keys PASS, usage PASS. Cloud rendering BLOCKED — pg-boss worker registers but never picks up jobs (see OANIM-036)."
     },
     {
       "id": "OANIM-032",
@@ -623,6 +623,43 @@
         "Code examples are accurate and tested"
       ],
       "status": "planned"
+    },
+    {
+      "id": "OANIM-036",
+      "title": "Fix pg-boss worker not processing render jobs",
+      "description": "pg-boss registers the render worker on startup (confirmed in Porter logs), but boss.work() never invokes the handler. Jobs submitted via boss.send() stay in 'queued' state indefinitely. Tested across multiple deploys (v10-v12) with fresh jobs — same result.",
+      "requirements": [
+        "Diagnose why boss.work('render') handler is never called despite boss.send('render') succeeding",
+        "Check pg-boss internal tables (pgboss.job) to verify job state",
+        "Ensure pg-boss polling/LISTEN-NOTIFY works with RDS Postgres + SSL",
+        "Worker picks up render jobs within seconds of submission",
+        "End-to-end: oanim render --cloud produces MP4"
+      ],
+      "tests": [
+        "Submit render job, status changes from 'queued' to 'rendering' within 10s",
+        "Porter logs show '[worker] picked up job: ...'",
+        "Full cloud render completes and produces downloadable MP4"
+      ],
+      "status": "in-progress",
+      "notes": "Added /debug/queue endpoint (boss.getQueueSize) and verbose worker logging in v13 deploy. Possible causes: pg-boss LISTEN/NOTIFY not working over SSL, polling interval misconfigured, or schema mismatch."
+    },
+    {
+      "id": "OANIM-037",
+      "title": "Fix Clerk OAuth login flow for deployed API",
+      "description": "Three bugs found during E2E verification of oanim login against api.oanim.dev",
+      "requirements": [
+        "Use forceRedirectUrl instead of deprecated afterSignInUrl (Clerk v5+)",
+        "Handle callback without token via client-side token bridge page",
+        "Fix http:// to https:// for callback URLs behind reverse proxy",
+        "Pass email from Clerk client-side (JWTs don't include email by default)"
+      ],
+      "tests": [
+        "oanim login completes full OAuth flow without 404",
+        "User email saved to database correctly",
+        "oanim whoami shows email and credits"
+      ],
+      "status": "done",
+      "notes": "Fixed in commits 4bd797a and 30bf880. Three issues: (1) afterSignInUrl deprecated → forceRedirectUrl, (2) http:// origin behind LB → https:// via host header, (3) email not in JWT → extracted from window.Clerk.user client-side. Also added credit_balance_usd to whoami output."
     }
   ]
 }

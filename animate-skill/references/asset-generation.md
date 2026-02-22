@@ -1,13 +1,12 @@
 # Asset Generation
 
-Generate images for your videos using fal.ai via the oanim CLI.
+Generate images for your videos using the oanim CLI.
 
 ## Setup
 
-1. Get a fal.ai API key at https://fal.ai/dashboard/keys
-2. Set the environment variable:
+Sign in to the oanim platform:
 ```bash
-export ANIMATE_FAL_KEY=your-key-here
+oanim login
 ```
 
 ## Commands

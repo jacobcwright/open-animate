@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import type { MediaProvider, MediaResult, GenerateOpts } from './providers/types';
 import { FalProvider } from './providers/fal';
+import { PlatformProvider } from './providers/platform';
 import { HttpClient } from './http';
 import { getAuth } from './config';
 
@@ -12,6 +13,18 @@ export interface UsageRecord {
   timestamp: Date;
 }
 
+/**
+ * Resolve which media provider to use.
+ * If ANIMATE_FAL_KEY is set, use fal.ai directly (power-user override).
+ * Otherwise, use the oanim platform API (requires login or ANIMATE_API_KEY).
+ */
+function resolveProvider(): MediaProvider {
+  if (process.env.ANIMATE_FAL_KEY) {
+    return new FalProvider();
+  }
+  return new PlatformProvider();
+}
+
 export class MediaGateway {
   private provider: MediaProvider;
   private usage: UsageRecord[] = [];
@@ -20,7 +33,7 @@ export class MediaGateway {
   private creditBalanceUsd: number | null = null;
 
   constructor(provider?: MediaProvider) {
-    this.provider = provider ?? new FalProvider();
+    this.provider = provider ?? resolveProvider();
     const limit = process.env.ANIMATE_MAX_USD_PER_RUN;
     this.costLimitUsd = limit ? parseFloat(limit) : null;
   }
