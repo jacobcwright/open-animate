@@ -1,0 +1,27 @@
+"on":
+    push:
+        branches:
+            - main
+name: Deploy to oanim-api
+jobs:
+    porter-deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Set Github tag
+              id: vars
+              run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+            - name: Setup porter
+              uses: porter-dev/setup-porter@v0.1.0
+            - name: Deploy stack
+              timeout-minutes: 30
+              run: porter apply
+              env:
+                PORTER_APP_NAME: oanim-api
+                PORTER_CLUSTER: "5509"
+                PORTER_DEPLOYMENT_TARGET_ID: b115f033-54e9-4715-9217-77701a172aac
+                PORTER_HOST: https://dashboard.porter.run
+                PORTER_PROJECT: "8935"
+                PORTER_TAG: ${{ steps.vars.outputs.sha_short }}
+                PORTER_TOKEN: ${{ secrets.PORTER_APP_8935_1163173874 }}
