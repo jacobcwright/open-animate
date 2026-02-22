@@ -16,13 +16,16 @@ export const whoamiCommand = new Command('whoami')
     const spinner = ora('Fetching user info...').start();
     try {
       const client = new HttpClient();
-      const me = await client.request<{ id: string; email: string; created_at: string }>(
-        'GET',
-        '/api/v1/auth/me',
-      );
+      const me = await client.request<{
+        id: string;
+        email: string;
+        credit_balance_usd: number;
+        created_at: string;
+      }>('GET', '/api/v1/auth/me');
       spinner.stop();
       keyValue({
         Email: me.email,
+        Credits: `$${me.credit_balance_usd.toFixed(2)}`,
         ID: me.id,
         'Member since': new Date(me.created_at).toLocaleDateString(),
       });

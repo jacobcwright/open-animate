@@ -70,7 +70,8 @@ auth.get('/cli/login', async (c) => {
       await window.Clerk.load();
       if (window.Clerk.user) {
         const token = await window.Clerk.session.getToken();
-        window.location.href = '${callbackUrl}?state=${state}&token=' + encodeURIComponent(token);
+        const email = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
+        window.location.href = '${callbackUrl}?state=${state}&token=' + encodeURIComponent(token) + '&email=' + encodeURIComponent(email);
       } else {
         document.getElementById('clerk-container').innerHTML = '';
         window.Clerk.mountSignIn(document.getElementById('clerk-container'), {
@@ -117,8 +118,10 @@ window.addEventListener('load', async () => {
   await window.Clerk.load();
   if (window.Clerk.session) {
     const token = await window.Clerk.session.getToken();
+    const email = window.Clerk.user?.primaryEmailAddress?.emailAddress || '';
     const url = new URL(window.location.href);
     url.searchParams.set('token', token);
+    url.searchParams.set('email', email);
     window.location.href = url.toString();
   } else {
     document.body.innerHTML = '<p>Authentication failed. Please run <code>oanim login</code> again.</p>';
@@ -156,10 +159,7 @@ window.addEventListener('load', async () => {
     const { payload } = await jwtVerify(clerkToken, JWKS);
 
     const clerkId = payload.sub;
-    const email =
-      (payload as Record<string, unknown>).email ??
-      (payload as Record<string, unknown>).primary_email_address ??
-      '';
+    const email = c.req.query('email') || '';
 
     if (!clerkId) return c.json({ error: 'Invalid token: missing sub' }, 401);
 
