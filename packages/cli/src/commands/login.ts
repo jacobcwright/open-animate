@@ -4,7 +4,7 @@ import ora from 'ora';
 import open from 'open';
 import { saveCredentials, getApiUrl } from '../lib/config';
 import { HttpClient } from '../lib/http';
-import { log } from '../lib/output';
+import { log, splashBanner } from '../lib/output';
 
 function findAvailablePort(): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -72,7 +72,10 @@ export const loginCommand = new Command('login')
         client.setAuth(opts.token);
         const me = await client.request<{ email: string }>('GET', '/api/v1/auth/me');
         await saveCredentials({ api_key: opts.token });
-        spinner.succeed(`Logged in as ${me.email}`);
+        spinner.stop();
+        console.log();
+        splashBanner();
+        log.success(`Logged in as ${me.email}`);
         return;
       }
 
@@ -93,7 +96,10 @@ export const loginCommand = new Command('login')
       const client = new HttpClient();
       client.setAuth(apiKey);
       const me = await client.request<{ email: string }>('GET', '/api/v1/auth/me');
-      spinner.succeed(`Logged in as ${me.email}`);
+      spinner.stop();
+      console.log();
+      splashBanner();
+      log.success(`Logged in as ${me.email}`);
     } catch (err) {
       spinner.fail('Login failed');
       log.error(String(err));
