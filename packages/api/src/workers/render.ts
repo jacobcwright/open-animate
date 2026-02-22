@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { db, renderJobs } from '../db/index.js';
-import { downloadFromS3, uploadDirToS3, uploadToS3 } from '../lib/s3.js';
+import { downloadFromS3, uploadToS3 } from '../lib/s3.js';
 import { getBoss } from '../lib/boss.js';
 
 interface RenderPayload {
@@ -52,13 +52,56 @@ export async function registerRenderWorker(): Promise<void> {
         await mkdir(extractDir, { recursive: true });
         execSync(`tar -xzf ${tarballPath} -C ${extractDir}`, { timeout: 30000 });
 
-        // Upload bundle to S3 for Remotion Lambda
+        // Upload bundle to Remotion's S3 bucket
         const region = process.env.AWS_REGION ?? 'us-east-1';
-        const bucket = process.env.S3_BUCKET ?? 'oanim-renders';
-        const siteId = `oanim-render-${jobId}`;
+        const { getOrCreateBucket, getAwsClient } = await import('@remotion/lambda/client');
+        const { lookup: mimeType } = await import('mime-types');
 
-        await uploadDirToS3(extractDir, `sites/${siteId}`);
-        const serveUrl = `https://${bucket}.s3.${region}.amazonaws.com/sites/${siteId}`;
+        const { bucketName } = await getOrCreateBucket({
+          region: region as Parameters<typeof getOrCreateBucket>[0]['region'],
+        });
+        const { client: s3Client, sdk } = getAwsClient({
+          region: region as Parameters<typeof getAwsClient>[0]['region'],
+          service: 's3',
+        });
+
+        const siteName = `oanim-render-${jobId}`;
+        const subFolder = `sites/${siteName}`;
+
+        // Recursively collect all files in the extracted bundle
+        async function getAllFiles(dir: string, base = ''): Promise<string[]> {
+          const { readdir } = await import('node:fs/promises');
+          const entries = await readdir(dir, { withFileTypes: true });
+          const files: string[] = [];
+          for (const entry of entries) {
+            const rel = base ? `${base}/${entry.name}` : entry.name;
+            if (entry.isDirectory()) {
+              files.push(...(await getAllFiles(join(dir, entry.name), rel)));
+            } else {
+              files.push(rel);
+            }
+          }
+          return files;
+        }
+
+        const { readFile } = await import('node:fs/promises');
+        const bundleFiles = await getAllFiles(extractDir);
+        for (const file of bundleFiles) {
+          const filePath = join(extractDir, file);
+          const key = `${subFolder}/${file}`;
+          const contentType = mimeType(filePath) || 'application/octet-stream';
+          await s3Client.send(
+            new sdk.PutObjectCommand({
+              Bucket: bucketName,
+              Key: key,
+              Body: await readFile(filePath),
+              ContentType: contentType,
+              ACL: 'public-read',
+            }),
+          );
+        }
+
+        const serveUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${subFolder}/index.html`;
 
         // Update progress
         await db
@@ -85,7 +128,7 @@ export async function registerRenderWorker(): Promise<void> {
           framesPerLambda: 20,
         });
 
-        const { renderId, bucketName } = renderResult;
+        const { renderId, bucketName: renderBucketName } = renderResult;
 
         // Poll for render progress
         let progress = 20;
@@ -94,7 +137,7 @@ export async function registerRenderWorker(): Promise<void> {
 
           const renderProgress = await getRenderProgress({
             renderId,
-            bucketName,
+            bucketName: renderBucketName,
             functionName: process.env.REMOTION_FUNCTION_NAME!,
             region: region as Parameters<typeof getRenderProgress>[0]['region'],
           });
