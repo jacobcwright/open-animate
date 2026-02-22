@@ -10,7 +10,10 @@ interface RenderPayload {
 export async function registerRenderWorker(): Promise<void> {
   const boss = getBoss();
 
+  boss.on('error', (err: Error) => console.error('[pg-boss] error event:', err));
+
   await boss.work<RenderPayload>('render', { teamSize: 2 }, async (job) => {
+    console.log('[worker] picked up job:', JSON.stringify(job.data));
     const { jobId } = job.data;
 
     // Mark as rendering

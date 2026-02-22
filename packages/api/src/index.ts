@@ -18,6 +18,17 @@ app.use('*', cors());
 // Health check
 app.get('/health', (c) => c.json({ ok: true }));
 
+// Diagnostic: query pg-boss queue state
+app.get('/debug/queue', async (c) => {
+  try {
+    const boss = (await import('./lib/boss.js')).getBoss();
+    const counts = await boss.getQueueSize('render');
+    return c.json({ render_queue: counts });
+  } catch (err: unknown) {
+    return c.json({ error: String(err) });
+  }
+});
+
 // Mount routes
 app.route('/api/v1/auth', authRoutes);
 app.route('/api/v1/api-keys', apiKeysRoutes);
