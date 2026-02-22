@@ -29,15 +29,15 @@ app.get('/debug/queue', async (c) => {
     // Check size
     const size = await boss.getQueueSize('render');
 
-    // Fetch it back
-    const job = await boss.fetch('render');
+    // Fetch it back (v10 returns an array, not a single job)
+    const jobs = await boss.fetch('render');
 
     return c.json({
       send_result: sendResult,
       queue_size: size,
-      fetch_result: JSON.parse(JSON.stringify(job)),
-      fetch_keys: job ? Object.keys(job) : null,
-      fetch_type: job === null ? 'null' : typeof job,
+      fetch_result: JSON.parse(JSON.stringify(jobs)),
+      fetch_length: Array.isArray(jobs) ? jobs.length : null,
+      fetch_first_keys: Array.isArray(jobs) && jobs.length > 0 ? Object.keys(jobs[0]) : null,
     });
   } catch (err: unknown) {
     return c.json({ error: String(err), stack: (err as Error).stack });

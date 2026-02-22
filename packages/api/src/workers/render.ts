@@ -12,7 +12,7 @@ export async function registerRenderWorker(): Promise<void> {
 
   boss.on('error', (err: Error) => console.error('[pg-boss] error event:', err));
 
-  await boss.work<RenderPayload>('render', { teamSize: 2 }, async (job) => {
+  await boss.work<RenderPayload>('render', async ([job]) => {
     console.log('[worker] picked up job:', JSON.stringify(job.data));
     const { jobId } = job.data;
 
