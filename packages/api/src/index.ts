@@ -18,18 +18,26 @@ app.use('*', cors());
 // Health check
 app.get('/health', (c) => c.json({ ok: true }));
 
-// Diagnostic: query pg-boss queue state + test fetch
+// Diagnostic: send + fetch + raw inspection
 app.get('/debug/queue', async (c) => {
   try {
     const boss = getBoss();
+
+    // Send a job
+    const sendResult = await boss.send('render', { jobId: 'debug-test' });
+
+    // Check size
     const size = await boss.getQueueSize('render');
 
-    // Try to manually fetch a job (doesn't auto-complete it)
+    // Fetch it back
     const job = await boss.fetch('render');
 
     return c.json({
-      render_queue_size: size,
-      fetched_job: job ? { id: job.id, data: job.data, name: job.name } : null,
+      send_result: sendResult,
+      queue_size: size,
+      fetch_result: JSON.parse(JSON.stringify(job)),
+      fetch_keys: job ? Object.keys(job) : null,
+      fetch_type: job === null ? 'null' : typeof job,
     });
   } catch (err: unknown) {
     return c.json({ error: String(err), stack: (err as Error).stack });
