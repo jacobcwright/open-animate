@@ -97,7 +97,6 @@ export async function registerRenderWorker(): Promise<void> {
               Key: key,
               Body: await readFile(filePath),
               ContentType: contentType,
-              ACL: 'public-read',
             }),
           );
         }
