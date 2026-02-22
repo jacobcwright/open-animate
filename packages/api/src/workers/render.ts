@@ -54,7 +54,8 @@ export async function registerRenderWorker(): Promise<void> {
 
         // Upload bundle to Remotion's S3 bucket
         const region = process.env.AWS_REGION ?? 'us-east-1';
-        const { getOrCreateBucket, getAwsClient } = await import('@remotion/lambda/client');
+        const { getOrCreateBucket } = await import('@remotion/lambda');
+        const { getAwsClient } = await import('@remotion/lambda/client');
         const { lookup: mimeType } = await import('mime-types');
 
         const { bucketName } = await getOrCreateBucket({
