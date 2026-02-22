@@ -97,6 +97,10 @@ export async function downloadRenderOutput(
     throw new Error(`Failed to download render output: ${res.status}`);
   }
 
+  const { mkdir } = await import('node:fs/promises');
+  const { dirname } = await import('node:path');
+  await mkdir(dirname(outPath), { recursive: true });
+
   const writer = createWriteStream(outPath);
   await pipeline(Readable.fromWeb(res.body as import('node:stream/web').ReadableStream), writer);
 }
