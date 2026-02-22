@@ -354,9 +354,98 @@ Note: Also added `credit_balance_usd` to whoami output (was missing).
 **Phase 7 — Cleanup (not started, blocked on Phase 6):**
 - `oanim logout` / `oanim whoami` verification deferred
 
+### pg-boss debugging (continued)
+
+**Finding 1 — `boss.send()` was returning null:**
+- Added `/debug/queue` diagnostic endpoint
+- Initial attempt used `await import('./lib/boss.js')` (dynamic import) — this created a SEPARATE module instance from the bundled code (tsup bundles to single file, dynamic imports resolve differently). Fixed to use static `import { getBoss }`.
+- Even with correct singleton, `send()` returned null and `getQueueSize()` returned 0.
+
+**Finding 2 — pg-boss v10 breaking change: explicit queue creation required:**
+- In pg-boss v9, queues were created implicitly on first `send()`. In v10, `createQueue(name)` must be called first.
+- Without it: `send()` silently returns null, `work()` registers but never fires, `getQueueSize()` returns 0.
+- Fix: Added `boss.createQueue('render')` to `startBoss()` in `packages/api/src/lib/boss.ts`.
+- After fix: `send()` returns real UUIDs, `getQueueSize()` returns 1 after send.
+
+**Finding 3 — worker still not picking up jobs:**
+- Even with queue created and jobs visible in queue, `boss.work('render', ...)` handler never fires.
+- `boss.fetch('render')` returns an empty-looking object (`{}`) — likely a pg-boss v10 API shape change.
+- Latest diagnostic (v18, commit ad76afa): sends job, fetches it, returns raw result with Object.keys() for inspection.
+- Awaiting deploy to see raw fetch shape — this will reveal if the v10 job format changed.
+
+**Commits pushed:**
+- `4bd797a` — fix: Clerk OAuth redirect (forceRedirectUrl, https://, token bridge)
+- `30bf880` — fix: email from Clerk client-side, credits in whoami
+- `3ae0ce2` — debug: queue diagnostic + worker logging
+- `3f43fa9` — debug: boss.send return value logging
+- `5abe01c` — debug: fix static import for getBoss
+- `a0a59de` — fix: createQueue('render') for pg-boss v10
+- `c5edbec` — debug: test send to render queue + list queues
+- `728f418` — debug: test manual fetch
+- `ad76afa` — debug: raw fetch result inspection
+
+### Cloud rendering fix (continued from Session 10)
+
+**Finding 4 — pg-boss v10 work() handler receives array, not single job:**
+- pg-boss v10 always passes an **array** of jobs to `work()` handlers, even for single jobs.
+- Our code: `async (job) => { ... job.data ... }` — `job` was the array, `.data` was undefined, handler silently failed.
+- Also removed `{ teamSize: 2 }` options object — `teamSize` was removed in v10.
+- Fix: `async ([job]) => { ... }` — destructure first element.
+- Commit: `d0604a2`
+
+**Finding 5 — bundle uploaded to wrong S3 bucket:**
+- Worker was uploading the Remotion bundle to `oanim-renders` (our private bucket) and constructing a public URL as `serveUrl`.
+- Remotion Lambda loads `serveUrl` via HTTPS (like a browser), so it got AccessDenied.
+- Fix: Use `getOrCreateBucket()` + `getAwsClient()` from `@remotion/lambda` to upload to the `remotionlambda-*` bucket where Lambda has access.
+- Import fix: `getOrCreateBucket` is from `@remotion/lambda` root, not `/client`.
+- Commits: `81b986c`, `4a0bb5d`
+
+**Finding 6 — S3 bucket ACL and public access:**
+- Remotion's bucket had `BucketOwnerEnforced` (ACLs disabled), so `ACL: 'public-read'` on PutObject failed.
+- Removed per-object ACL from upload code.
+- Remotion v4.0.418+ uses bucket policies for public access instead of ACLs.
+- Set bucket ownership to `BucketOwnerPreferred` (allows ACLs for Remotion Lambda's internal operations).
+- Set public-read bucket policy on `remotionlambda-useast1-19p1q149s1` via AWS CLI.
+- Added `s3:PutBucketOwnershipControls`, `s3:PutBucketPublicAccessBlock`, `s3:PutBucketPolicy` to `remotion-lambda-role` IAM policy.
+- Commit: `2426773`
+
+**Finding 7 — absolute paths in bundle index.html:**
+- `npx remotion bundle` generates `<script src="/bundle.js">` with absolute paths.
+- On S3, `/bundle.js` resolves to the bucket root, not the `sites/oanim-render-xxx/` prefix.
+- Fix: rewrite `src="/..."` and `href="/..."` to `src="./..."` and `href="./..."` before uploading.
+- Commit: `d439ffe`
+
+**Finding 8 — CLI missing output directory:**
+- `downloadRenderOutput()` tried to write to `out/HelloWorld.mp4` without creating the `out/` directory.
+- Fix: `mkdir -p` the output directory before creating the write stream.
+- Commit: `e2f2bb1`
+
+**Result: Cloud render E2E PASS**
+```
+✔ Cloud render complete
+  Output: out/HelloWorld.mp4
+  Size: 0.9 MB
+  Resolution: 1920x1080
+  FPS: 30
+  Codec: h264
+```
+
+**Commits pushed:**
+- `d0604a2` — fix: pg-boss v10 work() handler — destructure job array
+- `81b986c` — fix: upload bundle to Remotion's S3 bucket via getOrCreateBucket
+- `4a0bb5d` — fix: import getOrCreateBucket from @remotion/lambda root
+- `2426773` — fix: remove ACL from S3 uploads, use bucket policy for public access
+- `d439ffe` — fix: rewrite absolute paths in bundle index.html to relative
+- `e2f2bb1` — fix: create output directory before downloading cloud render
+
+**AWS IAM changes:**
+- Added `s3:PutBucketOwnershipControls`, `s3:PutBucketPublicAccessBlock`, `s3:PutBucketPolicy` to remotion-lambda-role
+- Set bucket ownership to BucketOwnerPreferred on remotionlambda-useast1-19p1q149s1
+- Set public-read bucket policy on remotionlambda-useast1-19p1q149s1
+
 ### Summary
 - Auth: PASS (after 3 bug fixes)
 - API Keys: PASS
 - Usage: PASS
-- Cloud Rendering: BLOCKED (pg-boss worker issue)
-- 3 commits pushed: Clerk OAuth fix, email + credits fix, debug logging
+- Cloud Rendering: PASS (after 8 findings across 2 sessions — pg-boss v10 migration + S3/IAM/Remotion Lambda integration)
+- 15 commits pushed total

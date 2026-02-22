@@ -547,8 +547,8 @@
         "oanim api-keys create --name test creates and returns a key",
         "oanim render --cloud submits, polls, and downloads MP4"
       ],
-      "status": "in-progress",
-      "notes": "Deployed on Porter (api.oanim.dev). Infra: RDS Postgres, S3 (oanim-renders), Clerk (factual-aphid-42), Remotion Lambda. E2E results: health OK, auth PASS (after 3 bug fixes), API keys PASS, usage PASS. Cloud rendering BLOCKED — pg-boss worker registers but never picks up jobs (see OANIM-036)."
+      "status": "done",
+      "notes": "Deployed on Porter (api.oanim.dev). Infra: RDS Postgres, S3 (oanim-renders + remotionlambda-useast1-19p1q149s1), Clerk (factual-aphid-42), Remotion Lambda. Full E2E PASS: health, auth, API keys, usage, cloud rendering. Cloud render produces 1920x1080 h264 MP4."
     },
     {
       "id": "OANIM-032",
@@ -640,8 +640,8 @@
         "Porter logs show '[worker] picked up job: ...'",
         "Full cloud render completes and produces downloadable MP4"
       ],
-      "status": "in-progress",
-      "notes": "Added /debug/queue endpoint (boss.getQueueSize) and verbose worker logging in v13 deploy. Possible causes: pg-boss LISTEN/NOTIFY not working over SSL, polling interval misconfigured, or schema mismatch."
+      "status": "done",
+      "notes": "Root causes: (1) pg-boss v10 work() always passes array — handler needed ([job]) destructure. (2) teamSize option removed in v10. (3) Bundle was uploaded to wrong S3 bucket — switched to Remotion's getOrCreateBucket(). (4) Bucket needed public-read policy + BucketOwnerPreferred for ACLs. (5) Bundle index.html had absolute paths that don't resolve on S3 — rewrite to relative. (6) CLI needed mkdir for output directory. Fixed in commits d0604a2 through e2f2bb1."
     },
     {
       "id": "OANIM-037",
