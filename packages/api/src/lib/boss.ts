@@ -20,5 +20,10 @@ export async function startBoss(): Promise<PgBoss> {
   const boss = getBoss();
   await boss.start();
   console.log('[pg-boss] started');
+
+  // pg-boss v10 requires explicit queue creation before send/work
+  await boss.createQueue('render');
+  console.log('[pg-boss] render queue created');
+
   return boss;
 }
