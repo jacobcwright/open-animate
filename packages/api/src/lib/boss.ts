@@ -4,8 +4,13 @@ let _boss: PgBoss | null = null;
 
 export function getBoss(): PgBoss {
   if (!_boss) {
+    const dbUrl = process.env.DATABASE_URL ?? '';
+    const connectionString = dbUrl.replace(/[?&]sslmode=[^&]*/g, '');
+    const needsSsl = dbUrl.includes('sslmode=') || dbUrl.includes('.rds.amazonaws.com');
+
     _boss = new PgBoss({
-      connectionString: process.env.DATABASE_URL!,
+      connectionString,
+      ...(needsSsl && { ssl: { rejectUnauthorized: false } }),
     });
   }
   return _boss;
