@@ -85,7 +85,15 @@ export async function registerRenderWorker(): Promise<void> {
           return files;
         }
 
-        const { readFile } = await import('node:fs/promises');
+        const { readFile, writeFile: writeFileFs } = await import('node:fs/promises');
+
+        // Rewrite absolute paths in index.html to relative so they resolve on S3
+        const indexPath = join(extractDir, 'index.html');
+        let indexHtml = await readFile(indexPath, 'utf-8');
+        indexHtml = indexHtml.replace(/src="\/([^"]+)"/g, 'src="./$1"');
+        indexHtml = indexHtml.replace(/href="\/([^"]+)"/g, 'href="./$1"');
+        await writeFileFs(indexPath, indexHtml, 'utf-8');
+
         const bundleFiles = await getAllFiles(extractDir);
         for (const file of bundleFiles) {
           const filePath = join(extractDir, file);
