@@ -8,7 +8,7 @@ import { apiKeysRoutes } from './routes/api-keys.js';
 import { renderRoutes } from './routes/render.js';
 import { usageRoutes } from './routes/usage.js';
 import { db } from './db/index.js';
-import { startBoss } from './lib/boss.js';
+import { startBoss, getBoss } from './lib/boss.js';
 import { registerRenderWorker } from './workers/render.js';
 
 const app = new Hono();
@@ -21,7 +21,7 @@ app.get('/health', (c) => c.json({ ok: true }));
 // Diagnostic: query pg-boss queue state + test send
 app.get('/debug/queue', async (c) => {
   try {
-    const boss = (await import('./lib/boss.js')).getBoss();
+    const boss = getBoss();
     const sizeBefore = await boss.getQueueSize('render');
 
     // Send a test job
@@ -35,7 +35,6 @@ app.get('/debug/queue', async (c) => {
       render_queue_after_test: sizeAfter,
       test_queue: testSize,
       test_job_id: testId,
-      boss_started: !!(boss as Record<string, unknown>).started,
     });
   } catch (err: unknown) {
     return c.json({ error: String(err), stack: (err as Error).stack });
