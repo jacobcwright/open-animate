@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+.git
+.DS_Store
+examples/
+animate-skill/
+packages/core/
+packages/cli/
+packages/gateway/
+packages/auth/
