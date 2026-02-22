@@ -28,7 +28,9 @@ auth.get('/cli/login', async (c) => {
     expiresAt,
   });
 
-  const baseUrl = new URL(c.req.url).origin;
+  // Behind a reverse proxy, c.req.url has http:// since TLS terminates at the LB
+  const host = c.req.header('host') || new URL(c.req.url).host;
+  const baseUrl = `https://${host}`;
   const callbackUrl = `${baseUrl}/api/v1/auth/cli/callback`;
 
   const html = `<!DOCTYPE html>
@@ -72,14 +74,8 @@ auth.get('/cli/login', async (c) => {
       } else {
         document.getElementById('clerk-container').innerHTML = '';
         window.Clerk.mountSignIn(document.getElementById('clerk-container'), {
-          afterSignInUrl: '${callbackUrl}?state=${state}',
-          signUpUrl: '${callbackUrl}?state=${state}',
-        });
-        window.Clerk.addListener(async ({ session }) => {
-          if (session) {
-            const token = await session.getToken();
-            window.location.href = '${callbackUrl}?state=${state}&token=' + encodeURIComponent(token);
-          }
+          forceRedirectUrl: '${callbackUrl}?state=${state}',
+          signUpForceRedirectUrl: '${callbackUrl}?state=${state}',
         });
       }
     });
@@ -99,8 +95,36 @@ auth.get('/cli/callback', async (c) => {
   const state = c.req.query('state');
   const clerkToken = c.req.query('token');
 
-  if (!state || !clerkToken) {
-    return c.json({ error: 'Missing state or token' }, 400);
+  if (!state) {
+    return c.json({ error: 'Missing state' }, 400);
+  }
+
+  // Clerk's forceRedirectUrl lands here without a token.
+  // Serve a tiny page that loads the Clerk session and re-submits with the JWT.
+  if (!clerkToken) {
+    const clerkDomain = process.env.CLERK_DOMAIN;
+    const clerkPubKey = process.env.CLERK_PUBLISHABLE_KEY ?? '';
+    return c.html(`<!DOCTYPE html>
+<html><head><title>oanim — Completing sign-in…</title>
+<style>body{font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0a0a0a;color:#fafafa;}</style>
+</head><body><p>Completing sign-in…</p>
+<script async crossorigin="anonymous"
+  data-clerk-publishable-key="${clerkPubKey}"
+  src="https://${clerkDomain}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+  type="text/javascript"></script>
+<script>
+window.addEventListener('load', async () => {
+  await window.Clerk.load();
+  if (window.Clerk.session) {
+    const token = await window.Clerk.session.getToken();
+    const url = new URL(window.location.href);
+    url.searchParams.set('token', token);
+    window.location.href = url.toString();
+  } else {
+    document.body.innerHTML = '<p>Authentication failed. Please run <code>oanim login</code> again.</p>';
+  }
+});
+</script></body></html>`);
   }
 
   // Validate loginState
