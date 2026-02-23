@@ -761,7 +761,7 @@
         "oanim billing buy opens browser and credits arrive"
       ],
       "status": "done",
-      "notes": "Stripe Checkout sessions, webhook handler (checkout.session.completed/expired), payments table with status tracking, billing CLI (balance, buy --amount). CLI buy flow: local callback server → POST /checkout → open browser → wait for callback → poll balance."
+      "notes": "Stripe Checkout sessions, webhook handler (checkout.session.completed/expired), payments table with status tracking, billing CLI (balance, buy --amount). Free-form dollar amounts ($5 min), 10% bonus credits on purchases >= $50. CLI shows checkout URL with 'send this to your human' message. Payment methods configured in Stripe Dashboard. E2E verified in test mode."
     },
     {
       "id": "OANIM-043",

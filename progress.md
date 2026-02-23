@@ -522,3 +522,12 @@ Note: Also added `credit_balance_usd` to whoami output (was missing).
 **New env vars needed for deployment:**
 - `STRIPE_SECRET_KEY` — Stripe API secret key
 - `STRIPE_WEBHOOK_SECRET` — Stripe webhook signing secret
+
+### Follow-up refinements
+
+- Replaced fixed tier system ($5/$20/$50) with free-form dollar amounts ($5 minimum)
+- 10% bonus credits on purchases >= $50 (e.g. $100 → $110 credits)
+- CLI shows checkout URL with "Send this to your human:" message (agent-friendly)
+- Payment methods configured via Stripe Dashboard (cards, Apple Pay, Google Pay, Cash App, Link)
+
+**E2E verified:** Stripe test-mode checkout completes, webhook fires, credits added to balance, `oanim billing` shows purchase history. All three features (rate limiting, usage commands, billing) working end-to-end.
