@@ -8,6 +8,13 @@
       "when": 1771709352707,
       "tag": "0000_illegal_kang",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1771887454534,
+      "tag": "0001_cultured_paibok",
+      "breakpoints": true
     }
   ]
 }

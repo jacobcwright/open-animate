@@ -84,6 +84,33 @@ export const usageRecords = pgTable(
   (t) => [index('usage_records_user_created_idx').on(t.userId, t.createdAt)],
 );
 
+export const paymentStatusEnum = pgEnum('payment_status', [
+  'pending',
+  'completed',
+  'failed',
+]);
+
+export const payments = pgTable(
+  'payments',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    stripeSessionId: text('stripe_session_id').notNull(),
+    stripePaymentIntentId: text('stripe_payment_intent_id'),
+    amountUsd: numeric('amount_usd', { precision: 10, scale: 2 }).notNull(),
+    creditsUsd: numeric('credits_usd', { precision: 10, scale: 2 }).notNull(),
+    status: paymentStatusEnum('status').notNull().default('pending'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex('payments_stripe_session_idx').on(t.stripeSessionId),
+    index('payments_user_id_idx').on(t.userId),
+  ],
+);
+
 export const loginStates = pgTable(
   'login_states',
   {

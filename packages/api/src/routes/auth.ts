@@ -4,8 +4,11 @@ import { eq } from 'drizzle-orm';
 import { db, users, apiKeys, loginStates } from '../db/index.js';
 import { generateApiKey } from '../lib/security.js';
 import { requireAuth, type AuthUser } from '../lib/auth.js';
+import { authRateLimit } from '../lib/rate-limit.js';
 
 const auth = new Hono<{ Variables: { user: AuthUser } }>();
+
+auth.use('/cli/*', authRateLimit);
 
 /**
  * GET /api/v1/auth/cli/login?port={port}

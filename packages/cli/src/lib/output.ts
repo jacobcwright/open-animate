@@ -42,3 +42,19 @@ export function splashBanner(): void {
   console.log(chalk.dim('  motion graphics CLI + animation presets'));
   console.log();
 }
+
+export function table(headers: string[], rows: string[][]): void {
+  const widths = headers.map((h, i) =>
+    Math.max(h.length, ...rows.map((r) => (r[i] ?? '').length)),
+  );
+
+  const header = headers.map((h, i) => chalk.bold(h.padEnd(widths[i]))).join('  ');
+  const separator = widths.map((w) => chalk.dim('─'.repeat(w))).join('  ');
+
+  console.log(`  ${header}`);
+  console.log(`  ${separator}`);
+  for (const row of rows) {
+    const line = row.map((cell, i) => cell.padEnd(widths[i])).join('  ');
+    console.log(`  ${line}`);
+  }
+}

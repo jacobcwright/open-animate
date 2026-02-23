@@ -3,10 +3,12 @@ import { eq, sql } from 'drizzle-orm';
 import { db, users, usageRecords } from '../db/index.js';
 import { requireAuth, type AuthUser } from '../lib/auth.js';
 import { getModelCost } from '../lib/costs.js';
+import { mediaRateLimit } from '../lib/rate-limit.js';
 
 const media = new Hono<{ Variables: { user: AuthUser } }>();
 
 media.use('*', requireAuth);
+media.use('*', mediaRateLimit);
 
 // -- fal.ai helpers --
 

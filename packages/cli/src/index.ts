@@ -7,8 +7,10 @@ import { loginCommand } from './commands/login';
 import { whoamiCommand } from './commands/whoami';
 import { logoutCommand } from './commands/logout';
 import { apiKeysCommand } from './commands/api-keys';
+import { usageCommand } from './commands/usage';
+import { billingCommand } from './commands/billing';
 
-const SKIP_BANNER = new Set(['init', 'login', 'logout', 'whoami', 'api-keys']);
+const SKIP_BANNER = new Set(['init', 'login', 'logout', 'whoami', 'api-keys', 'usage', 'billing']);
 
 const program = new Command()
   .name('oanim')
@@ -27,5 +29,7 @@ program.addCommand(loginCommand);
 program.addCommand(whoamiCommand);
 program.addCommand(logoutCommand);
 program.addCommand(apiKeysCommand);
+program.addCommand(usageCommand);
+program.addCommand(billingCommand);
 
 program.parse();

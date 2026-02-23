@@ -706,6 +706,116 @@
       ],
       "status": "done",
       "notes": "Shared costs.ts in both api and cli packages. API /run endpoint returns raw result + extracted URL. CLI run command with optional --out download."
+    },
+    {
+      "id": "OANIM-040",
+      "title": "Publish agent skills (skills.sh, ClawHub, etc.)",
+      "description": "Package and publish the animate-skill as installable agent skills on skills.sh, ClawHub, and other agent skill registries so agents can discover and use oanim.",
+      "requirements": [
+        "Skill packaged in format required by each registry",
+        "Published and discoverable on skills.sh",
+        "Published and discoverable on ClawHub",
+        "Skill includes oanim assets run for generic model access",
+        "README/description optimized for agent discovery"
+      ],
+      "tests": [
+        "Skill installable from each registry",
+        "Agent can use skill to generate assets end-to-end"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-041",
+      "title": "Create launch video and add to landing page",
+      "description": "Create a polished launch/demo video using oanim itself, embed it on the castari-landing page as a hero element.",
+      "requirements": [
+        "Launch video created with oanim (dogfooding)",
+        "Video showcases core workflow: init, preview, render, assets",
+        "Embedded on landing page hero section",
+        "Responsive video player, autoplay muted with controls"
+      ],
+      "tests": [
+        "Video plays on landing page without layout shift",
+        "Mobile-responsive"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-042",
+      "title": "Stripe billing integration",
+      "description": "Integrate Stripe for credit purchases and subscription billing. Users buy credits via Stripe checkout, webhook tops up creditBalanceUsd.",
+      "requirements": [
+        "Stripe Checkout session creation endpoint (POST /api/v1/billing/checkout)",
+        "Stripe webhook handler (POST /api/v1/billing/webhook) tops up credits on payment_intent.succeeded",
+        "Credit packages: $5, $20, $50 tiers",
+        "Billing history endpoint (GET /api/v1/billing/history)",
+        "oanim billing — shows credit balance + purchase history",
+        "oanim billing buy — opens Stripe Checkout in browser (like oanim login flow)",
+        "oanim billing buy --amount <5|20|50> — skip tier selection",
+        "Webhook callback updates credits, CLI polls until confirmed"
+      ],
+      "tests": [
+        "Stripe test-mode checkout completes and credits appear",
+        "Webhook idempotent (duplicate events don't double-credit)",
+        "oanim billing shows updated balance after purchase",
+        "oanim billing buy opens browser and credits arrive"
+      ],
+      "status": "done",
+      "notes": "Stripe Checkout sessions, webhook handler (checkout.session.completed/expired), payments table with status tracking, billing CLI (balance, buy --amount). CLI buy flow: local callback server → POST /checkout → open browser → wait for callback → poll balance."
+    },
+    {
+      "id": "OANIM-043",
+      "title": "API rate limiting",
+      "description": "Add rate limiting to the API to prevent abuse. Per-user limits on media endpoints, stricter limits on auth endpoints.",
+      "requirements": [
+        "Rate limiter middleware (token bucket or sliding window)",
+        "Media endpoints: 60 req/min per user",
+        "Auth endpoints: 10 req/min per IP",
+        "429 response with Retry-After header",
+        "Redis-backed for distributed rate limiting (or in-memory for single instance)"
+      ],
+      "tests": [
+        "Requests beyond limit return 429",
+        "Retry-After header present",
+        "Different users have independent limits"
+      ],
+      "status": "done",
+      "notes": "In-memory sliding window rate limiter. Factory function rateLimit({ windowMs, maxRequests, keyFn }). mediaRateLimit (60/min by user) on /media/*, authRateLimit (10/min by IP) on /auth/cli/*. CLI handles 429 with Retry-After. Periodic stale-entry cleanup."
+    },
+    {
+      "id": "OANIM-044",
+      "title": "Error monitoring (Sentry)",
+      "description": "Add Sentry error tracking to the API server for production observability.",
+      "requirements": [
+        "Sentry SDK integrated in API server",
+        "Unhandled exceptions captured with user context",
+        "Source maps uploaded for readable stack traces",
+        "Alert rules for error spikes"
+      ],
+      "tests": [
+        "Thrown error appears in Sentry dashboard",
+        "User ID attached to error events"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "OANIM-045",
+      "title": "CLI usage & account commands",
+      "description": "Add oanim usage command for credit balance, spending history, and account overview — all in the terminal. Postpones dashboard web app.",
+      "requirements": [
+        "oanim usage — shows credit balance + summary of recent spending",
+        "oanim usage history — full usage table (date, model, operation, cost) with optional --limit",
+        "Formatted table output (columns aligned, costs right-aligned)",
+        "Total spend shown at bottom",
+        "Low-balance warning when credits < $1"
+      ],
+      "tests": [
+        "oanim usage shows correct credit balance",
+        "oanim usage history lists records matching API",
+        "Works with both API key and token auth"
+      ],
+      "status": "done",
+      "notes": "GET /usage/records?limit&offset&days endpoint for per-record detail. CLI: oanim usage (balance + 7-day summary), oanim usage history --limit --days (per-record table). table() helper in output.ts. Low-balance warning when < $1."
     }
   ]
 }

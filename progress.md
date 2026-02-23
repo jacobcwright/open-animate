@@ -479,3 +479,46 @@ Note: Also added `credit_balance_usd` to whoami output (was missing).
 - Added `run()` to `MediaGateway` with cost limit + credit balance checks
 - Added `oanim assets run --model <id> --input <json> [--out <path>]` command
 - If `--out` and URL exists: downloads to file. Otherwise: prints raw JSON to stdout (agent-friendly)
+
+---
+
+## Session 8 — 2026-02-23
+
+### Rate Limiting + CLI Usage Commands + Stripe Billing (OANIM-042, OANIM-043, OANIM-045)
+
+**Phase 1 — Rate Limiting (OANIM-043):**
+- New `packages/api/src/lib/rate-limit.ts` — in-memory sliding window rate limiter
+- Factory function `rateLimit({ windowMs, maxRequests, keyFn })` returns Hono middleware
+- Returns 429 with `Retry-After` header when limit exceeded
+- Periodic stale-entry cleanup via `setInterval` (60s, unref'd)
+- `mediaRateLimit` — 60 req/min, keyed by user ID, applied to `/api/v1/media/*`
+- `authRateLimit` — 10 req/min, keyed by client IP (X-Forwarded-For), applied to `/api/v1/auth/cli/*`
+- CLI `HttpClient` handles 429 in both `request()` and `uploadBlob()` methods
+
+**Phase 2 — CLI Usage Commands (OANIM-045):**
+- New `GET /api/v1/usage/records?limit=50&offset=0&days=30` endpoint — per-record usage detail with pagination
+- New `table(headers, rows)` helper in `packages/cli/src/lib/output.ts` — padEnd column alignment with chalk
+- New `packages/cli/src/commands/usage.ts`:
+  - `oanim usage` — balance + last 7 days summary table (date, cost, requests). Low-balance warning when < $1.
+  - `oanim usage history --limit <n> --days <n>` — per-record table (Date, Provider, Model, Operation, Cost) with total
+
+**Phase 3 — Stripe Billing (OANIM-042):**
+- New `paymentStatusEnum` + `payments` table in `packages/api/src/db/schema.ts` — id, userId FK, stripeSessionId (unique idx), stripePaymentIntentId, amountUsd, creditsUsd, status, createdAt, completedAt
+- Migration generated: `drizzle/0001_cultured_paibok.sql`
+- Added `stripe@^17` dependency, added to tsup externals
+- New `packages/api/src/routes/billing.ts`:
+  - `POST /checkout` (auth) — creates Stripe Checkout Session, inserts pending payment, returns `{ checkoutUrl, sessionId }`
+  - `GET /success?session_id&port` — redirects to CLI localhost callback or shows HTML
+  - `GET /cancel?port` — same pattern for cancellation
+  - `POST /webhook` — verifies Stripe signature, handles `checkout.session.completed` (update payment, add credits) and `checkout.session.expired` (mark failed). Idempotent via status check.
+  - `GET /history?limit=20` (auth) — returns `{ payments: [...], totalPurchasedUsd }`
+- New `packages/cli/src/commands/billing.ts`:
+  - `oanim billing` — balance + 5 most recent purchases table. Low-balance warning.
+  - `oanim billing buy --amount <5|20|50>` — local callback server, POST /checkout, open browser, wait for callback (5min timeout), poll balance on success. Without --amount: shows tier list.
+- Mounted at `/api/v1/billing` in API index
+
+**Build verified:** `pnpm build` succeeds (all 3 packages)
+
+**New env vars needed for deployment:**
+- `STRIPE_SECRET_KEY` — Stripe API secret key
+- `STRIPE_WEBHOOK_SECRET` — Stripe webhook signing secret

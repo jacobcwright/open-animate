@@ -35,6 +35,10 @@ export class HttpClient {
       if (res.status === 401) {
         throw new Error('Not authenticated. Run "oanim login" to sign in.');
       }
+      if (res.status === 429) {
+        const retryAfter = res.headers.get('Retry-After') ?? '60';
+        throw new Error(`Rate limited. Try again in ${retryAfter} seconds.`);
+      }
       const text = await res.text();
       throw new Error(`API error (${res.status}): ${text}`);
     }
@@ -61,6 +65,10 @@ export class HttpClient {
     if (!res.ok) {
       if (res.status === 401) {
         throw new Error('Not authenticated. Run "oanim login" to sign in.');
+      }
+      if (res.status === 429) {
+        const retryAfter = res.headers.get('Retry-After') ?? '60';
+        throw new Error(`Rate limited. Try again in ${retryAfter} seconds.`);
       }
       const text = await res.text();
       throw new Error(`API error (${res.status}): ${text}`);

@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, desc } from 'drizzle-orm';
 import { db, usageRecords, users } from '../db/index.js';
 import { requireAuth, type AuthUser } from '../lib/auth.js';
 
@@ -75,6 +75,51 @@ usage.get('/', async (c) => {
       count: r.count,
     })),
     totalCostUsd,
+  });
+});
+
+/**
+ * GET /api/v1/usage/records?limit=50&offset=0&days=30
+ * Returns per-record usage detail for the authenticated user.
+ */
+usage.get('/records', async (c) => {
+  const user = c.get('user');
+  const limit = Math.min(parseInt(c.req.query('limit') ?? '50', 10), 200);
+  const offset = parseInt(c.req.query('offset') ?? '0', 10);
+  const days = parseInt(c.req.query('days') ?? '30', 10);
+  const since = new Date();
+  since.setDate(since.getDate() - days);
+
+  const records = await db
+    .select({
+      id: usageRecords.id,
+      provider: usageRecords.provider,
+      model: usageRecords.model,
+      operation: usageRecords.operation,
+      estimatedCostUsd: usageRecords.estimatedCostUsd,
+      createdAt: usageRecords.createdAt,
+    })
+    .from(usageRecords)
+    .where(sql`${usageRecords.userId} = ${user.id} AND ${usageRecords.createdAt} >= ${since}`)
+    .orderBy(desc(usageRecords.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  const [countRow] = await db
+    .select({ total: sql<number>`COUNT(*)::int` })
+    .from(usageRecords)
+    .where(sql`${usageRecords.userId} = ${user.id} AND ${usageRecords.createdAt} >= ${since}`);
+
+  return c.json({
+    records: records.map((r) => ({
+      id: r.id,
+      provider: r.provider,
+      model: r.model,
+      operation: r.operation,
+      estimatedCostUsd: parseFloat(r.estimatedCostUsd),
+      createdAt: r.createdAt.toISOString(),
+    })),
+    total: countRow?.total ?? 0,
   });
 });
 
