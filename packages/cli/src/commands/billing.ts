@@ -191,7 +191,8 @@ billingCommand
 
       spinner.stop();
       console.log();
-      console.log(`  ${chalk.dim('Checkout:')} ${checkout.checkoutUrl}`);
+      console.log(`  ${chalk.dim('Send this to your human:')}`);
+      console.log(`  ${checkout.checkoutUrl}`);
       console.log();
       spinner.start('Opening browser for payment...');
       await open(checkout.checkoutUrl);
