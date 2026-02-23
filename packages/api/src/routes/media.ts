@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { eq, sql } from 'drizzle-orm';
 import { db, users, usageRecords } from '../db/index.js';
 import { requireAuth, type AuthUser } from '../lib/auth.js';
+import { getModelCost } from '../lib/costs.js';
 
 const media = new Hono<{ Variables: { user: AuthUser } }>();
 
@@ -12,20 +13,14 @@ media.use('*', requireAuth);
 interface FalResult {
   images?: Array<{ url: string }>;
   image?: { url: string };
+  [key: string]: unknown;
 }
 
-function getImageUrl(result: FalResult): string {
+function getImageUrl(result: FalResult): string | null {
   if (result.images?.[0]?.url) return result.images[0].url;
   if (result.image?.url) return result.image.url;
-  throw new Error('Unexpected fal.ai response: no image URL found');
+  return null;
 }
-
-const COST_ESTIMATES: Record<string, number> = {
-  'fal-ai/flux/schnell': 0.003,
-  'fal-ai/flux/dev/image-to-image': 0.025,
-  'fal-ai/birefnet': 0.005,
-  'fal-ai/creative-upscaler': 0.025,
-};
 
 function getFalKey(): string {
   const key = process.env.FAL_KEY;
@@ -78,11 +73,35 @@ function makeResponse(model: string, url: string) {
     url,
     provider: 'fal.ai',
     model,
-    estimatedCostUsd: COST_ESTIMATES[model] ?? 0,
+    estimatedCostUsd: getModelCost(model),
   };
 }
 
 // -- Routes --
+
+media.post('/run', async (c) => {
+  const user = c.get('user');
+  const { model, input } = await c.req.json<{
+    model: string;
+    input: Record<string, unknown>;
+  }>();
+
+  if (!model) return c.json({ error: 'Missing model' }, 400);
+  if (!input) return c.json({ error: 'Missing input' }, 400);
+
+  const result = await falRequest(model, input);
+  const cost = getModelCost(model);
+  await trackUsage(user.id, 'fal.ai', model, 'run', cost);
+
+  const url = getImageUrl(result);
+  return c.json({
+    url,
+    result,
+    provider: 'fal.ai',
+    model,
+    estimatedCostUsd: cost,
+  });
+});
 
 media.post('/generate', async (c) => {
   const user = c.get('user');
@@ -102,7 +121,8 @@ media.post('/generate', async (c) => {
   });
 
   const url = getImageUrl(result);
-  await trackUsage(user.id, 'fal.ai', model, 'generateImage', COST_ESTIMATES[model]);
+  if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
+  await trackUsage(user.id, 'fal.ai', model, 'generateImage', getModelCost(model));
   return c.json(makeResponse(model, url));
 });
 
@@ -123,7 +143,8 @@ media.post('/edit', async (c) => {
   });
 
   const url = getImageUrl(result);
-  await trackUsage(user.id, 'fal.ai', model, 'editImage', COST_ESTIMATES[model]);
+  if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
+  await trackUsage(user.id, 'fal.ai', model, 'editImage', getModelCost(model));
   return c.json(makeResponse(model, url));
 });
 
@@ -137,7 +158,8 @@ media.post('/remove-background', async (c) => {
   const result = await falRequest(model, { image_url: imageUrl });
 
   const url = getImageUrl(result);
-  await trackUsage(user.id, 'fal.ai', model, 'removeBackground', COST_ESTIMATES[model]);
+  if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
+  await trackUsage(user.id, 'fal.ai', model, 'removeBackground', getModelCost(model));
   return c.json(makeResponse(model, url));
 });
 
@@ -157,7 +179,8 @@ media.post('/upscale', async (c) => {
   });
 
   const url = getImageUrl(result);
-  await trackUsage(user.id, 'fal.ai', model, 'upscale', COST_ESTIMATES[model]);
+  if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
+  await trackUsage(user.id, 'fal.ai', model, 'upscale', getModelCost(model));
   return c.json(makeResponse(model, url));
 });
 

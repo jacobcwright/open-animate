@@ -1,22 +1,17 @@
-import type { MediaProvider, MediaResult, GenerateOpts } from './types';
+import type { MediaProvider, MediaResult, RunResult, GenerateOpts } from './types';
+import { getModelCost } from '../costs';
 
 interface FalResult {
   images?: Array<{ url: string }>;
   image?: { url: string };
+  [key: string]: unknown;
 }
 
-function getImageUrl(result: FalResult): string {
+function getImageUrl(result: FalResult): string | null {
   if (result.images?.[0]?.url) return result.images[0].url;
   if (result.image?.url) return result.image.url;
-  throw new Error('Unexpected fal.ai response: no image URL found');
+  return null;
 }
-
-const COST_ESTIMATES: Record<string, number> = {
-  'fal-ai/flux/schnell': 0.003,
-  'fal-ai/flux/dev/image-to-image': 0.025,
-  'fal-ai/birefnet': 0.005,
-  'fal-ai/creative-upscaler': 0.025,
-};
 
 export class FalProvider implements MediaProvider {
   name = 'fal.ai';
@@ -56,7 +51,7 @@ export class FalProvider implements MediaProvider {
       url,
       provider: this.name,
       model,
-      estimatedCostUsd: COST_ESTIMATES[model] ?? 0,
+      estimatedCostUsd: getModelCost(model),
     };
   }
 
@@ -67,7 +62,9 @@ export class FalProvider implements MediaProvider {
       image_size: opts?.imageSize ?? 'landscape_16_9',
       num_images: opts?.numImages ?? 1,
     });
-    return this.makeResult(model, getImageUrl(result));
+    const url = getImageUrl(result);
+    if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
+    return this.makeResult(model, url);
   }
 
   async editImage(imageUrl: string, prompt: string): Promise<MediaResult> {
@@ -77,7 +74,9 @@ export class FalProvider implements MediaProvider {
       prompt,
       num_images: 1,
     });
-    return this.makeResult(model, getImageUrl(result));
+    const url = getImageUrl(result);
+    if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
+    return this.makeResult(model, url);
   }
 
   async removeBackground(imageUrl: string): Promise<MediaResult> {
@@ -85,7 +84,9 @@ export class FalProvider implements MediaProvider {
     const result = await this.request(model, {
       image_url: imageUrl,
     });
-    return this.makeResult(model, getImageUrl(result));
+    const url = getImageUrl(result);
+    if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
+    return this.makeResult(model, url);
   }
 
   async upscale(imageUrl: string, scale = 2): Promise<MediaResult> {
@@ -94,6 +95,19 @@ export class FalProvider implements MediaProvider {
       image_url: imageUrl,
       scale,
     });
-    return this.makeResult(model, getImageUrl(result));
+    const url = getImageUrl(result);
+    if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
+    return this.makeResult(model, url);
+  }
+
+  async run(model: string, input: Record<string, unknown>): Promise<RunResult> {
+    const result = await this.request(model, input);
+    return {
+      url: getImageUrl(result),
+      result,
+      provider: this.name,
+      model,
+      estimatedCostUsd: getModelCost(model),
+    };
   }
 }

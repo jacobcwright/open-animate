@@ -1,8 +1,16 @@
-import type { MediaProvider, MediaResult, GenerateOpts } from './types';
+import type { MediaProvider, MediaResult, RunResult, GenerateOpts } from './types';
 import { HttpClient } from '../http';
 
 interface PlatformMediaResponse {
   url: string;
+  provider: string;
+  model: string;
+  estimatedCostUsd: number;
+}
+
+interface PlatformRunResponse {
+  url: string | null;
+  result: unknown;
   provider: string;
   model: string;
   estimatedCostUsd: number;
@@ -65,5 +73,20 @@ export class PlatformProvider implements MediaProvider {
       { body: { imageUrl, scale } },
     );
     return this.toResult(res);
+  }
+
+  async run(model: string, input: Record<string, unknown>): Promise<RunResult> {
+    const res = await this.client.request<PlatformRunResponse>(
+      'POST',
+      '/api/v1/media/run',
+      { body: { model, input } },
+    );
+    return {
+      url: res.url,
+      result: res.result,
+      provider: res.provider,
+      model: res.model,
+      estimatedCostUsd: res.estimatedCostUsd,
+    };
   }
 }

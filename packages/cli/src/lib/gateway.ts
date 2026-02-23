@@ -1,5 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import type { MediaProvider, MediaResult, GenerateOpts } from './providers/types';
+import type { MediaProvider, MediaResult, RunResult, GenerateOpts } from './providers/types';
+import { getModelCost } from './costs';
 import { FalProvider } from './providers/fal';
 import { PlatformProvider } from './providers/platform';
 import { HttpClient } from './http';
@@ -103,7 +104,7 @@ export class MediaGateway {
     }
   }
 
-  private track(result: MediaResult, operation: string): void {
+  private track(result: MediaResult | RunResult, operation: string): void {
     const record: UsageRecord = {
       provider: result.provider,
       model: result.model,
@@ -186,5 +187,14 @@ export class MediaGateway {
     const result = await this.provider.upscale(imageUrl, 2);
     this.track(result, 'upscale');
     await this.downloadToFile(result.url, outPath);
+  }
+
+  async run(model: string, input: Record<string, unknown>): Promise<RunResult> {
+    const cost = getModelCost(model);
+    this.checkCostLimit(cost);
+    await this.checkCreditBalance(cost);
+    const result = await this.provider.run(model, input);
+    this.track(result, 'run');
+    return result;
   }
 }

@@ -682,6 +682,30 @@
       ],
       "status": "done",
       "notes": "Single FAL_KEY on server, users pay via credits. All 4 endpoints implemented + usage tracking + credit deduction. Tested: gen-image produces 1024x576 image via platform auth."
+    },
+    {
+      "id": "OANIM-039",
+      "title": "Generic fal.ai proxy + model cost table",
+      "description": "Generic POST /api/v1/media/run endpoint that proxies any fal.ai model, plus oanim assets run CLI command. Shared cost lookup table with ~30 models and $0.05 default.",
+      "requirements": [
+        "Shared cost table with ~30 popular fal.ai models + DEFAULT_COST=$0.05",
+        "POST /api/v1/media/run accepts { model, input }, proxies to fal.run/{model}",
+        "Returns { url, result, provider, model, estimatedCostUsd }",
+        "No prefix restriction on model names",
+        "RunResult type + run() on MediaProvider interface",
+        "FalProvider and PlatformProvider implement run()",
+        "MediaGateway.run() with cost limit + credit balance checks",
+        "oanim assets run --model <id> --input <json> [--out <path>]",
+        "Existing 4 endpoints refactored to use getModelCost()"
+      ],
+      "tests": [
+        "pnpm build succeeds",
+        "oanim assets run --model fal-ai/flux/schnell --input '{\"prompt\":\"a sunset\"}' --out test.png produces image",
+        "oanim assets gen-image still works (existing endpoints unchanged)",
+        "Usage recorded in DB and credits deducted"
+      ],
+      "status": "done",
+      "notes": "Shared costs.ts in both api and cli packages. API /run endpoint returns raw result + extracted URL. CLI run command with optional --out download."
     }
   ]
 }

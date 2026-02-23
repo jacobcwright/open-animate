@@ -449,3 +449,33 @@ Note: Also added `credit_balance_usd` to whoami output (was missing).
 - Usage: PASS
 - Cloud Rendering: PASS (after 8 findings across 2 sessions — pg-boss v10 migration + S3/IAM/Remotion Lambda integration)
 - 15 commits pushed total
+
+---
+
+## Session 7 — 2026-02-23
+
+### OANIM-039: Generic fal.ai proxy + model cost table
+
+**Shared cost table:**
+- Created `packages/api/src/lib/costs.ts` and `packages/cli/src/lib/costs.ts`
+- ~30 popular fal.ai models (image gen, editing, video, audio, upscale, bg removal)
+- `DEFAULT_COST = $0.05` for unknown models
+- `getModelCost(model)` helper function
+
+**Generic `/run` endpoint (API):**
+- Added `POST /api/v1/media/run` — accepts `{ model, input }`, proxies to any fal.ai model
+- Returns `{ url, result, provider, model, estimatedCostUsd }` where `url` is extracted if image model, `null` otherwise
+- `result` is always the raw fal.ai response
+- No prefix restriction on model names (supports third-party models like `xai/`, `beatoven/`, `mirelo-ai/`)
+- Refactored 4 existing endpoints to use `getModelCost()` instead of inline `COST_ESTIMATES`
+
+**CLI provider updates:**
+- Added `RunResult` type (url: string | null, result: unknown) to provider types
+- Added `run(model, input)` to `MediaProvider` interface
+- Implemented in `FalProvider` (direct fal.ai) and `PlatformProvider` (platform proxy)
+- Both providers now use shared `getModelCost()` from `lib/costs.ts`
+
+**Gateway + CLI command:**
+- Added `run()` to `MediaGateway` with cost limit + credit balance checks
+- Added `oanim assets run --model <id> --input <json> [--out <path>]` command
+- If `--out` and URL exists: downloads to file. Otherwise: prints raw JSON to stdout (agent-friendly)

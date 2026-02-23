@@ -1,3 +1,4 @@
+import { writeFile } from 'node:fs/promises';
 import { Command } from 'commander';
 import ora from 'ora';
 import { MediaGateway } from '../lib/gateway';
@@ -89,6 +90,45 @@ assetsCommand
       spinner.succeed(`Upscaled image saved to ${opts.out}`);
     } catch (err) {
       spinner.fail('Upscaling failed');
+      log.error(String(err));
+      process.exit(1);
+    }
+  });
+
+assetsCommand
+  .command('run')
+  .description('Run any fal.ai model')
+  .requiredOption('--model <id>', 'fal.ai model ID (e.g. fal-ai/flux/schnell)')
+  .requiredOption('--input <json>', 'JSON input for the model')
+  .option('--out <path>', 'download result URL to file')
+  .action(async (opts) => {
+    const spinner = ora(`Running ${opts.model}...`).start();
+    try {
+      await requireAuth();
+
+      let input: Record<string, unknown>;
+      try {
+        input = JSON.parse(opts.input) as Record<string, unknown>;
+      } catch {
+        throw new Error('Invalid --input: must be valid JSON');
+      }
+
+      const gw = new MediaGateway();
+      const result = await gw.run(opts.model, input);
+      spinner.stop();
+
+      if (opts.out && result.url) {
+        const dlSpinner = ora('Downloading...').start();
+        const res = await fetch(result.url);
+        if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+        const buffer = Buffer.from(await res.arrayBuffer());
+        await writeFile(opts.out, buffer);
+        dlSpinner.succeed(`Saved to ${opts.out} ($${result.estimatedCostUsd.toFixed(4)})`);
+      } else {
+        console.log(JSON.stringify(result, null, 2));
+      }
+    } catch (err) {
+      spinner.fail(`${opts.model} failed`);
       log.error(String(err));
       process.exit(1);
     }
