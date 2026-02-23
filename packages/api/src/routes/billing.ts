@@ -6,11 +6,16 @@ import { requireAuth, type AuthUser } from '../lib/auth.js';
 
 const billing = new Hono<{ Variables: { user: AuthUser } }>();
 
-const TIERS = new Map([
-  [5, 5],
-  [20, 20],
-  [50, 50],
-]);
+const MIN_AMOUNT = 5;
+const BONUS_THRESHOLD = 50;
+const BONUS_PERCENT = 10;
+
+function calculateCredits(amount: number): number {
+  if (amount >= BONUS_THRESHOLD) {
+    return amount * (1 + BONUS_PERCENT / 100);
+  }
+  return amount;
+}
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -32,10 +37,13 @@ billing.post('/checkout', requireAuth, async (c) => {
   const user = c.get('user');
   const { amount, port } = await c.req.json<{ amount: number; port?: number }>();
 
-  const credits = TIERS.get(amount);
-  if (!credits) {
-    return c.json({ error: 'Invalid amount. Choose 5, 20, or 50.' }, 400);
+  if (!amount || !Number.isFinite(amount) || amount < MIN_AMOUNT) {
+    return c.json({ error: `Minimum purchase is $${MIN_AMOUNT}.` }, 400);
   }
+
+  // Round to nearest cent
+  const roundedAmount = Math.round(amount * 100) / 100;
+  const credits = calculateCredits(roundedAmount);
 
   const stripe = getStripe();
 
@@ -44,6 +52,7 @@ billing.post('/checkout', requireAuth, async (c) => {
   const successQuery = port ? `?session_id={CHECKOUT_SESSION_ID}&port=${port}` : `?session_id={CHECKOUT_SESSION_ID}`;
   const cancelQuery = port ? `?port=${port}` : '';
 
+  const bonusLabel = roundedAmount >= BONUS_THRESHOLD ? ` (includes ${BONUS_PERCENT}% bonus)` : '';
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     line_items: [
@@ -51,10 +60,10 @@ billing.post('/checkout', requireAuth, async (c) => {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `oanim Credits — $${amount}`,
-            description: `$${credits} in media generation credits`,
+            name: `oanim Credits — $${roundedAmount}`,
+            description: `$${credits.toFixed(2)} in media generation credits${bonusLabel}`,
           },
-          unit_amount: amount * 100,
+          unit_amount: Math.round(roundedAmount * 100),
         },
         quantity: 1,
       },
@@ -68,7 +77,7 @@ billing.post('/checkout', requireAuth, async (c) => {
   await db.insert(payments).values({
     userId: user.id,
     stripeSessionId: session.id,
-    amountUsd: String(amount),
+    amountUsd: String(roundedAmount),
     creditsUsd: String(credits),
   });
 

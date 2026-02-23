@@ -29,11 +29,9 @@ interface CheckoutResponse {
   sessionId: string;
 }
 
-const TIERS = [
-  { amount: 5, label: '$5' },
-  { amount: 20, label: '$20' },
-  { amount: 50, label: '$50' },
-];
+const MIN_AMOUNT = 5;
+const BONUS_THRESHOLD = 50;
+const BONUS_PERCENT = 10;
 
 function findAvailablePort(): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -105,7 +103,7 @@ export const billingCommand = new Command('billing')
 
       if (balance.creditBalanceUsd < 1) {
         console.log(
-          `  ${chalk.yellow('⚠')} Low balance — run ${chalk.bold('oanim billing buy --amount 5')} to add credits`,
+          `  ${chalk.yellow('⚠')} Low balance — run ${chalk.bold('oanim billing buy --amount 10')} to add credits`,
         );
       }
 
@@ -148,30 +146,35 @@ export const billingCommand = new Command('billing')
 billingCommand
   .command('buy')
   .description('Purchase credits via Stripe')
-  .option('-a, --amount <amount>', 'Amount to purchase (5, 20, or 50)')
+  .option('-a, --amount <amount>', 'Dollar amount to purchase (minimum $5, 10% bonus over $50)')
   .action(async (opts: { amount?: string }) => {
     if (!opts.amount) {
       console.log();
-      console.log(chalk.bold('  Available credit tiers:'));
+      console.log(chalk.bold('  Purchase credits'));
       console.log();
-      for (const tier of TIERS) {
-        console.log(`  ${chalk.dim('•')} ${chalk.bold(tier.label)}`);
-      }
+      console.log(`  ${chalk.dim('Minimum:')} $${MIN_AMOUNT}`);
+      console.log(`  ${chalk.dim('Bonus:')}   Spend $${BONUS_THRESHOLD}+ and get ${BONUS_PERCENT}% extra credits`);
       console.log();
       console.log(
-        chalk.dim('  Usage: ') + chalk.bold('oanim billing buy --amount 5'),
+        chalk.dim('  Usage: ') + chalk.bold('oanim billing buy --amount 25'),
+      );
+      console.log(
+        chalk.dim('  Example: ') +
+          `$100 → $${(100 * (1 + BONUS_PERCENT / 100)).toFixed(0)} in credits`,
       );
       console.log();
       return;
     }
 
-    const amount = parseInt(opts.amount, 10);
-    if (![5, 20, 50].includes(amount)) {
-      log.error('Invalid amount. Choose 5, 20, or 50.');
+    const amount = parseFloat(opts.amount);
+    if (!Number.isFinite(amount) || amount < MIN_AMOUNT) {
+      log.error(`Minimum purchase is $${MIN_AMOUNT}.`);
       process.exit(1);
     }
 
-    const spinner = ora(`Starting $${amount} checkout...`).start();
+    const credits = amount >= BONUS_THRESHOLD ? amount * (1 + BONUS_PERCENT / 100) : amount;
+    const bonusNote = amount >= BONUS_THRESHOLD ? ` (${BONUS_PERCENT}% bonus → $${credits.toFixed(2)} credits)` : '';
+    const spinner = ora(`Starting $${amount.toFixed(2)} checkout${bonusNote}...`).start();
 
     try {
       const port = await findAvailablePort();
@@ -179,14 +182,18 @@ billingCommand
 
       spinner.text = 'Creating checkout session...';
       const checkout = await client.request<CheckoutResponse>('POST', '/api/v1/billing/checkout', {
-        body: { amount, port },
+        body: { amount: Math.round(amount * 100) / 100, port },
       });
 
       if (!checkout.checkoutUrl) {
         throw new Error('No checkout URL returned');
       }
 
-      spinner.text = 'Opening browser for payment...';
+      spinner.stop();
+      console.log();
+      console.log(`  ${chalk.dim('Checkout:')} ${checkout.checkoutUrl}`);
+      console.log();
+      spinner.start('Opening browser for payment...');
       await open(checkout.checkoutUrl);
 
       spinner.text = 'Waiting for payment (press Ctrl+C to cancel)...';
