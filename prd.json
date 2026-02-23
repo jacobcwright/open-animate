@@ -660,6 +660,28 @@
       ],
       "status": "done",
       "notes": "Fixed in commits 4bd797a and 30bf880. Three issues: (1) afterSignInUrl deprecated → forceRedirectUrl, (2) http:// origin behind LB → https:// via host header, (3) email not in JWT → extracted from window.Clerk.user client-side. Also added credit_balance_usd to whoami output."
+    },
+    {
+      "id": "OANIM-038",
+      "title": "Backend media gateway endpoints (fal.ai proxy)",
+      "description": "Add /api/v1/media/* endpoints to the API server that proxy asset generation requests to fal.ai. The CLI PlatformProvider already calls these routes but they don't exist on the backend yet — only the direct ANIMATE_FAL_KEY path works.",
+      "requirements": [
+        "POST /api/v1/media/generate — proxy to fal.ai flux/schnell, return { url, provider, model, estimatedCostUsd }",
+        "POST /api/v1/media/edit — proxy to fal.ai flux/dev/image-to-image",
+        "POST /api/v1/media/remove-background — proxy to fal.ai birefnet",
+        "POST /api/v1/media/upscale — proxy to fal.ai creative-upscaler",
+        "All endpoints require auth (API key or JWT)",
+        "Deduct from user credit balance per operation",
+        "Record usage in usageRecords table"
+      ],
+      "tests": [
+        "oanim assets gen-image works without ANIMATE_FAL_KEY (platform auth only)",
+        "All 4 asset commands produce valid output via platform proxy",
+        "Usage records created and credits deducted",
+        "401 returned for unauthenticated requests"
+      ],
+      "status": "done",
+      "notes": "Single FAL_KEY on server, users pay via credits. All 4 endpoints implemented + usage tracking + credit deduction. Tested: gen-image produces 1024x576 image via platform auth."
     }
   ]
 }
