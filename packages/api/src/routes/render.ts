@@ -57,10 +57,6 @@ render.post('/', async (c) => {
   // Enqueue render worker
   const boss = getBoss();
   const pgBossJobId = await boss.send('render', { jobId: job.id });
-  console.log('[render] boss.send result:', pgBossJobId, 'for job:', job.id);
-
-  const queueSize = await boss.getQueueSize('render');
-  console.log('[render] queue size after send:', queueSize);
 
   return c.json({ job_id: job.id, pgboss_id: pgBossJobId });
 });
