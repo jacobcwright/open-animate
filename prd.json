@@ -444,7 +444,8 @@
         "npx oanim --help works",
         "npx oanim init scaffolds a working project"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "Published @oanim/core@0.1.0 and oanim@0.1.0 to npm under @oanim org. Added publishConfig, repository, homepage, keywords. npx oanim init works from fresh install."
     },
     {
       "id": "OANIM-027",

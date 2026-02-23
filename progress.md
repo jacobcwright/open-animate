@@ -531,3 +531,11 @@ Note: Also added `credit_balance_usd` to whoami output (was missing).
 - Payment methods configured via Stripe Dashboard (cards, Apple Pay, Google Pay, Cash App, Link)
 
 **E2E verified:** Stripe test-mode checkout completes, webhook fires, credits added to balance, `oanim billing` shows purchase history. All three features (rate limiting, usage commands, billing) working end-to-end.
+
+### npm publish (OANIM-026)
+
+- Created `@oanim` org on npmjs.com
+- Added `publishConfig`, `repository`, `homepage`, `keywords` to both package.json files
+- Published `@oanim/core@0.1.0` (34KB) — animation presets, components, design tokens for Remotion
+- Published `oanim@0.1.0` (13KB) — CLI with init, render, assets, login, billing, usage commands
+- Users can now: `npx oanim init my-project` and `npm install @oanim/core`
