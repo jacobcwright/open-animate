@@ -155,36 +155,40 @@ export class MediaGateway {
   }
 
   async generateImage(prompt: string, outPath: string, opts?: GenerateOpts): Promise<void> {
-    this.checkCostLimit(0.003);
-    await this.checkCreditBalance(0.003);
+    const cost = opts?.model ? getModelCost(opts.model) : 0.003;
+    this.checkCostLimit(cost);
+    await this.checkCreditBalance(cost);
     const result = await this.provider.generateImage(prompt, opts);
     this.track(result, 'generateImage');
     await this.downloadToFile(result.url, outPath);
   }
 
-  async editImage(inputPath: string, prompt: string, outPath: string): Promise<void> {
-    this.checkCostLimit(0.025);
-    await this.checkCreditBalance(0.025);
+  async editImage(inputPath: string, prompt: string, outPath: string, model?: string): Promise<void> {
+    const cost = model ? getModelCost(model) : 0.025;
+    this.checkCostLimit(cost);
+    await this.checkCreditBalance(cost);
     const imageUrl = await this.fileToDataUrl(inputPath);
-    const result = await this.provider.editImage(imageUrl, prompt);
+    const result = await this.provider.editImage(imageUrl, prompt, model);
     this.track(result, 'editImage');
     await this.downloadToFile(result.url, outPath);
   }
 
-  async removeBackground(inputPath: string, outPath: string): Promise<void> {
-    this.checkCostLimit(0.005);
-    await this.checkCreditBalance(0.005);
+  async removeBackground(inputPath: string, outPath: string, model?: string): Promise<void> {
+    const cost = model ? getModelCost(model) : 0.005;
+    this.checkCostLimit(cost);
+    await this.checkCreditBalance(cost);
     const imageUrl = await this.fileToDataUrl(inputPath);
-    const result = await this.provider.removeBackground(imageUrl);
+    const result = await this.provider.removeBackground(imageUrl, model);
     this.track(result, 'removeBackground');
     await this.downloadToFile(result.url, outPath);
   }
 
-  async upscaleImage(inputPath: string, outPath: string): Promise<void> {
-    this.checkCostLimit(0.025);
-    await this.checkCreditBalance(0.025);
+  async upscaleImage(inputPath: string, outPath: string, model?: string): Promise<void> {
+    const cost = model ? getModelCost(model) : 0.025;
+    this.checkCostLimit(cost);
+    await this.checkCreditBalance(cost);
     const imageUrl = await this.fileToDataUrl(inputPath);
-    const result = await this.provider.upscale(imageUrl, 2);
+    const result = await this.provider.upscale(imageUrl, 2, model);
     this.track(result, 'upscale');
     await this.downloadToFile(result.url, outPath);
   }

@@ -34,6 +34,13 @@ export class PlatformProvider implements MediaProvider {
   }
 
   async generateImage(prompt: string, opts?: GenerateOpts): Promise<MediaResult> {
+    if (opts?.model) {
+      return this.runAsMediaResult(opts.model, {
+        prompt,
+        image_size: opts?.imageSize ?? 'landscape_16_9',
+        num_images: opts?.numImages ?? 1,
+      });
+    }
     const res = await this.client.request<PlatformMediaResponse>(
       'POST',
       '/api/v1/media/generate',
@@ -48,7 +55,10 @@ export class PlatformProvider implements MediaProvider {
     return this.toResult(res);
   }
 
-  async editImage(imageUrl: string, prompt: string): Promise<MediaResult> {
+  async editImage(imageUrl: string, prompt: string, model?: string): Promise<MediaResult> {
+    if (model) {
+      return this.runAsMediaResult(model, { image_url: imageUrl, prompt, num_images: 1 });
+    }
     const res = await this.client.request<PlatformMediaResponse>(
       'POST',
       '/api/v1/media/edit',
@@ -57,7 +67,10 @@ export class PlatformProvider implements MediaProvider {
     return this.toResult(res);
   }
 
-  async removeBackground(imageUrl: string): Promise<MediaResult> {
+  async removeBackground(imageUrl: string, model?: string): Promise<MediaResult> {
+    if (model) {
+      return this.runAsMediaResult(model, { image_url: imageUrl });
+    }
     const res = await this.client.request<PlatformMediaResponse>(
       'POST',
       '/api/v1/media/remove-background',
@@ -66,13 +79,29 @@ export class PlatformProvider implements MediaProvider {
     return this.toResult(res);
   }
 
-  async upscale(imageUrl: string, scale = 2): Promise<MediaResult> {
+  async upscale(imageUrl: string, scale = 2, model?: string): Promise<MediaResult> {
+    if (model) {
+      return this.runAsMediaResult(model, { image_url: imageUrl, scale });
+    }
     const res = await this.client.request<PlatformMediaResponse>(
       'POST',
       '/api/v1/media/upscale',
       { body: { imageUrl, scale } },
     );
     return this.toResult(res);
+  }
+
+  private async runAsMediaResult(
+    model: string,
+    input: Record<string, unknown>,
+  ): Promise<MediaResult> {
+    const res = await this.client.request<PlatformRunResponse>(
+      'POST',
+      '/api/v1/media/run',
+      { body: { model, input } },
+    );
+    if (!res.url) throw new Error(`Model ${model} did not return an image URL`);
+    return { url: res.url, provider: res.provider, model: res.model, estimatedCostUsd: res.estimatedCostUsd };
   }
 
   async run(model: string, input: Record<string, unknown>): Promise<RunResult> {

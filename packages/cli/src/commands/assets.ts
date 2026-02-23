@@ -23,12 +23,13 @@ assetsCommand
   .description('Generate an image from a text prompt')
   .requiredOption('--prompt <text>', 'image generation prompt')
   .requiredOption('--out <path>', 'output file path')
+  .option('--model <id>', 'override model (default: fal-ai/flux/schnell)')
   .action(async (opts) => {
     const spinner = ora('Generating image...').start();
     try {
       await requireAuth();
       const gw = new MediaGateway();
-      await gw.generateImage(opts.prompt, opts.out);
+      await gw.generateImage(opts.prompt, opts.out, { model: opts.model });
       spinner.succeed(`Image saved to ${opts.out}`);
     } catch (err) {
       spinner.fail('Image generation failed');
@@ -43,12 +44,13 @@ assetsCommand
   .requiredOption('--in <path>', 'input image path')
   .requiredOption('--prompt <text>', 'edit prompt')
   .requiredOption('--out <path>', 'output file path')
+  .option('--model <id>', 'override model (default: fal-ai/flux/dev/image-to-image)')
   .action(async (opts) => {
     const spinner = ora('Editing image...').start();
     try {
       await requireAuth();
       const gw = new MediaGateway();
-      await gw.editImage(opts.in, opts.prompt, opts.out);
+      await gw.editImage(opts.in, opts.prompt, opts.out, opts.model);
       spinner.succeed(`Edited image saved to ${opts.out}`);
     } catch (err) {
       spinner.fail('Image editing failed');
@@ -62,12 +64,13 @@ assetsCommand
   .description('Remove background from an image')
   .requiredOption('--in <path>', 'input image path')
   .requiredOption('--out <path>', 'output file path')
+  .option('--model <id>', 'override model (default: fal-ai/birefnet)')
   .action(async (opts) => {
     const spinner = ora('Removing background...').start();
     try {
       await requireAuth();
       const gw = new MediaGateway();
-      await gw.removeBackground(opts.in, opts.out);
+      await gw.removeBackground(opts.in, opts.out, opts.model);
       spinner.succeed(`Image saved to ${opts.out}`);
     } catch (err) {
       spinner.fail('Background removal failed');
@@ -81,12 +84,13 @@ assetsCommand
   .description('Upscale an image 2x')
   .requiredOption('--in <path>', 'input image path')
   .requiredOption('--out <path>', 'output file path')
+  .option('--model <id>', 'override model (default: fal-ai/creative-upscaler)')
   .action(async (opts) => {
     const spinner = ora('Upscaling image...').start();
     try {
       await requireAuth();
       const gw = new MediaGateway();
-      await gw.upscaleImage(opts.in, opts.out);
+      await gw.upscaleImage(opts.in, opts.out, opts.model);
       spinner.succeed(`Upscaled image saved to ${opts.out}`);
     } catch (err) {
       spinner.fail('Upscaling failed');

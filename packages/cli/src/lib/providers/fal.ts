@@ -56,7 +56,7 @@ export class FalProvider implements MediaProvider {
   }
 
   async generateImage(prompt: string, opts?: GenerateOpts): Promise<MediaResult> {
-    const model = 'fal-ai/flux/schnell';
+    const model = opts?.model ?? 'fal-ai/flux/schnell';
     const result = await this.request(model, {
       prompt,
       image_size: opts?.imageSize ?? 'landscape_16_9',
@@ -67,8 +67,8 @@ export class FalProvider implements MediaProvider {
     return this.makeResult(model, url);
   }
 
-  async editImage(imageUrl: string, prompt: string): Promise<MediaResult> {
-    const model = 'fal-ai/flux/dev/image-to-image';
+  async editImage(imageUrl: string, prompt: string, model?: string): Promise<MediaResult> {
+    model = model ?? 'fal-ai/flux/dev/image-to-image';
     const result = await this.request(model, {
       image_url: imageUrl,
       prompt,
@@ -79,8 +79,8 @@ export class FalProvider implements MediaProvider {
     return this.makeResult(model, url);
   }
 
-  async removeBackground(imageUrl: string): Promise<MediaResult> {
-    const model = 'fal-ai/birefnet';
+  async removeBackground(imageUrl: string, model?: string): Promise<MediaResult> {
+    model = model ?? 'fal-ai/birefnet';
     const result = await this.request(model, {
       image_url: imageUrl,
     });
@@ -89,8 +89,8 @@ export class FalProvider implements MediaProvider {
     return this.makeResult(model, url);
   }
 
-  async upscale(imageUrl: string, scale = 2): Promise<MediaResult> {
-    const model = 'fal-ai/creative-upscaler';
+  async upscale(imageUrl: string, scale = 2, model?: string): Promise<MediaResult> {
+    model = model ?? 'fal-ai/creative-upscaler';
     const result = await this.request(model, {
       image_url: imageUrl,
       scale,
