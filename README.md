@@ -1,10 +1,12 @@
-# Open Animate
+<p align="center">
+  <img src=".github/splash.svg" alt="Open Animate" width="100%"/>
+</p>
 
-[![npm](https://img.shields.io/npm/v/oanim)](https://www.npmjs.com/package/oanim)
-[![npm](https://img.shields.io/npm/v/@oanim/core)](https://www.npmjs.com/package/@oanim/core)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
-**The open-source creative suite for AI agents.**
+<p align="center">
+  <a href="https://www.npmjs.com/package/oanim"><img src="https://img.shields.io/npm/v/oanim" alt="npm"></a>
+  <a href="https://www.npmjs.com/package/@oanim/core"><img src="https://img.shields.io/npm/v/@oanim/core" alt="npm"></a>
+  <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache 2.0"></a>
+</p>
 
 Open Animate gives coding agents the tools to generate images, compose videos, and create motion graphics — all through code.
 
