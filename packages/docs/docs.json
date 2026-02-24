@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "name": "oanim",
+  "name": "Open Animate",
   "theme": "mint",
   "logo": {
     "light": "/logo/light.svg",
