@@ -1,0 +1,64 @@
+---
+title: Cloud Rendering
+description: Render videos in the cloud without local infrastructure
+---
+
+Cloud rendering lets you export videos without needing Chromium or ffmpeg installed locally. Your project is bundled, uploaded, and rendered on hosted infrastructure.
+
+## Usage
+
+```bash
+oanim render --cloud
+```
+
+<Note>
+Cloud rendering requires authentication. Run `oanim login` first, or set `ANIMATE_API_KEY`.
+</Note>
+
+## How it works
+
+1. **Bundle** — Remotion bundles your project locally (`remotion bundle`)
+2. **Upload** — The bundle tarball is uploaded to the platform via `/api/v1/render/upload`
+3. **Render** — The platform renders your composition using your `animate.json` settings
+4. **Stream progress** — The CLI polls for progress updates and displays a percentage
+5. **Download** — The rendered video is downloaded to your output path
+
+## Options
+
+All standard `oanim render` flags work with `--cloud`:
+
+```bash
+oanim render --cloud --out out/video.mp4
+oanim render --cloud --fps 60 --res 3840x2160
+oanim render --cloud --codec h265
+```
+
+See [oanim render](/cli/render) for the full flag reference.
+
+## Output
+
+On success:
+
+```
+✔ Cloud render complete
+
+Output:     /path/to/out/MyComp.mp4
+Size:       2.4 MB
+Resolution: 1920x1080
+FPS:        30
+Codec:      h264
+```
+
+## When to use cloud rendering
+
+| Scenario | Recommendation |
+|---|---|
+| Local development | Use local `oanim render` for fast iteration |
+| CI/CD pipelines | Use `--cloud` to avoid installing Chromium in CI |
+| Machines without ffmpeg | Use `--cloud` |
+| Long/complex compositions | Use `--cloud` for better hardware |
+| Quick previews | Use local render |
+
+## Pricing
+
+Cloud rendering is billed based on render duration and resolution. Check your current balance with `oanim usage` and purchase credits with `oanim billing buy`. See [Credits & Billing](/platform/credits-and-billing) for details.

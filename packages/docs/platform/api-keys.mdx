@@ -1,0 +1,68 @@
+---
+title: API Keys
+description: Create and manage API keys for programmatic access
+---
+
+API keys provide programmatic access to the oanim platform — use them in CI/CD pipelines, automated workflows, or any environment where browser login isn't practical.
+
+## Create a key
+
+```bash
+oanim api-keys create --name "ci-pipeline"
+```
+
+Output:
+
+```
+Name:   ci-pipeline
+Prefix: oan_abc1...
+Key:    oan_abc123def456...
+
+⚠ Save this key — it will not be shown again.
+```
+
+<Warning>
+The full key is only shown once at creation time. Store it securely.
+</Warning>
+
+## List your keys
+
+```bash
+oanim api-keys list
+```
+
+Shows all your keys with name, prefix, creation date, and last-used date.
+
+## Revoke a key
+
+```bash
+oanim api-keys revoke <key-id>
+```
+
+Immediately invalidates the key. Any requests using it will fail.
+
+## Using API keys
+
+### Environment variable (recommended)
+
+```bash
+export ANIMATE_API_KEY=oan_abc123def456...
+oanim assets gen-image --prompt "gradient" --out bg.png
+```
+
+### CI/CD login
+
+```bash
+oanim login --token $ANIMATE_API_KEY
+```
+
+This saves the key to `~/.oanim/credentials.yaml` so subsequent commands use it automatically.
+
+### Resolution order
+
+When making API calls, the CLI resolves credentials in this order:
+
+1. `ANIMATE_API_KEY` environment variable
+2. `~/.oanim/credentials.yaml` (saved by `oanim login`)
+
+Set the env var in your CI secrets to avoid needing `oanim login` in pipelines.

@@ -1,0 +1,9 @@
+{
+  "name": "@oanim/docs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "mintlify dev",
+    "build": "echo 'docs: no build step (hosted by Mintlify)'"
+  }
+}

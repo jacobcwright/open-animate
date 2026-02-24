@@ -539,3 +539,32 @@ Note: Also added `credit_balance_usd` to whoami output (was missing).
 - Published `@oanim/core@0.1.0` (34KB) — animation presets, components, design tokens for Remotion
 - Published `oanim@0.1.0` (13KB) — CLI with init, render, assets, login, billing, usage commands
 - Users can now: `npx oanim init my-project` and `npm install @oanim/core`
+
+---
+
+## Session 9 — 2026-02-23
+
+### Mintlify documentation site (OANIM-035)
+
+**Scaffold:**
+- Created `packages/docs/` with `package.json`, `docs.json` (Mintlify config), logo SVGs, favicon
+- Orange branding (#FF8000), two tabs (Documentation + Platform), GitHub topbar link
+- Picked up automatically by `packages/*` glob in pnpm-workspace.yaml
+
+**Documentation tab (14 pages):**
+- Getting Started: `index.mdx` (intro + card groups), `quickstart.mdx` (full workflow), `examples.mdx` (6 examples)
+- CLI: `cli/init.mdx` (scaffold reference), `cli/render.mdx` (render + animate.json), `cli/assets.mdx` (5 asset commands)
+- Animation Presets: `core/element-animations.mdx` (8 animations), `core/springs-and-easings.mdx` (7 springs + 5 easings + helpers), `core/transitions.mdx` (14 transitions)
+- Components: `core/typography.mdx` (AnimatedCharacters, TypewriterText, CountUp), `core/ui-components.mdx` (8 UI components + layering), `core/design-tokens.mdx` (5 palettes, fonts, spacing)
+- Guides: `guides/composition-patterns.mdx` (multi-scene architecture), `guides/agent-skill.mdx` (skill overview)
+
+**Platform tab (7 pages):**
+- `platform/overview.mdx` — open-core model, service overview, auth chain
+- `platform/authentication.mdx` — browser OAuth + token login + credential resolution
+- `platform/api-keys.mdx` — create/list/revoke + CI usage
+- `platform/cloud-rendering.mdx` — `oanim render --cloud` workflow
+- `platform/credits-and-billing.mdx` — Stripe billing + full cost table (~30 models)
+- `platform/usage.mdx` — balance + usage history commands
+- `platform/self-hosting.mdx` — docker-compose + env vars + direct provider keys
+
+**Verification:** `pnpm build` passes (docs package has no build step — `echo` only)

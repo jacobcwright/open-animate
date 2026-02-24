@@ -1,0 +1,113 @@
+---
+title: oanim init
+description: Scaffold a new Remotion project with @oanim/core
+---
+
+```bash
+oanim init [name]
+```
+
+Creates a new Remotion project directory pre-configured with `@oanim/core`.
+
+## Arguments
+
+| Argument | Default | Description |
+|---|---|---|
+| `name` | `my-video` | Project directory name |
+
+## What it creates
+
+```
+my-video/
+├── src/
+│   ├── index.ts        # Remotion entry point
+│   ├── Root.tsx         # Remotion root with Composition
+│   └── MyComp.tsx       # Starter component using @oanim/core
+├── public/              # Static assets directory
+├── animate.json         # Render configuration
+├── package.json         # Dependencies
+└── tsconfig.json        # TypeScript config
+```
+
+### Starter component
+
+The generated `MyComp.tsx` uses `fadeUp`, `Background`, `SafeArea`, and `palettes` from `@oanim/core`:
+
+```tsx
+import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
+import { fadeUp, Background, SafeArea, palettes } from '@oanim/core';
+
+const colors = palettes.dark;
+
+export const MyComp: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  return (
+    <AbsoluteFill>
+      <Background gradient={`linear-gradient(135deg, ${colors.bg}, ${colors.bgAlt})`} />
+      <SafeArea style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{
+          ...fadeUp({ frame, fps, delay: 0.2 }),
+          fontSize: 80,
+          fontWeight: 700,
+          color: colors.text,
+          textAlign: 'center',
+        }}>
+          Hello, oanim
+        </div>
+      </SafeArea>
+    </AbsoluteFill>
+  );
+};
+```
+
+### Default animate.json
+
+```json
+{
+  "name": "My Video",
+  "compositionId": "MyComp",
+  "render": {
+    "fps": 30,
+    "width": 1920,
+    "height": 1080,
+    "codec": "h264",
+    "crf": 18
+  },
+  "props": {}
+}
+```
+
+## Dependencies installed
+
+| Package | Purpose |
+|---|---|
+| `@oanim/core` | Animation presets + components |
+| `remotion` | Core Remotion framework |
+| `@remotion/cli` | Remotion CLI (studio, render) |
+| `@remotion/transitions` | TransitionSeries for scene transitions |
+| `react`, `react-dom` | React 19 |
+| `typescript`, `@types/react` | TypeScript support |
+
+## Package manager detection
+
+`oanim init` auto-detects your package manager in this order:
+
+1. **pnpm** (if available)
+2. **yarn** (if available)
+3. **npm** (fallback)
+
+Dependencies are installed automatically. If installation fails, a warning is shown and you can install manually.
+
+## After scaffolding
+
+```bash
+cd my-video
+
+# Preview in browser
+npx remotion studio
+
+# Render to MP4
+npx oanim render
+```

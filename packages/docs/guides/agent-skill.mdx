@@ -1,0 +1,75 @@
+---
+title: Agent Skill
+description: Teach AI agents to compose motion graphics with oanim
+---
+
+The `animate-skill/` directory contains an agent skill that teaches AI agents how to compose professional motion graphics using Remotion + `@oanim/core`.
+
+## What is an agent skill?
+
+An agent skill is a structured set of references, templates, and workflow instructions that an AI coding agent (like Claude) can use to produce high-quality output in a specific domain. The oanim skill teaches agents the oanim workflow, animation presets, composition patterns, and best practices.
+
+## Prerequisites
+
+The oanim skill builds on top of **Remotion skills** for core Remotion API knowledge:
+
+```bash
+npx skills add remotion-dev/skills
+```
+
+oanim adds premium animation presets, components, and a workflow CLI on top of Remotion's foundations.
+
+## Skill structure
+
+```
+animate-skill/
+├── SKILL.md                         # Entry point — overview + workflow
+├── references/
+│   ├── workflow.md                  # Step-by-step agent workflow
+│   ├── scene-config.md              # animate.json reference
+│   ├── composition-patterns.md      # Multi-scene architecture
+│   ├── animation-cookbook.md         # Full presets reference
+│   └── asset-generation.md          # AI asset generation guide
+└── templates/
+    ├── launch-video.md              # 4-scene product launch
+    ├── explainer.md                 # Step-based explainer
+    ├── logo-reveal.md               # Logo animation
+    ├── meme-caption.md              # Social clip
+    └── investor-update.md           # Metrics dashboard
+```
+
+## Agent workflow
+
+The skill instructs agents to follow this workflow:
+
+1. **Initialize** — `oanim init my-video`
+2. **Compose** — Write scenes using `@oanim/core` presets and components
+3. **Preview** — `npx remotion studio`
+4. **Render** — `oanim render`
+5. **Assets** (optional) — `oanim assets gen-image`
+
+## When to use what
+
+| Need | Tool |
+|---|---|
+| Core Remotion API (`interpolate`, `spring`, `Sequence`) | Remotion skills |
+| Animation presets (`fadeUp`, `popIn`, springs) | `@oanim/core` |
+| Ready-made components (`Terminal`, `Card`, `Badge`) | `@oanim/core` |
+| Scene transitions (`fadeBlur`, `clipCircle`) | `@oanim/core` + `@remotion/transitions` |
+| Project scaffolding | `oanim init` |
+| Rendering to video | `oanim render` |
+| AI asset generation | `oanim assets` |
+
+## Templates
+
+Templates provide full scene-by-scene blueprints for common video types:
+
+| Template | Description |
+|---|---|
+| `launch-video` | 4-scene product launch with hero, features, demo, CTA |
+| `explainer` | Step-based explainer with numbered sections |
+| `logo-reveal` | Logo animation with glow effects |
+| `meme-caption` | Quick vertical social clip |
+| `investor-update` | Metrics dashboard with CountUp numbers |
+
+Each template includes complete code for every scene, recommended transitions, and duration guidelines.

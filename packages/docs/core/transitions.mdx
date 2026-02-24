@@ -1,0 +1,112 @@
+---
+title: Transitions
+description: 14 transition presets for @remotion/transitions TransitionSeries
+---
+
+oanim provides 14 transition presets for use with `@remotion/transitions` `TransitionSeries`. Each returns a `TransitionPresentation` that you pass to `<TransitionSeries.Transition>`.
+
+## Usage
+
+```tsx
+import { TransitionSeries, springTiming } from '@remotion/transitions';
+import { fadeBlur, wipe, scaleFade } from '@oanim/core';
+
+<TransitionSeries>
+  <TransitionSeries.Sequence durationInFrames={120}>
+    <Scene1 />
+  </TransitionSeries.Sequence>
+
+  <TransitionSeries.Transition
+    presentation={fadeBlur()}
+    timing={springTiming({ config: { damping: 200 }, durationInFrames: 30 })}
+  />
+
+  <TransitionSeries.Sequence durationInFrames={120}>
+    <Scene2 />
+  </TransitionSeries.Sequence>
+</TransitionSeries>
+```
+
+## Available transitions
+
+| Preset | Effect |
+|---|---|
+| `fadeBlur()` | Crossfade with blur |
+| `scaleFade()` | Scale 0.95 to 1 with fade |
+| `clipCircle()` | Circular reveal |
+| `clipPolygon()` | Diamond/polygon reveal |
+| `wipe()` | Directional wipe |
+| `splitHorizontal()` | Open from horizontal center |
+| `splitVertical()` | Open from vertical center |
+| `perspectiveFlip()` | 3D flip |
+| `morphExpand()` | Scale up from circle to full |
+| `zoomThrough()` | Zoom into next scene |
+| `pushLeft()` | Push current scene left |
+| `pushRight()` | Push current scene right |
+| `slideLeft()` | New scene slides in from right |
+| `slideRight()` | New scene slides in from left |
+
+## wipe options
+
+The `wipe()` transition accepts a direction:
+
+```tsx
+wipe({ direction: 'left' })   // wipe from right to left
+wipe({ direction: 'right' })  // wipe from left to right
+wipe({ direction: 'up' })     // wipe from bottom to top
+wipe({ direction: 'down' })   // wipe from top to bottom
+```
+
+## Transition timing
+
+Use `springTiming` or `linearTiming` from `@remotion/transitions`:
+
+```tsx
+import { springTiming, linearTiming } from '@remotion/transitions';
+
+// Spring timing — smooth, natural feel
+springTiming({ config: { damping: 200 }, durationInFrames: 30 })
+
+// Linear timing — constant speed
+linearTiming({ durationInFrames: 20 })
+```
+
+### Timing guidelines
+
+| Speed | Frames | Feel |
+|---|---|---|
+| Fast | 15-20 | Energetic, snappy |
+| Medium | 25-35 | Professional, smooth |
+| Slow | 40-60 | Cinematic, dramatic |
+
+Use `springTiming` with high damping (200) for smooth transitions. Use `linearTiming` for constant-speed transitions.
+
+## Combining transitions in a sequence
+
+Mix different transitions for variety:
+
+```tsx
+<TransitionSeries>
+  <TransitionSeries.Sequence durationInFrames={120}>
+    <Scene1 />
+  </TransitionSeries.Sequence>
+
+  <TransitionSeries.Transition
+    presentation={fadeBlur()}
+    timing={springTiming({ config: { damping: 200 }, durationInFrames: 30 })}
+  />
+
+  <TransitionSeries.Sequence durationInFrames={120}>
+    <Scene2 />
+  </TransitionSeries.Sequence>
+
+  <TransitionSeries.Transition
+    presentation={wipe({ direction: 'left' })}
+    timing={springTiming({ config: { damping: 200 }, durationInFrames: 25 })}
+  />
+
+  <TransitionSeries.Sequence durationInFrames={120}>
+    <Scene3 />
+  </TransitionSeries.Sequence>
+</TransitionSeries>
+```

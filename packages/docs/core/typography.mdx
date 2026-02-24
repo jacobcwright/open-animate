@@ -1,0 +1,102 @@
+---
+title: Typography
+description: AnimatedCharacters, TypewriterText, and CountUp components
+---
+
+Three typography components for animated text in your Remotion compositions.
+
+## AnimatedCharacters
+
+Staggered per-character spring entrance. Each character animates in individually with configurable delay and spring physics.
+
+```tsx
+import { AnimatedCharacters } from '@oanim/core';
+
+<AnimatedCharacters
+  text="Hello World"
+  delay={0.2}
+  stagger={0.03}
+  spring="snappy"
+/>
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `text` | `string` | required | Text to animate |
+| `delay` | `number` | `0` | Seconds before first character appears |
+| `stagger` | `number` | `0.03` | Seconds between each character |
+| `spring` | `SpringPreset` | `'snappy'` | Spring preset for each character |
+
+### Tips
+
+- Use for headings and hero text where you want a premium feel
+- Keep `stagger` between 0.02-0.05 for readable pacing
+- Pair with `'bouncy'` spring for playful headers or `'smooth'` for formal text
+
+## TypewriterText
+
+Character-by-character typing reveal with an optional blinking cursor.
+
+```tsx
+import { TypewriterText } from '@oanim/core';
+
+<TypewriterText
+  text="npm install @oanim/core"
+  delay={0.5}
+  charsPerSecond={20}
+  showCursor={true}
+/>
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `text` | `string` | required | Text to type out |
+| `delay` | `number` | `0` | Seconds before typing starts |
+| `charsPerSecond` | `number` | `20` | Typing speed |
+| `showCursor` | `boolean` | `true` | Show blinking cursor |
+
+### Tips
+
+- Use for terminal commands, code snippets, or any "typing" effect
+- Pair with the `Terminal` component for a terminal window look
+- Adjust `charsPerSecond` based on text length — longer text benefits from faster typing
+
+## CountUp
+
+Animated number counter with optional prefix, suffix, and decimal formatting.
+
+```tsx
+import { CountUp } from '@oanim/core';
+
+<CountUp
+  from={0}
+  to={10000}
+  delay={0.3}
+  duration={1}
+  prefix="$"
+  suffix="+"
+  decimals={0}
+/>
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `from` | `number` | `0` | Starting value |
+| `to` | `number` | required | Ending value |
+| `delay` | `number` | `0` | Seconds before count starts |
+| `duration` | `number` | `1` | Duration of the count animation in seconds |
+| `prefix` | `string` | `''` | Text before the number (e.g. `$`) |
+| `suffix` | `string` | `''` | Text after the number (e.g. `%`, `+`) |
+| `decimals` | `number` | `0` | Number of decimal places |
+
+### Tips
+
+- Use for metrics, statistics, and data-driven scenes
+- Pair with `Card` component for a dashboard look
+- Combine with `fadeUp` on the container for a staggered entrance with the count

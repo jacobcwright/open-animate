@@ -1,0 +1,86 @@
+{
+  "$schema": "https://mintlify.com/docs/mintlify/schema.json",
+  "name": "oanim",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#FF8000",
+    "light": "#FFB366",
+    "dark": "#CC6600",
+    "anchors": {
+      "from": "#FF8000",
+      "to": "#CC6600"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/jacobcwright/open-animate"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "/quickstart"
+  },
+  "tabs": [
+    {
+      "name": "Documentation",
+      "url": "/"
+    },
+    {
+      "name": "Platform",
+      "url": "/platform"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": ["index", "quickstart", "examples"]
+    },
+    {
+      "group": "CLI",
+      "pages": ["cli/init", "cli/render", "cli/assets"]
+    },
+    {
+      "group": "Animation Presets",
+      "pages": [
+        "core/element-animations",
+        "core/springs-and-easings",
+        "core/transitions"
+      ]
+    },
+    {
+      "group": "Components",
+      "pages": [
+        "core/typography",
+        "core/ui-components",
+        "core/design-tokens"
+      ]
+    },
+    {
+      "group": "Guides",
+      "pages": ["guides/composition-patterns", "guides/agent-skill"]
+    },
+    {
+      "group": "Platform",
+      "pages": [
+        "platform/overview",
+        "platform/authentication",
+        "platform/api-keys",
+        "platform/cloud-rendering",
+        "platform/credits-and-billing",
+        "platform/usage"
+      ]
+    },
+    {
+      "group": "Self-Hosting",
+      "pages": ["platform/self-hosting"]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/jacobcwright/open-animate"
+  }
+}

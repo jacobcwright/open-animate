@@ -1,0 +1,69 @@
+---
+title: Examples
+description: Working Remotion projects built with @oanim/core
+---
+
+All examples live in the `examples/` directory and can be run immediately.
+
+## Running an example
+
+```bash
+# Clone the repo
+git clone https://github.com/jacobcwright/open-animate.git
+cd open-animate
+
+# Install workspace dependencies
+pnpm install
+
+# Run any example
+cd examples/hello-world
+npx remotion studio   # preview in browser
+npx oanim render      # export to MP4
+```
+
+## Available examples
+
+| Example | Description | Duration | Resolution |
+|---|---|---|---|
+| [hello-world](https://github.com/jacobcwright/open-animate/tree/main/examples/hello-world) | Minimal animated text | 5s | 1920x1080 |
+| [launch-video](https://github.com/jacobcwright/open-animate/tree/main/examples/launch-video) | 4-scene product launch | 15s | 1920x1080 |
+| [logo-reveal](https://github.com/jacobcwright/open-animate/tree/main/examples/logo-reveal) | Logo pop-in with glow | 5s | 1920x1080 |
+| [meme-caption](https://github.com/jacobcwright/open-animate/tree/main/examples/meme-caption) | Vertical social clip | 6s | 1080x1920 |
+| [explainer](https://github.com/jacobcwright/open-animate/tree/main/examples/explainer) | 4-scene step-by-step | 20s | 1920x1080 |
+| [investor-update](https://github.com/jacobcwright/open-animate/tree/main/examples/investor-update) | Metrics with CountUp | 15s | 1920x1080 |
+
+## hello-world
+
+The simplest possible oanim project — a single `fadeUp` animation on centered text. Start here to understand the basics.
+
+**Uses:** `fadeUp`, `Background`, `SafeArea`, `palettes`
+
+## launch-video
+
+A 4-scene product launch video with transitions between scenes. Demonstrates TransitionSeries with `fadeBlur` and `scaleFade` transitions, plus staggered element entrances.
+
+**Uses:** `TransitionSeries`, `fadeBlur`, `scaleFade`, `fadeUp`, `popIn`, `AnimatedCharacters`, `Background`, `SafeArea`, `Badge`, `Card`
+
+## logo-reveal
+
+Animated logo entrance with a glow effect. Shows how to combine `popIn` with `GlowOrb` for a polished reveal.
+
+**Uses:** `popIn`, `blurIn`, `GlowOrb`, `Background`, `Vignette`
+
+## meme-caption
+
+Vertical-format (1080x1920) social media clip with bold captions. Demonstrates non-standard resolutions via `animate.json`.
+
+**Uses:** `fadeUp`, `elasticScale`, `Background`, `SafeArea`
+
+## explainer
+
+4-scene step-by-step explainer with numbered sections. Uses `AnimatedCharacters` for headers and staggered `fadeUp` for bullet points.
+
+**Uses:** `TransitionSeries`, `wipe`, `clipCircle`, `AnimatedCharacters`, `fadeUp`, `Background`, `SafeArea`, `Grid`
+
+## investor-update
+
+Metrics dashboard with animated `CountUp` numbers. Demonstrates data-driven animations with prefix/suffix formatting.
+
+**Uses:** `CountUp`, `fadeUp`, `Card`, `Background`, `SafeArea`, `palettes.midnight`

@@ -1,0 +1,106 @@
+---
+title: Quickstart
+description: Create your first oanim video in 60 seconds
+---
+
+## Install and scaffold
+
+```bash
+# Scaffold a new project
+npx oanim init my-video
+
+# Enter the project
+cd my-video
+```
+
+This creates a Remotion project pre-configured with `@oanim/core`, including:
+
+- `src/Root.tsx` — Remotion root with a starter composition
+- `src/MyComp.tsx` — A component using `fadeUp`, `Background`, and `SafeArea`
+- `animate.json` — Render configuration (fps, resolution, codec)
+- `package.json` — Dependencies already installed
+
+## Preview
+
+```bash
+npx remotion studio
+```
+
+Opens Remotion Studio in your browser at `http://localhost:3000`. You'll see a live preview of your composition with timeline scrubbing.
+
+## Edit your composition
+
+Open `src/MyComp.tsx` and start composing:
+
+```tsx
+import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
+import { fadeUp, popIn, Background, SafeArea, palettes } from '@oanim/core';
+
+const colors = palettes.dark;
+
+export const MyComp: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  return (
+    <AbsoluteFill>
+      <Background gradient={`linear-gradient(135deg, ${colors.bg}, ${colors.bgAlt})`} />
+      <SafeArea style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{
+          ...fadeUp({ frame, fps, delay: 0.2 }),
+          fontSize: 80,
+          fontWeight: 700,
+          color: colors.text,
+        }}>
+          Hello, oanim
+        </div>
+      </SafeArea>
+    </AbsoluteFill>
+  );
+};
+```
+
+Changes appear instantly in Remotion Studio.
+
+## Render to MP4
+
+```bash
+npx oanim render
+```
+
+This reads `animate.json` for render settings and outputs to `out/MyComp.mp4`.
+
+Override settings with flags:
+
+```bash
+npx oanim render --fps 60 --res 3840x2160 --codec h265 --out out/4k.mp4
+```
+
+## Generate assets (optional)
+
+Create AI-generated images for backgrounds, product shots, and more:
+
+```bash
+# Requires authentication
+npx oanim login
+
+# Generate a background
+npx oanim assets gen-image --prompt "dark abstract gradient, purple and blue" --out public/bg.png
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Element Animations" href="/core/element-animations">
+    All 8 animation presets with usage examples.
+  </Card>
+  <Card title="Transitions" href="/core/transitions">
+    14 transition presets for scene changes.
+  </Card>
+  <Card title="Composition Patterns" href="/guides/composition-patterns">
+    Multi-scene architecture and layering.
+  </Card>
+  <Card title="Examples" href="/examples">
+    Browse 6 working example projects.
+  </Card>
+</CardGroup>

@@ -1,0 +1,108 @@
+---
+title: oanim assets
+description: AI-powered image generation for your videos
+---
+
+```bash
+oanim assets <command> [options]
+```
+
+Generate and manipulate images for your Remotion videos using AI models routed through the oanim media gateway.
+
+<Note>
+Asset commands require authentication. Run `oanim login` to sign in, or set `ANIMATE_API_KEY`. You can also set `ANIMATE_FAL_KEY` to use your own fal.ai key directly.
+</Note>
+
+## Commands
+
+### gen-image
+
+Generate an image from a text prompt.
+
+```bash
+oanim assets gen-image --prompt "dark abstract gradient with purple and blue tones, 16:9" --out public/bg.png
+```
+
+| Flag | Required | Description |
+|---|---|---|
+| `--prompt <text>` | Yes | Image generation prompt |
+| `--out <path>` | Yes | Output file path |
+| `--model <id>` | No | Override model (default: `fal-ai/flux/schnell`) |
+
+### edit-image
+
+Edit an existing image with a text prompt.
+
+```bash
+oanim assets edit-image --in public/bg.png --prompt "add subtle grid pattern" --out public/bg-grid.png
+```
+
+| Flag | Required | Description |
+|---|---|---|
+| `--in <path>` | Yes | Input image path |
+| `--prompt <text>` | Yes | Edit prompt |
+| `--out <path>` | Yes | Output file path |
+| `--model <id>` | No | Override model (default: `fal-ai/flux/dev/image-to-image`) |
+
+### remove-bg
+
+Remove the background from an image.
+
+```bash
+oanim assets remove-bg --in public/product.png --out public/product-cutout.png
+```
+
+| Flag | Required | Description |
+|---|---|---|
+| `--in <path>` | Yes | Input image path |
+| `--out <path>` | Yes | Output file path |
+| `--model <id>` | No | Override model (default: `fal-ai/birefnet`) |
+
+### upscale
+
+Upscale an image 2x.
+
+```bash
+oanim assets upscale --in public/logo-small.png --out public/logo-2x.png
+```
+
+| Flag | Required | Description |
+|---|---|---|
+| `--in <path>` | Yes | Input image path |
+| `--out <path>` | Yes | Output file path |
+| `--model <id>` | No | Override model (default: `fal-ai/creative-upscaler`) |
+
+### run
+
+Run any fal.ai model directly.
+
+```bash
+oanim assets run --model fal-ai/flux/schnell --input '{"prompt": "a mountain"}' --out public/mountain.png
+```
+
+| Flag | Required | Description |
+|---|---|---|
+| `--model <id>` | Yes | fal.ai model ID |
+| `--input <json>` | Yes | JSON input for the model |
+| `--out <path>` | No | Download result URL to file |
+
+## When to use each command
+
+| Scenario | Command |
+|---|---|
+| Background textures or gradients | `gen-image` |
+| Product screenshots with edits | `edit-image` |
+| Product photos for compositing | `remove-bg` |
+| Low-res logos or icons | `upscale` |
+| Any other fal.ai model | `run` |
+
+## Tips
+
+- Generate backgrounds at your video resolution (1920x1080 by default)
+- Use `staticFile()` in Remotion to reference files in `public/`
+- Remove backgrounds on product shots so they composite cleanly over gradient backgrounds
+- For text-heavy videos, generate abstract/blurred backgrounds that don't compete with text
+
+## Pricing
+
+Asset generation is billed per operation. See [Credits & Billing](/platform/credits-and-billing) for current model costs.

@@ -1,0 +1,147 @@
+---
+title: UI Components
+description: Composable building blocks for scene layouts
+---
+
+8 UI components for building polished scene layouts.
+
+## SafeArea
+
+Title-safe padding container. Keeps content within broadcast-safe margins.
+
+```tsx
+import { SafeArea } from '@oanim/core';
+
+<SafeArea style={{ justifyContent: 'center', alignItems: 'center' }}>
+  <div>Content stays within safe margins</div>
+</SafeArea>
+```
+
+Use `SafeArea` as the content layer in every scene to ensure text and UI elements don't get clipped at edges.
+
+## Background
+
+Gradient or solid-color backgrounds.
+
+```tsx
+import { Background, palettes } from '@oanim/core';
+
+// Gradient background
+<Background gradient={`linear-gradient(135deg, ${palettes.dark.bg}, ${palettes.dark.bgAlt})`} />
+
+// Solid background
+<Background color="#0a0a0a" />
+```
+
+Place `Background` as the first child inside `AbsoluteFill` so it sits behind all other layers.
+
+## GlowOrb
+
+Animated glowing orb for ambient visual interest.
+
+```tsx
+import { GlowOrb } from '@oanim/core';
+
+<GlowOrb color="rgba(99, 102, 241, 0.2)" x={30} y={40} />
+```
+
+| Prop | Type | Description |
+|---|---|---|
+| `color` | `string` | Glow color (use with alpha for subtlety) |
+| `x` | `number` | Horizontal position (percentage) |
+| `y` | `number` | Vertical position (percentage) |
+
+Place between `Background` and content layers for a soft ambient effect.
+
+## Terminal
+
+Typewriter-style terminal window. Pairs naturally with `TypewriterText`.
+
+```tsx
+import { Terminal, TypewriterText } from '@oanim/core';
+
+<Terminal>
+  <TypewriterText text="npm install @oanim/core" delay={0.5} />
+</Terminal>
+```
+
+Renders a dark terminal chrome with a title bar. Content is displayed in monospace font.
+
+## Card
+
+Glassmorphism card with spring entrance animation.
+
+```tsx
+import { Card } from '@oanim/core';
+
+<Card>
+  <h2>Feature Title</h2>
+  <p>Feature description goes here.</p>
+</Card>
+```
+
+Cards have a frosted glass effect with subtle borders. Use for feature highlights, metric displays, and content grouping.
+
+## Badge
+
+Pill-shaped label component.
+
+```tsx
+import { Badge } from '@oanim/core';
+
+<Badge>NEW</Badge>
+<Badge>v2.0</Badge>
+```
+
+Small pill-shaped labels. Use for version numbers, tags, categories, or status indicators.
+
+## Grid
+
+Subtle background grid overlay.
+
+```tsx
+import { Grid } from '@oanim/core';
+
+<Grid />
+```
+
+Renders a faint grid pattern. Place between `Background` and content layers for a technical/engineered aesthetic.
+
+## Vignette
+
+Edge-darkening overlay.
+
+```tsx
+import { Vignette } from '@oanim/core';
+
+<Vignette intensity={0.4} />
+```
+
+| Prop | Type | Description |
+|---|---|---|
+| `intensity` | `number` | Darkness level (0 = none, 1 = fully dark edges) |
+
+Place as one of the last layers to subtly draw focus to the center of the frame.
+
+## Scene layering pattern
+
+Combine components in this order for a polished scene:
+
+```tsx
+<AbsoluteFill>
+  {/* 1. Background */}
+  <Background gradient="linear-gradient(135deg, #0a0a0a, #1a1a2e)" />
+
+  {/* 2. Ambient elements */}
+  <GlowOrb color="rgba(99, 102, 241, 0.2)" x={30} y={40} />
+  <Grid />
+
+  {/* 3. Overlays */}
+  <Vignette intensity={0.4} />
+
+  {/* 4. Content */}
+  <SafeArea style={{ justifyContent: 'center', alignItems: 'center' }}>
+    {/* Your animated content here */}
+  </SafeArea>
+</AbsoluteFill>
+```

@@ -1,0 +1,70 @@
+---
+title: Usage
+description: Track credit balance and per-operation usage history
+---
+
+## View balance and summary
+
+```bash
+oanim usage
+```
+
+Shows your current credit balance and a 7-day usage summary:
+
+```
+  Balance: $8.45
+
+  Last 7 days:
+
+  Date         Cost       Requests
+  2026-02-22   $0.0310    5
+  2026-02-21   $0.0530    8
+  2026-02-20   $0.0060    2
+
+  Total: $0.0900
+```
+
+A low-balance warning appears when your balance drops below $1.
+
+## Detailed history
+
+```bash
+oanim usage history
+```
+
+Shows per-record usage with provider, model, operation, and cost:
+
+```
+  Date         Provider   Model               Operation        Cost
+  2026-02-22   fal.ai     flux/schnell        gen-image        $0.0030
+  2026-02-22   fal.ai     flux/dev/i2i        edit-image       $0.0250
+  2026-02-21   fal.ai     birefnet            remove-bg        $0.0050
+```
+
+### Options
+
+| Flag | Default | Description |
+|---|---|---|
+| `-l, --limit <n>` | `20` | Number of records to show |
+| `-d, --days <n>` | `30` | Number of days to look back |
+
+```bash
+# Show last 50 records from the past 90 days
+oanim usage history --limit 50 --days 90
+```
+
+## Low balance
+
+When your balance drops below $1, you'll see a warning on every `usage` and `billing` command:
+
+```
+  ⚠ Low balance — run oanim billing buy to add credits
+```
+
+Purchase more credits with:
+
+```bash
+oanim billing buy --amount 10
+```
+
+See [Credits & Billing](/platform/credits-and-billing) for pricing details.

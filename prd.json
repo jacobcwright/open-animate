@@ -623,7 +623,8 @@
         "All pages render without errors",
         "Code examples are accurate and tested"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "21-page Mintlify docs site at packages/docs/. Two tabs: Documentation (14 pages — quickstart, CLI, core presets, components, tokens, guides) and Platform (7 pages — overview, auth, API keys, cloud rendering, billing, usage, self-hosting). All content sourced from existing references, source code, and README. Orange branding (#FF8000), GitHub link. pnpm build passes."
     },
     {
       "id": "OANIM-036",

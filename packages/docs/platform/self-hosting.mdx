@@ -1,0 +1,131 @@
+---
+title: Self-Hosting
+description: Run the oanim platform on your own infrastructure
+---
+
+oanim is fully open source (Apache 2.0). You can run the entire platform on your own infrastructure.
+
+## Prerequisites
+
+- Node.js 18+
+- PostgreSQL 15+
+- A [fal.ai](https://fal.ai) API key (for asset generation)
+- AWS credentials with S3 access (for cloud rendering)
+
+## Quick start with Docker
+
+### 1. Start the database
+
+```bash
+git clone https://github.com/jacobcwright/open-animate.git
+cd open-animate/packages/api
+
+docker-compose up -d
+```
+
+This starts PostgreSQL 15 on port 5432.
+
+### 2. Configure environment
+
+Create `.env` from the example:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+
+```bash
+# Database
+DATABASE_URL=postgres://oanim:oanim@localhost:5432/oanim
+
+# Authentication (Clerk)
+CLERK_DOMAIN=your-app.clerk.accounts.dev
+CLERK_PUBLISHABLE_KEY=pk_test_...
+
+# Storage (S3-compatible)
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+AWS_REGION=us-east-1
+S3_BUCKET=oanim-renders
+
+# Cloud rendering (Remotion Lambda)
+REMOTION_FUNCTION_NAME=remotion-render-xxx
+
+# Server
+PORT=8000
+```
+
+### 3. Start the API
+
+```bash
+pnpm install
+pnpm build
+pnpm start
+```
+
+### 4. Point the CLI at your instance
+
+```bash
+# Via environment variable
+export ANIMATE_API_URL=http://localhost:8000
+
+# Or via config file
+# ~/.oanim/config.yaml
+# api_url: http://localhost:8000
+```
+
+Then use the CLI normally:
+
+```bash
+oanim login
+oanim assets gen-image --prompt "gradient" --out bg.png
+```
+
+## Environment variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `CLERK_DOMAIN` | Yes | Clerk OAuth domain |
+| `CLERK_PUBLISHABLE_KEY` | Yes | Clerk publishable key |
+| `AWS_ACCESS_KEY_ID` | For cloud render | AWS access key |
+| `AWS_SECRET_ACCESS_KEY` | For cloud render | AWS secret key |
+| `AWS_REGION` | For cloud render | AWS region |
+| `S3_BUCKET` | For cloud render | S3 bucket for render uploads |
+| `REMOTION_FUNCTION_NAME` | For cloud render | Remotion Lambda function name |
+| `PORT` | No | Server port (default: 8000) |
+
+## Direct provider keys
+
+For asset generation without running the platform API, users can set `ANIMATE_FAL_KEY` to go directly to fal.ai:
+
+```bash
+export ANIMATE_FAL_KEY=your-fal-key
+oanim assets gen-image --prompt "gradient" --out bg.png
+```
+
+This bypasses the platform entirely — no API server, database, or auth required.
+
+## docker-compose.yml
+
+The included `docker-compose.yml` runs PostgreSQL:
+
+```yaml
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: oanim
+      POSTGRES_PASSWORD: oanim
+      POSTGRES_DB: oanim
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+```
+
+For production, add proper passwords, SSL, and backup configuration.

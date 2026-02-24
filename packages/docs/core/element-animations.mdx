@@ -1,0 +1,121 @@
+---
+title: Element Animations
+description: 8 animation presets that return CSSProperties — drop them on any div
+---
+
+All element animations take `{ frame, fps, delay?, spring? }` and return `CSSProperties`. Spread them onto any element's `style` prop.
+
+```tsx
+import { fadeUp } from '@oanim/core';
+import { useCurrentFrame, useVideoConfig } from 'remotion';
+
+const frame = useCurrentFrame();
+const { fps } = useVideoConfig();
+
+<div style={fadeUp({ frame, fps, delay: 0.2 })}>Content</div>
+```
+
+## Parameters
+
+| Param | Type | Default | Description |
+|---|---|---|---|
+| `frame` | `number` | required | Current frame from `useCurrentFrame()` |
+| `fps` | `number` | required | FPS from `useVideoConfig()` |
+| `delay` | `number` | `0` | Delay in seconds before animation starts |
+| `spring` | `SpringPreset` | `'snappy'` | Spring preset name |
+
+## fadeUp
+
+Fades in while moving up 20px. The default go-to for text and UI elements.
+
+```tsx
+import { fadeUp } from '@oanim/core';
+
+<div style={fadeUp({ frame, fps, delay: 0.2 })}>Content</div>
+```
+
+## fadeDown
+
+Fades in while moving down 20px. Good for dropdown menus and secondary info.
+
+```tsx
+import { fadeDown } from '@oanim/core';
+
+<div style={fadeDown({ frame, fps, delay: 0.2 })}>Content</div>
+```
+
+## slideInLeft / slideInRight
+
+Slides in from the left or right with fade. Good for side-by-side comparisons.
+
+```tsx
+import { slideInLeft, slideInRight } from '@oanim/core';
+
+<div style={slideInLeft({ frame, fps, delay: 0.2 })}>Left panel</div>
+<div style={slideInRight({ frame, fps, delay: 0.3 })}>Right panel</div>
+```
+
+## popIn
+
+Spring-based scale entrance (0.5 to 1) with bounce. Great for badges, icons, and CTAs.
+
+```tsx
+import { popIn } from '@oanim/core';
+
+<div style={popIn({ frame, fps, delay: 0.1 })}>Click me</div>
+```
+
+## blurIn
+
+Fades in from blurry to sharp. Cinematic feel, good for hero text.
+
+```tsx
+import { blurIn } from '@oanim/core';
+
+<div style={blurIn({ frame, fps, delay: 0.2 })}>Title</div>
+```
+
+## elasticScale
+
+Wobbly spring scale entrance. Playful and attention-grabbing.
+
+```tsx
+import { elasticScale } from '@oanim/core';
+
+<div style={elasticScale({ frame, fps })}>Boing!</div>
+```
+
+## perspectiveRotateIn
+
+3D rotation entrance from below. Dramatic, good for cards and panels.
+
+```tsx
+import { perspectiveRotateIn } from '@oanim/core';
+
+<div style={perspectiveRotateIn({ frame, fps, delay: 0.3 })}>Card</div>
+```
+
+## Staggering multiple elements
+
+Use the `delay` parameter to create staggered entrances:
+
+```tsx
+<div style={fadeUp({ frame, fps, delay: 0.0 })}>First</div>
+<div style={fadeUp({ frame, fps, delay: 0.1 })}>Second</div>
+<div style={fadeUp({ frame, fps, delay: 0.2 })}>Third</div>
+```
+
+## Combining with inline styles
+
+Since animations return `CSSProperties`, spread them alongside your own styles:
+
+```tsx
+<div style={{
+  ...fadeUp({ frame, fps, delay: 0.2 }),
+  fontSize: 48,
+  fontWeight: 700,
+  color: '#ffffff',
+}}>
+  Styled and animated
+</div>
+```

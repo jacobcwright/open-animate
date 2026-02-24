@@ -1,0 +1,135 @@
+---
+title: Design Tokens
+description: Color palettes, font stacks, and spacing scale
+---
+
+Design tokens provide consistent visual styling across your compositions.
+
+## Color palettes
+
+5 built-in palettes, each with 7 color slots:
+
+```tsx
+import { palettes } from '@oanim/core';
+
+const colors = palettes.dark;
+// colors.primary, colors.secondary, colors.accent,
+// colors.bg, colors.bgAlt, colors.text, colors.textMuted
+```
+
+### dark
+
+| Token | Value | Usage |
+|---|---|---|
+| `primary` | `#6366f1` | Primary accent (indigo) |
+| `secondary` | `#8b5cf6` | Secondary accent (violet) |
+| `accent` | `#06b6d4` | Highlight (cyan) |
+| `bg` | `#0a0a0a` | Main background |
+| `bgAlt` | `#141414` | Alternate background |
+| `text` | `#f1f5f9` | Primary text |
+| `textMuted` | `#94a3b8` | Secondary text |
+
+### light
+
+| Token | Value | Usage |
+|---|---|---|
+| `primary` | `#4f46e5` | Primary accent (indigo) |
+| `secondary` | `#7c3aed` | Secondary accent (violet) |
+| `accent` | `#0891b2` | Highlight (cyan) |
+| `bg` | `#ffffff` | Main background |
+| `bgAlt` | `#f8fafc` | Alternate background |
+| `text` | `#0f172a` | Primary text |
+| `textMuted` | `#64748b` | Secondary text |
+
+### midnight
+
+| Token | Value | Usage |
+|---|---|---|
+| `primary` | `#818cf8` | Primary accent (light indigo) |
+| `secondary` | `#a78bfa` | Secondary accent (light violet) |
+| `accent` | `#22d3ee` | Highlight (light cyan) |
+| `bg` | `#020617` | Deep dark background |
+| `bgAlt` | `#0f172a` | Alternate background |
+| `text` | `#e2e8f0` | Primary text |
+| `textMuted` | `#64748b` | Secondary text |
+
+### sunset
+
+| Token | Value | Usage |
+|---|---|---|
+| `primary` | `#f97316` | Primary accent (orange) |
+| `secondary` | `#f59e0b` | Secondary accent (amber) |
+| `accent` | `#ef4444` | Highlight (red) |
+| `bg` | `#0c0a09` | Warm dark background |
+| `bgAlt` | `#1c1917` | Alternate background |
+| `text` | `#fafaf9` | Primary text |
+| `textMuted` | `#a8a29e` | Secondary text |
+
+### ocean
+
+| Token | Value | Usage |
+|---|---|---|
+| `primary` | `#0ea5e9` | Primary accent (sky blue) |
+| `secondary` | `#06b6d4` | Secondary accent (cyan) |
+| `accent` | `#14b8a6` | Highlight (teal) |
+| `bg` | `#0c1222` | Deep blue background |
+| `bgAlt` | `#162032` | Alternate background |
+| `text` | `#e0f2fe` | Primary text |
+| `textMuted` | `#7dd3fc` | Secondary text |
+
+## Font stacks
+
+Pre-configured font family strings for common pairings:
+
+```tsx
+import { fonts } from '@oanim/core';
+```
+
+### Heading fonts
+
+| Key | Value |
+|---|---|
+| `fonts.heading.inter` | `Inter, sans-serif` |
+| `fonts.heading.instrumentSerif` | `"Instrument Serif", serif` |
+| `fonts.heading.spaceGrotesk` | `"Space Grotesk", sans-serif` |
+| `fonts.heading.dmSans` | `"DM Sans", sans-serif` |
+
+### Body fonts
+
+| Key | Value |
+|---|---|
+| `fonts.body.inter` | `Inter, sans-serif` |
+| `fonts.body.dmSans` | `"DM Sans", sans-serif` |
+| `fonts.body.sourceCodePro` | `"Source Code Pro", monospace` |
+
+### Monospace fonts
+
+| Key | Value |
+|---|---|
+| `fonts.mono.jetbrainsMono` | `"JetBrains Mono", monospace` |
+| `fonts.mono.firaCode` | `"Fira Code", monospace` |
+| `fonts.mono.geistMono` | `"Geist Mono", monospace` |
+
+<Note>
+Load fonts via `@remotion/google-fonts` or `staticFile()` for local fonts. The token values are CSS `font-family` strings — they don't load the font files.
+</Note>
+
+## Spacing scale
+
+Consistent spacing values in pixels, based on a 4px unit scaled for 1920x1080:
+
+```tsx
+import { spacing } from '@oanim/core';
+```
+
+| Key | Value | Typical use |
+|---|---|---|
+| `xs` | `4px` | Tight spacing, icon gaps |
+| `sm` | `8px` | Small padding |
+| `md` | `16px` | Default padding |
+| `lg` | `24px` | Section padding |
+| `xl` | `32px` | Large gaps |
+| `2xl` | `48px` | Major section spacing |
+| `3xl` | `64px` | Hero spacing |
+| `4xl` | `96px` | Large layout margins |
+| `5xl` | `128px` | Full-width margins |

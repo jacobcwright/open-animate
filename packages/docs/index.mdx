@@ -1,0 +1,65 @@
+---
+title: Introduction
+description: CLI + component library for creating premium motion graphics with Remotion
+---
+
+# oanim
+
+**CLI + component library for creating premium motion graphics with [Remotion](https://www.remotion.dev/).**
+
+oanim gives you production-ready animation presets, transitions, and UI components so you can go from idea to rendered video in minutes — not hours.
+
+## What you get
+
+<CardGroup cols={2}>
+  <Card title="Animation Presets" icon="wand-magic-sparkles">
+    8 element animations, 7 spring presets, 5 easing curves — all returning plain `CSSProperties`.
+  </Card>
+  <Card title="14 Transitions" icon="shuffle">
+    Drop-in presets for `@remotion/transitions` TransitionSeries — fadeBlur, wipe, clipCircle, and more.
+  </Card>
+  <Card title="UI Components" icon="layer-group">
+    SafeArea, Background, GlowOrb, Terminal, Card, Badge, Grid, Vignette — composable building blocks.
+  </Card>
+  <Card title="Typography" icon="font">
+    AnimatedCharacters, TypewriterText, CountUp — staggered entrances and animated counters.
+  </Card>
+  <Card title="Design Tokens" icon="palette">
+    5 color palettes, font stacks, and a spacing scale tuned for 1920x1080.
+  </Card>
+  <Card title="CLI Workflow" icon="terminal">
+    `oanim init` scaffolds a project, `oanim render` exports MP4, `oanim assets` generates images with AI.
+  </Card>
+</CardGroup>
+
+## Architecture
+
+```
+oanim/
+├── packages/
+│   ├── core/       @oanim/core — animation presets + components
+│   └── cli/        oanim CLI (init, render, assets)
+├── animate-skill/  Agent skill (SKILL.md + references + templates)
+└── examples/       6 working Remotion projects
+```
+
+### How it works
+
+```
+oanim init → scaffold Remotion project with @oanim/core
+          → compose scenes using presets + components
+          → npx remotion studio (preview)
+          → oanim render (export MP4)
+          → oanim assets (AI image generation)
+```
+
+## Quick links
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Create your first video in 60 seconds.
+  </Card>
+  <Card title="Examples" icon="grid-2" href="/examples">
+    Browse 6 working example projects.
+  </Card>
+</CardGroup>

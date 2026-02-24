@@ -1,0 +1,100 @@
+---
+title: Credits & Billing
+description: Pay-as-you-go credits for platform services
+---
+
+The oanim platform uses a prepaid credit system. Purchase credits via Stripe and they're deducted per-operation as you use asset generation and cloud rendering.
+
+## Check your balance
+
+```bash
+oanim billing
+```
+
+Shows your current credit balance and recent purchase history.
+
+## Purchase credits
+
+```bash
+oanim billing buy --amount 25
+```
+
+| Detail | Value |
+|---|---|
+| Minimum purchase | $5 |
+| Bonus threshold | $50+ |
+| Bonus amount | 10% extra credits |
+
+**Example:** A $100 purchase gets you $110 in credits.
+
+The command opens a Stripe checkout page in your browser. After payment completes, credits are added to your account immediately.
+
+## Asset generation costs
+
+Costs are per-operation and vary by model:
+
+### Image generation
+
+| Model | Cost |
+|---|---|
+| `fal-ai/flux/schnell` (default) | $0.003 |
+| `fal-ai/flux/dev` | $0.025 |
+| `fal-ai/flux-pro/v1.1` | $0.04 |
+| `fal-ai/flux-pro/v1.1-ultra` | $0.06 |
+| `fal-ai/recraft-v3` | $0.04 |
+| `fal-ai/ideogram/v2` | $0.08 |
+| `fal-ai/stable-diffusion-v35-large` | $0.035 |
+
+### Image editing
+
+| Model | Cost |
+|---|---|
+| `fal-ai/flux/dev/image-to-image` (default) | $0.025 |
+| `fal-ai/flux-pro/v1/fill` | $0.05 |
+| `fal-ai/flux/dev/inpainting` | $0.03 |
+
+### Background removal
+
+| Model | Cost |
+|---|---|
+| `fal-ai/birefnet` (default) | $0.005 |
+| `fal-ai/imageutils/rembg` | $0.005 |
+
+### Upscaling
+
+| Model | Cost |
+|---|---|
+| `fal-ai/creative-upscaler` (default) | $0.025 |
+| `fal-ai/clarity-upscaler` | $0.025 |
+
+### Video generation
+
+| Model | Cost |
+|---|---|
+| `fal-ai/kling-video/v1/standard/text-to-video` | $0.10 |
+| `fal-ai/kling-video/v1/pro/text-to-video` | $0.35 |
+| `fal-ai/minimax-video/video-01-live` | $0.30 |
+| `fal-ai/hunyuan-video` | $0.50 |
+| `fal-ai/luma-dream-machine` | $0.30 |
+| `fal-ai/runway-gen3/turbo/image-to-video` | $0.25 |
+| `fal-ai/veo2` | $0.50 |
+
+### Other
+
+| Model | Cost |
+|---|---|
+| `fal-ai/stable-audio` | $0.04 |
+| `fal-ai/flux/dev/controlnet` | $0.03 |
+| `fal-ai/flux/dev/ip-adapter` | $0.03 |
+| Unknown models | $0.05 (default) |
+
+## Direct provider key
+
+If you prefer to skip the platform billing system, set `ANIMATE_FAL_KEY` with your own fal.ai API key. Requests go directly to fal.ai and are billed by them:
+
+```bash
+export ANIMATE_FAL_KEY=your-fal-key
+oanim assets gen-image --prompt "gradient" --out bg.png
+```
+
+This bypasses oanim credit checks entirely.

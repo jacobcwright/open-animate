@@ -1,0 +1,67 @@
+---
+title: Platform Overview
+description: Hosted services for oanim — media gateway, cloud rendering, and more
+---
+
+oanim is an **open-core platform** — everything is open source (Apache 2.0), and you can self-host it all for free. The hosted platform at `api.oanim.dev` provides managed infrastructure so you don't have to.
+
+## Platform services
+
+<CardGroup cols={2}>
+  <Card title="Media Gateway" icon="images">
+    Multi-provider AI image generation. Currently backed by fal.ai with Runway and other providers planned. Handles routing, cost metering, and usage tracking.
+  </Card>
+  <Card title="Cloud Rendering" icon="cloud">
+    `oanim render --cloud` sends your composition to hosted infrastructure and streams back the rendered MP4. No local Chromium or ffmpeg needed.
+  </Card>
+  <Card title="Authentication" icon="lock">
+    Browser-based OAuth via `oanim login`. API keys for CI/CD and programmatic access.
+  </Card>
+  <Card title="Usage & Billing" icon="chart-bar">
+    Pay-as-you-go credits with per-operation cost tracking. Purchase credits via Stripe with a 10% bonus on purchases over $50.
+  </Card>
+</CardGroup>
+
+## How it connects
+
+```
+oanim CLI → api.oanim.dev → fal.ai (media generation)
+                           → S3 + Remotion Lambda (cloud rendering)
+                           → PostgreSQL (usage tracking)
+                           → Stripe (billing)
+```
+
+## Authentication chain
+
+Credentials resolve in this order:
+
+1. Explicit `ANIMATE_API_KEY` environment variable
+2. `~/.oanim/credentials.yaml` (saved by `oanim login`)
+3. Direct provider key (`ANIMATE_FAL_KEY`) — bypasses platform, goes direct to fal.ai
+
+## Free vs Hosted
+
+| Feature | Self-hosted | Hosted platform |
+|---|---|---|
+| `@oanim/core` library | Yes | Yes |
+| `oanim init` / `oanim render` (local) | Yes | Yes |
+| AI asset generation | Bring your own fal.ai key | Pay-per-use via credits |
+| Cloud rendering | Run your own infra | `oanim render --cloud` |
+| Usage tracking | N/A | Built-in dashboard |
+| API keys | N/A | Create & manage via CLI |
+
+## Getting started
+
+```bash
+# Sign in
+oanim login
+
+# Check your balance
+oanim usage
+
+# Purchase credits
+oanim billing buy --amount 10
+
+# Generate an image
+oanim assets gen-image --prompt "dark gradient" --out public/bg.png
+```

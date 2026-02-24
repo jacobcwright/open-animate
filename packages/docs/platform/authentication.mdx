@@ -1,0 +1,70 @@
+---
+title: Authentication
+description: Sign in to the oanim platform via browser OAuth or API key
+---
+
+## Browser login
+
+```bash
+oanim login
+```
+
+Opens your browser for OAuth authentication. After signing in, credentials are saved to `~/.oanim/credentials.yaml` (file permissions: `0600`).
+
+The flow:
+1. CLI starts a local HTTP server on a random port
+2. Browser opens `api.oanim.dev/api/v1/auth/cli/login?port=<port>`
+3. After OAuth, the API sends an API key back to the local server
+4. CLI verifies the key and saves it
+
+## Token-based login
+
+For CI/CD environments or headless use:
+
+```bash
+oanim login --token <your-api-key>
+```
+
+This verifies the key against the API and saves it to credentials. No browser required.
+
+## Credential resolution
+
+When the CLI makes API calls, credentials resolve in this order:
+
+| Priority | Source | Description |
+|---|---|---|
+| 1 | `ANIMATE_API_KEY` env var | Environment variable — highest priority |
+| 2 | `~/.oanim/credentials.yaml` `api_key` | Saved by `oanim login` |
+| 3 | `~/.oanim/credentials.yaml` `token` | Legacy token field |
+
+For asset generation only, there's an additional bypass:
+
+| Priority | Source | Description |
+|---|---|---|
+| Special | `ANIMATE_FAL_KEY` env var | Goes direct to fal.ai, skipping the platform |
+
+## Check who you're logged in as
+
+```bash
+oanim whoami
+```
+
+## Log out
+
+```bash
+oanim logout
+```
+
+Clears saved credentials from `~/.oanim/credentials.yaml`.
+
+## Configuration
+
+The API URL defaults to `https://api.oanim.dev`. Override it with:
+
+- `ANIMATE_API_URL` environment variable
+- `api_url` field in `~/.oanim/config.yaml`
+
+```yaml
+# ~/.oanim/config.yaml
+api_url: http://localhost:8000
+```
