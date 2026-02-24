@@ -1,18 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" fill="none">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0a0a0a"/>
-      <stop offset="100%" stop-color="#1a1a2e"/>
+      <stop offset="0%" stop-color="#000000"/>
+      <stop offset="100%" stop-color="#0a0a0a"/>
     </linearGradient>
     <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#6366f1"/>
-      <stop offset="50%" stop-color="#a78bfa"/>
-      <stop offset="100%" stop-color="#6366f1"/>
+      <stop offset="0%" stop-color="#ff8700"/>
+      <stop offset="50%" stop-color="#ffb347"/>
+      <stop offset="100%" stop-color="#ff8700"/>
     </linearGradient>
     <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#6366f1" stop-opacity="0"/>
-      <stop offset="50%" stop-color="#6366f1" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#ff8700" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ff8700" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#ff8700" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff8700"/>
+      <stop offset="50%" stop-color="#ffb347"/>
+      <stop offset="100%" stop-color="#ff8700"/>
     </linearGradient>
   </defs>
 
@@ -20,7 +25,7 @@
   <rect width="1200" height="300" rx="12" fill="url(#bg)"/>
 
   <!-- Subtle grid pattern -->
-  <g opacity="0.04" stroke="#ffffff" stroke-width="0.5">
+  <g opacity="0.03" stroke="#ffffff" stroke-width="0.5">
     <line x1="0" y1="60" x2="1200" y2="60"/>
     <line x1="0" y1="120" x2="1200" y2="120"/>
     <line x1="0" y1="180" x2="1200" y2="180"/>
@@ -35,30 +40,30 @@
   <ellipse cx="600" cy="130" rx="300" ry="80" fill="url(#glow)"/>
 
   <!-- Title -->
-  <text x="600" y="140" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="800" fill="#f1f5f9" letter-spacing="-2">open animate</text>
+  <text x="600" y="140" text-anchor="middle" font-family="'Space Grotesk', system-ui, -apple-system, sans-serif" font-size="64" font-weight="600" fill="url(#text-grad)" letter-spacing="-2">open animate</text>
 
   <!-- Accent line -->
   <rect x="480" y="160" width="240" height="2" rx="1" fill="url(#accent)"/>
 
   <!-- Tagline -->
-  <text x="600" y="200" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="400" fill="#94a3b8">the open-source creative suite for AI agents</text>
+  <text x="600" y="200" text-anchor="middle" font-family="'Space Grotesk', system-ui, -apple-system, sans-serif" font-size="20" font-weight="400" fill="#666666">the open-source creative suite for AI agents</text>
 
   <!-- Pill badges -->
   <g transform="translate(365, 225)">
     <!-- Video -->
-    <rect x="0" y="0" width="90" height="28" rx="14" fill="#6366f1" fill-opacity="0.15" stroke="#6366f1" stroke-opacity="0.3" stroke-width="1"/>
-    <text x="45" y="18" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#a78bfa">video</text>
+    <rect x="0" y="0" width="90" height="28" rx="14" fill="#ff8700" fill-opacity="0.1" stroke="#ff8700" stroke-opacity="0.25" stroke-width="1"/>
+    <text x="45" y="18" text-anchor="middle" font-family="'Space Grotesk', system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#ffb347">video</text>
 
     <!-- Images -->
-    <rect x="105" y="0" width="90" height="28" rx="14" fill="#6366f1" fill-opacity="0.15" stroke="#6366f1" stroke-opacity="0.3" stroke-width="1"/>
-    <text x="150" y="18" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#a78bfa">images</text>
+    <rect x="105" y="0" width="90" height="28" rx="14" fill="#ff8700" fill-opacity="0.1" stroke="#ff8700" stroke-opacity="0.25" stroke-width="1"/>
+    <text x="150" y="18" text-anchor="middle" font-family="'Space Grotesk', system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#ffb347">images</text>
 
     <!-- Motion -->
-    <rect x="210" y="0" width="90" height="28" rx="14" fill="#6366f1" fill-opacity="0.15" stroke="#6366f1" stroke-opacity="0.3" stroke-width="1"/>
-    <text x="255" y="18" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#a78bfa">motion</text>
+    <rect x="210" y="0" width="90" height="28" rx="14" fill="#ff8700" fill-opacity="0.1" stroke="#ff8700" stroke-opacity="0.25" stroke-width="1"/>
+    <text x="255" y="18" text-anchor="middle" font-family="'Space Grotesk', system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#ffb347">motion</text>
 
     <!-- Audio -->
-    <rect x="315" y="0" width="90" height="28" rx="14" fill="#6366f1" fill-opacity="0.15" stroke="#6366f1" stroke-opacity="0.3" stroke-width="1"/>
-    <text x="360" y="18" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#a78bfa">audio</text>
+    <rect x="315" y="0" width="90" height="28" rx="14" fill="#ff8700" fill-opacity="0.1" stroke="#ff8700" stroke-opacity="0.25" stroke-width="1"/>
+    <text x="360" y="18" text-anchor="middle" font-family="'Space Grotesk', system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#ffb347">audio</text>
   </g>
 </svg>
