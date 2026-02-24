@@ -36,11 +36,31 @@ function waitForCallback(port: number, timeoutMs = 120_000): Promise<string> {
 
       if (url.pathname === '/callback' && key) {
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(
-          '<html><body style="font-family:system-ui;text-align:center;padding:60px">' +
-            '<h1>Logged in!</h1><p>You can close this window and return to the terminal.</p>' +
-            '</body></html>',
-        );
+        res.end(`<!DOCTYPE html>
+<html><head>
+<title>Open Animate — Logged In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  body { font-family: 'Space Grotesk', system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #000; color: #fafafa; text-align: center; }
+  .logo { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 32px; }
+  .card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 16px; padding: 40px 36px; min-width: 300px; }
+  h1 { font-size: 1.3rem; font-weight: 600; margin: 0 0 8px; letter-spacing: -0.3px; }
+  .check { width: 48px; height: 48px; margin: 0 auto 16px; border-radius: 50%; background: linear-gradient(135deg, #ff8700, #ffb347); display: flex; align-items: center; justify-content: center; }
+  .check svg { width: 24px; height: 24px; }
+  p { color: #666; font-size: 0.85rem; margin: 0; }
+</style>
+</head><body>
+<div>
+  <div class="logo">open animate</div>
+  <div class="card">
+    <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h1>Logged in</h1>
+    <p>You can close this window and return to the terminal.</p>
+  </div>
+</div>
+</body></html>`);
         clearTimeout(timer);
         server.close();
         resolve(key);
