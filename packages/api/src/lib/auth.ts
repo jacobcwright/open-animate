@@ -4,6 +4,12 @@ import { eq } from 'drizzle-orm';
 import { db, users, apiKeys } from '../db/index.js';
 import { hashApiKey } from './security.js';
 
+/** Extract the Clerk Frontend API domain from a publishable key. */
+export function clerkFapi(publishableKey: string): string {
+  const encoded = publishableKey.replace(/^pk_(test|live)_/, '');
+  return Buffer.from(encoded, 'base64').toString().replace(/\$$/, '');
+}
+
 export type AuthUser = {
   id: string;
   clerkId: string;
@@ -54,11 +60,11 @@ async function authenticateApiKey(key: string): Promise<AuthUser | null> {
 }
 
 async function authenticateClerkJwt(token: string): Promise<AuthUser | null> {
-  const clerkDomain = process.env.CLERK_DOMAIN;
-  if (!clerkDomain) return null;
+  const domain = clerkFapi(process.env.CLERK_PUBLISHABLE_KEY ?? '');
+  if (!domain) return null;
 
   try {
-    const JWKS = createRemoteJWKSet(new URL(`https://${clerkDomain}/.well-known/jwks.json`));
+    const JWKS = createRemoteJWKSet(new URL(`https://${domain}/.well-known/jwks.json`));
     const { payload } = await jwtVerify(token, JWKS);
 
     const clerkId = payload.sub;

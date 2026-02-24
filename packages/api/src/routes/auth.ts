@@ -3,7 +3,7 @@ import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { eq } from 'drizzle-orm';
 import { db, users, apiKeys, loginStates } from '../db/index.js';
 import { generateApiKey } from '../lib/security.js';
-import { requireAuth, type AuthUser } from '../lib/auth.js';
+import { requireAuth, clerkFapi, type AuthUser } from '../lib/auth.js';
 import { authRateLimit } from '../lib/rate-limit.js';
 
 const auth = new Hono<{ Variables: { user: AuthUser } }>();
@@ -18,8 +18,8 @@ auth.get('/cli/login', async (c) => {
   const port = c.req.query('port');
   if (!port) return c.json({ error: 'Missing port parameter' }, 400);
 
-  const clerkDomain = process.env.CLERK_DOMAIN?.replace(/^https?:\/\//, '');
   const clerkPubKey = process.env.CLERK_PUBLISHABLE_KEY ?? '';
+  const clerkDomain = clerkFapi(clerkPubKey);
   if (!clerkDomain) return c.json({ error: 'Server misconfigured' }, 500);
 
   const state = crypto.randomUUID();
@@ -70,7 +70,7 @@ auth.get('/cli/login', async (c) => {
   ></script>
   <script>
     window.addEventListener('load', async () => {
-      await window.Clerk.load({ proxyUrl: 'https://${clerkDomain}' });
+      await window.Clerk.load();
       if (window.Clerk.user) {
         const token = await window.Clerk.session.getToken();
         const email = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
@@ -106,19 +106,19 @@ auth.get('/cli/callback', async (c) => {
   // Clerk's forceRedirectUrl lands here without a token.
   // Serve a tiny page that loads the Clerk session and re-submits with the JWT.
   if (!clerkToken) {
-    const clerkDomain = process.env.CLERK_DOMAIN?.replace(/^https?:\/\//, '');
     const clerkPubKey = process.env.CLERK_PUBLISHABLE_KEY ?? '';
+    const clerkFapiDomain = clerkFapi(clerkPubKey);
     return c.html(`<!DOCTYPE html>
 <html><head><title>oanim — Completing sign-in…</title>
 <style>body{font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0a0a0a;color:#fafafa;}</style>
 </head><body><p>Completing sign-in…</p>
 <script async crossorigin="anonymous"
   data-clerk-publishable-key="${clerkPubKey}"
-  src="https://${clerkDomain}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+  src="https://${clerkFapiDomain}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
   type="text/javascript"></script>
 <script>
 window.addEventListener('load', async () => {
-  await window.Clerk.load({ proxyUrl: 'https://${clerkDomain}' });
+  await window.Clerk.load();
   if (window.Clerk.session) {
     const token = await window.Clerk.session.getToken();
     const email = window.Clerk.user?.primaryEmailAddress?.emailAddress || '';
@@ -155,10 +155,10 @@ window.addEventListener('load', async () => {
 
   // Verify Clerk JWT
   try {
-    const clerkDomain = process.env.CLERK_DOMAIN?.replace(/^https?:\/\//, '');
-    if (!clerkDomain) return c.json({ error: 'Server misconfigured' }, 500);
+    const jwksDomain = clerkFapi(process.env.CLERK_PUBLISHABLE_KEY ?? '');
+    if (!jwksDomain) return c.json({ error: 'Server misconfigured' }, 500);
 
-    const JWKS = createRemoteJWKSet(new URL(`https://${clerkDomain}/.well-known/jwks.json`));
+    const JWKS = createRemoteJWKSet(new URL(`https://${jwksDomain}/.well-known/jwks.json`));
     const { payload } = await jwtVerify(clerkToken, JWKS);
 
     const clerkId = payload.sub;
