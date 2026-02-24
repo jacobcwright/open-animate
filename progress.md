@@ -842,3 +842,10 @@ Verified in Remotion Studio: all 6 scenes render, video plays as background, aud
 - npm packages published: `@oanim/core@0.1.0`, `oanim@0.1.0`
 - Agent skill installable via `npx skills add jacobcwright/open-animate`
 - ClawHub listing at clawhub.ai/jacobcwright/open-animate
+
+### Branded success page + splash SVG
+
+- Updated CLI localhost callback success page (`packages/cli/src/commands/login.ts`) with matching branding: Space Grotesk font, dark card, orange gradient checkmark, "open animate" logo
+- Updated `.github/splash.svg` (README hero image) from purple/indigo color scheme to orange brand identity: `#ff8700`/`#ffb347` gradient on title text, accent line, and pill badges; pure black background; Space Grotesk font
+
+**Commits:** `7998bcc` (success page), `a246fa9` (splash SVG)
