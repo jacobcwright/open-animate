@@ -6,3 +6,9 @@ out/
 .env
 .env.local
 .DS_Store
+
+# skills install artifacts (local per-machine)
+.agents/
+.agent/
+.claude/skills/
+skills-lock.json
