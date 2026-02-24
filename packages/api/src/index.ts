@@ -9,6 +9,7 @@ import { renderRoutes } from './routes/render.js';
 import { usageRoutes } from './routes/usage.js';
 import { mediaRoutes } from './routes/media.js';
 import { billingRoutes } from './routes/billing.js';
+import { adminRoutes } from './routes/admin.js';
 import { db } from './db/index.js';
 import { startBoss } from './lib/boss.js';
 import { registerRenderWorker } from './workers/render.js';
@@ -27,6 +28,7 @@ app.route('/api/v1/render', renderRoutes);
 app.route('/api/v1/usage', usageRoutes);
 app.route('/api/v1/media', mediaRoutes);
 app.route('/api/v1/billing', billingRoutes);
+app.route('/admin', adminRoutes);
 
 const port = parseInt(process.env.PORT ?? '8000', 10);
 
