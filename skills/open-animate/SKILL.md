@@ -9,10 +9,6 @@ metadata:
     requires:
       bins:
         - npx
-      env:
-        - ANIMATE_FAL_KEY
-        - ANIMATE_API_KEY
-    primaryEnv: ANIMATE_FAL_KEY
     install:
       - kind: node
         package: oanim
