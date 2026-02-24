@@ -36,9 +36,13 @@ function getFalKey(): string {
   return key;
 }
 
+function falAuthHeader(): Record<string, string> {
+  return { Authorization: `Key ${getFalKey()}` };
+}
+
 function falHeaders(): Record<string, string> {
   return {
-    Authorization: `Key ${getFalKey()}`,
+    ...falAuthHeader(),
     'Content-Type': 'application/json',
   };
 }
@@ -90,7 +94,7 @@ async function falQueueSubmit(model: string, input: Record<string, unknown>): Pr
 async function falQueueStatus(model: string, requestId: string): Promise<FalQueueStatusResponse> {
   const res = await fetch(
     `https://queue.fal.run/${model}/requests/${requestId}/status`,
-    { headers: falHeaders() },
+    { headers: falAuthHeader() },
   );
 
   if (!res.ok) {
@@ -104,7 +108,7 @@ async function falQueueStatus(model: string, requestId: string): Promise<FalQueu
 async function falQueueResult(model: string, requestId: string): Promise<FalResult> {
   const res = await fetch(
     `https://queue.fal.run/${model}/requests/${requestId}`,
-    { headers: falHeaders() },
+    { headers: falAuthHeader() },
   );
 
   if (!res.ok) {
@@ -112,8 +116,9 @@ async function falQueueResult(model: string, requestId: string): Promise<FalResu
     throw new Error(`fal.ai queue result error (${res.status}): ${text}`);
   }
 
-  // fal.ai queue result returns the payload directly (same format as synchronous endpoint)
-  return (await res.json()) as FalResult;
+  // Queue result wraps output in a `response` key (unlike synchronous endpoint)
+  const data = (await res.json()) as { response?: FalResult } & FalResult;
+  return data.response ?? data;
 }
 
 async function trackUsage(
