@@ -796,3 +796,49 @@ Generated the missing video asset (`abstract-clip.mp4`) via kling-video now that
 - `bg-music.mp3` (5.0MB) — ambient electronic for global audio track
 
 Verified in Remotion Studio: all 6 scenes render, video plays as background, audio visible in timeline, duration 00:27.19 (829 frames).
+
+---
+
+## Session 14 — 2026-02-24
+
+### Fix CLI login OAuth redirect (OANIM-049)
+
+**Problem:** `oanim login` opened the browser, user signed in via GitHub OAuth, but Clerk redirected to `oanim.dev` instead of back to `api.oanim.dev/api/v1/auth/cli/callback`. The CLI hung indefinitely waiting for the localhost callback. Running `oanim login` a second time worked because the Clerk session was already established.
+
+**Root cause:** Clerk's `mountSignIn()` widget controls the OAuth redirect chain server-side. The `forceRedirectUrl` and `signInForceRedirectUrl` options (both component-level and `Clerk.load()`-level) were all ignored for OAuth flows because `api.oanim.dev` wasn't in Clerk's allowed redirect domains.
+
+**Solution:** Replaced `mountSignIn()` with Clerk's lower-level `authenticateWithRedirect()` API:
+- Custom OAuth buttons (GitHub, Google) + email/password form
+- `authenticateWithRedirect({ strategy, redirectUrl, redirectUrlComplete })` with both URLs pointing back to the same login page
+- On return from OAuth, `handleRedirectCallback()` completes verification
+- Existing "already signed in" logic then fires `redirectWithToken()`
+- Guarded `handleRedirectCallback()` to only fire when `__clerk` params present in URL (prevents redirect to Clerk's hosted sign-in on fresh page loads)
+
+**Commits:** `fe4c3b6`, `257fde0`, `f681a4b`, `1d39bb0`
+
+### Login page branding + browser sign-out (OANIM-050)
+
+**Login page branding:**
+- Space Grotesk font (matching oanim.dev landing page)
+- "open animate" logo text above sign-in card
+- Dark card container with subtle border (`#0a0a0a` on `#000`)
+- Orange gradient "Continue" button (`#ff8700 → #ffb347 → #ff8700`)
+- Orange focus ring on input fields
+- Title: "Open Animate — Sign In"
+
+**Browser sign-out on logout:**
+- New endpoint: `GET /api/v1/auth/cli/logout` — serves page that loads Clerk and calls `Clerk.signOut()`
+- Updated `oanim logout` to open this page in the browser after clearing local credentials
+- Prevents stale Clerk sessions from auto-completing on next `oanim login`
+- Re-linked CLI globally via `npm link` (previous `pnpm link` had created a copy, not a symlink)
+
+**Commit:** `b7a92c0`
+
+### Launch (OANIM-051)
+
+- Announced Open Animate on LinkedIn and X
+- Landing page live at oanim.dev
+- Docs live at docs.open-animate.com
+- npm packages published: `@oanim/core@0.1.0`, `oanim@0.1.0`
+- Agent skill installable via `npx skills add jacobcwright/open-animate`
+- ClawHub listing at clawhub.ai/jacobcwright/open-animate

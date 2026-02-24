@@ -883,6 +883,62 @@
       ],
       "status": "done",
       "notes": "Implemented queue-based submit+poll pattern. API: POST /submit queues to fal.ai, GET /status/:requestId polls. Uses fal.ai-provided status_url/response_url (model paths differ between sync and queue endpoints). CLI: PlatformProvider.submitAndPoll() with exponential backoff (2s→10s, 10min timeout). Falls back to sync /run for old API versions."
+    },
+    {
+      "id": "OANIM-049",
+      "title": "Fix CLI login OAuth redirect",
+      "description": "oanim login hangs on first run because Clerk's OAuth redirect goes to oanim.dev instead of api.oanim.dev. Replace mountSignIn() with authenticateWithRedirect() for explicit redirect control.",
+      "requirements": [
+        "OAuth flow redirects back to api.oanim.dev login page after sign-in",
+        "handleRedirectCallback() completes verification on return",
+        "Login resolves on first try (not just second run)",
+        "Email/password sign-in still works",
+        "No redirect to Clerk hosted sign-in on fresh page loads"
+      ],
+      "tests": [
+        "oanim login completes OAuth flow on first attempt",
+        "Browser shows 'Logged in!' page after sign-in",
+        "CLI displays 'Logged in as <email>'"
+      ],
+      "status": "done",
+      "notes": "Replaced mountSignIn with custom OAuth buttons using authenticateWithRedirect(). Both redirectUrl and redirectUrlComplete point back to the login page. handleRedirectCallback() guarded by __clerk URL param check. Commits: fe4c3b6, 257fde0, f681a4b, 1d39bb0."
+    },
+    {
+      "id": "OANIM-050",
+      "title": "Login page branding + browser sign-out",
+      "description": "Brand the CLI login page to match oanim.dev landing page. Add browser Clerk sign-out to oanim logout command.",
+      "requirements": [
+        "Login page uses Space Grotesk font, orange gradient button, dark card, 'open animate' logo",
+        "GET /api/v1/auth/cli/logout endpoint signs user out of Clerk",
+        "oanim logout opens browser to sign out of Clerk session",
+        "Next oanim login shows fresh sign-in form"
+      ],
+      "tests": [
+        "Login page matches oanim.dev branding",
+        "oanim logout opens browser and signs out",
+        "Subsequent oanim login requires fresh sign-in"
+      ],
+      "status": "done",
+      "notes": "Added Space Grotesk, orange gradient CTA, dark card container. New /cli/logout endpoint with Clerk.signOut(). CLI opens logout page via 'open' package. Re-linked CLI via npm link (pnpm link had created a copy). Commit: b7a92c0."
+    },
+    {
+      "id": "OANIM-051",
+      "title": "Public launch — LinkedIn & X",
+      "description": "Announce Open Animate publicly on LinkedIn and X (Twitter).",
+      "requirements": [
+        "LinkedIn post published",
+        "X/Twitter post published",
+        "Landing page live at oanim.dev",
+        "Docs live at docs.open-animate.com",
+        "npm packages published",
+        "Agent skill installable"
+      ],
+      "tests": [
+        "Posts visible on LinkedIn and X",
+        "All links in posts resolve correctly"
+      ],
+      "status": "done",
+      "notes": "Launched on LinkedIn and X on 2026-02-24. All infrastructure live: oanim.dev (landing), docs.open-animate.com (docs), api.oanim.dev (API), npm (@oanim/core@0.1.0, oanim@0.1.0), skills (npx skills add, ClawHub)."
     }
   ]
 }
