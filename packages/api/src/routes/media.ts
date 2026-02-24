@@ -18,9 +18,15 @@ interface FalResult {
   [key: string]: unknown;
 }
 
-function getImageUrl(result: FalResult): string | null {
+function getMediaUrl(result: FalResult): string | null {
   if (result.images?.[0]?.url) return result.images[0].url;
   if (result.image?.url) return result.image.url;
+  // Video models (kling, minimax, hunyuan)
+  const video = result.video as { url?: string } | undefined;
+  if (video?.url) return video.url;
+  // Audio models (stable-audio)
+  const audioFile = result.audio_file as { url?: string } | undefined;
+  if (audioFile?.url) return audioFile.url;
   return null;
 }
 
@@ -65,12 +71,6 @@ interface FalQueueStatusResponse {
   logs?: Array<{ message: string; level: string; source: string; timestamp: string }>;
 }
 
-interface FalQueueResultResponse {
-  status: string;
-  response: FalResult;
-  logs?: Array<{ message: string; level: string; source: string; timestamp: string }>;
-}
-
 async function falQueueSubmit(model: string, input: Record<string, unknown>): Promise<string> {
   const res = await fetch(`https://queue.fal.run/${model}`, {
     method: 'POST',
@@ -112,8 +112,8 @@ async function falQueueResult(model: string, requestId: string): Promise<FalResu
     throw new Error(`fal.ai queue result error (${res.status}): ${text}`);
   }
 
-  const data = (await res.json()) as FalQueueResultResponse;
-  return data.response;
+  // fal.ai queue result returns the payload directly (same format as synchronous endpoint)
+  return (await res.json()) as FalResult;
 }
 
 async function trackUsage(
@@ -163,7 +163,7 @@ media.post('/run', async (c) => {
   const cost = getModelCost(model);
   await trackUsage(user.id, 'fal.ai', model, 'run', cost);
 
-  const url = getImageUrl(result);
+  const url = getMediaUrl(result);
   return c.json({
     url,
     result,
@@ -211,7 +211,7 @@ media.get('/status/:requestId', async (c) => {
   if (status.status === 'COMPLETED') {
     // Fetch the full result
     const result = await falQueueResult(model, requestId);
-    const url = getImageUrl(result);
+    const url = getMediaUrl(result);
     return c.json({
       status: 'COMPLETED',
       url,
@@ -248,7 +248,7 @@ media.post('/generate', async (c) => {
     num_images: numImages ?? 1,
   });
 
-  const url = getImageUrl(result);
+  const url = getMediaUrl(result);
   if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
   await trackUsage(user.id, 'fal.ai', model, 'generateImage', getModelCost(model));
   return c.json(makeResponse(model, url));
@@ -270,7 +270,7 @@ media.post('/edit', async (c) => {
     num_images: 1,
   });
 
-  const url = getImageUrl(result);
+  const url = getMediaUrl(result);
   if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
   await trackUsage(user.id, 'fal.ai', model, 'editImage', getModelCost(model));
   return c.json(makeResponse(model, url));
@@ -285,7 +285,7 @@ media.post('/remove-background', async (c) => {
   const model = 'fal-ai/birefnet';
   const result = await falRequest(model, { image_url: imageUrl });
 
-  const url = getImageUrl(result);
+  const url = getMediaUrl(result);
   if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
   await trackUsage(user.id, 'fal.ai', model, 'removeBackground', getModelCost(model));
   return c.json(makeResponse(model, url));
@@ -306,7 +306,7 @@ media.post('/upscale', async (c) => {
     scale: scale ?? 2,
   });
 
-  const url = getImageUrl(result);
+  const url = getMediaUrl(result);
   if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
   await trackUsage(user.id, 'fal.ai', model, 'upscale', getModelCost(model));
   return c.json(makeResponse(model, url));

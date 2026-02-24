@@ -7,9 +7,15 @@ interface FalResult {
   [key: string]: unknown;
 }
 
-function getImageUrl(result: FalResult): string | null {
+function getMediaUrl(result: FalResult): string | null {
   if (result.images?.[0]?.url) return result.images[0].url;
   if (result.image?.url) return result.image.url;
+  // Video models (kling, minimax, hunyuan)
+  const video = result.video as { url?: string } | undefined;
+  if (video?.url) return video.url;
+  // Audio models (stable-audio)
+  const audioFile = result.audio_file as { url?: string } | undefined;
+  if (audioFile?.url) return audioFile.url;
   return null;
 }
 
@@ -62,7 +68,7 @@ export class FalProvider implements MediaProvider {
       image_size: opts?.imageSize ?? 'landscape_16_9',
       num_images: opts?.numImages ?? 1,
     });
-    const url = getImageUrl(result);
+    const url = getMediaUrl(result);
     if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
     return this.makeResult(model, url);
   }
@@ -74,7 +80,7 @@ export class FalProvider implements MediaProvider {
       prompt,
       num_images: 1,
     });
-    const url = getImageUrl(result);
+    const url = getMediaUrl(result);
     if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
     return this.makeResult(model, url);
   }
@@ -84,7 +90,7 @@ export class FalProvider implements MediaProvider {
     const result = await this.request(model, {
       image_url: imageUrl,
     });
-    const url = getImageUrl(result);
+    const url = getMediaUrl(result);
     if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
     return this.makeResult(model, url);
   }
@@ -95,7 +101,7 @@ export class FalProvider implements MediaProvider {
       image_url: imageUrl,
       scale,
     });
-    const url = getImageUrl(result);
+    const url = getMediaUrl(result);
     if (!url) throw new Error('Unexpected fal.ai response: no image URL found');
     return this.makeResult(model, url);
   }
@@ -103,7 +109,7 @@ export class FalProvider implements MediaProvider {
   async run(model: string, input: Record<string, unknown>): Promise<RunResult> {
     const result = await this.request(model, input);
     return {
-      url: getImageUrl(result),
+      url: getMediaUrl(result),
       result,
       provider: this.name,
       model,
