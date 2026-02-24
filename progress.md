@@ -640,7 +640,9 @@ Ran 4 parallel research agents auditing: CLI commands, core library exports, API
 
 **ClawHub:**
 - `clawhub login` — authenticated as @jacobcwright
-- `clawhub publish` — blocked by rate limit (likely new-account cooldown). Retry later.
+- CLI publish rate-limited — published manually via web UI at clawhub.ai/upload
+- Live at: https://clawhub.ai/jacobcwright/open-animate
+- Install: `clawhub install oanim`
 
 **Claude plugin directory:**
 - Submission is via Google Form at `forms.gle/rDSt7kudt7G9MrKB7` — manual submission needed
