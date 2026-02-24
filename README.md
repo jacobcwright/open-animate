@@ -6,9 +6,7 @@
 
 **The open-source creative suite for AI agents.**
 
-Open Animate turns any coding agent into a motion designer. Describe what you want. Get an MP4.
-
-Your agent writes React. [Remotion](https://remotion.dev) renders frames. You get an MP4.
+Open Animate gives coding agents the tools to generate images, compose videos, and create motion graphics — all through code.
 
 [Website](https://open-animate.com) &middot; [Docs](https://docs.open-animate.com) &middot; [npm](https://www.npmjs.com/package/oanim)
 
@@ -29,8 +27,8 @@ Claude Code &middot; Cursor &middot; Codex &middot; Windsurf &middot; any agent 
 
 | | |
 |---|---|
-| **Asset Generation** | Generate images, edit photos, remove backgrounds, upscale — multi-provider AI media gateway |
-| **Video Composition** | 8 animation presets, 14 transitions, typography, and production-ready UI components |
+| **AI Media Generation** | Generate images, video, and audio. Edit photos, remove backgrounds, upscale. Run any fal.ai model via `oanim assets run`. Multi-provider media gateway with 30+ supported models. |
+| **Video Composition** | Compose React-based videos with [Remotion](https://remotion.dev). 8 animation presets, 14 transitions, typography, and production-ready UI components via `@oanim/core`. |
 | **Design System** | 5 color palettes, font stacks, spacing scale, and components tuned for 1920x1080 |
 | **Cloud Rendering** | Render locally or `oanim render --cloud` — no Chromium or ffmpeg needed |
 
@@ -80,7 +78,7 @@ The skill includes workflow instructions, animation reference, composition patte
 | `oanim assets edit-image` | Edit image with text prompt |
 | `oanim assets remove-bg` | Remove image background |
 | `oanim assets upscale` | 2x upscale image |
-| `oanim assets run` | Run any fal.ai model |
+| `oanim assets run` | Run any fal.ai model (image, video, audio, etc.) |
 | `oanim login` | Authenticate with the platform |
 | `oanim billing` | Check balance, purchase credits |
 | `oanim usage` | View usage history |

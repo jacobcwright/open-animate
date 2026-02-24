@@ -1,19 +1,19 @@
 ---
 title: oanim assets
-description: Generate and manipulate images with AI
+description: Generate images, video, audio, and more with AI
 ---
 
 ```bash
 oanim assets <command> [options]
 ```
 
-Generate and manipulate images using AI models routed through the Open Animate media gateway.
+Generate and manipulate media using AI models routed through the Open Animate media gateway. Supports 30+ models for image generation, video generation, audio, upscaling, and more.
 
 <Note>
 Asset commands require authentication. Run `oanim login` to sign in, or set `ANIMATE_API_KEY`. You can also set `ANIMATE_FAL_KEY` to use your own fal.ai key directly.
 </Note>
 
-## Commands
+## Image commands
 
 ### gen-image
 
@@ -72,12 +72,12 @@ oanim assets upscale --in public/logo-small.png --out public/logo-2x.png
 | `--out <path>` | Yes | Output file path |
 | `--model <id>` | No | Override model (default: `fal-ai/creative-upscaler`) |
 
-### run
+## run — any model
 
-Run any fal.ai model directly.
+Run any fal.ai model directly. This is how you access video generation, audio generation, and any other model not covered by the dedicated commands above.
 
 ```bash
-oanim assets run --model fal-ai/flux/schnell --input '{"prompt": "a mountain"}' --out public/mountain.png
+oanim assets run --model <model-id> --input '<json>' [--out <path>]
 ```
 
 | Flag | Required | Description |
@@ -85,6 +85,58 @@ oanim assets run --model fal-ai/flux/schnell --input '{"prompt": "a mountain"}' 
 | `--model <id>` | Yes | fal.ai model ID |
 | `--input <json>` | Yes | JSON input for the model |
 | `--out <path>` | No | Download result URL to file |
+
+### Video generation
+
+```bash
+# Generate a video with Kling
+oanim assets run \
+  --model fal-ai/kling-video/v1.5/pro/text-to-video \
+  --input '{"prompt": "a slow zoom into a neon city at night"}' \
+  --out public/city.mp4
+
+# Generate with Runway Gen-3
+oanim assets run \
+  --model fal-ai/runway-gen3/turbo/image-to-video \
+  --input '{"prompt": "camera slowly pans right", "image_url": "https://..."}' \
+  --out public/pan.mp4
+
+# Other video models: hunyuan-video, luma-dream-machine, minimax-video, veo2
+```
+
+### Audio generation
+
+```bash
+# Generate audio with Stable Audio
+oanim assets run \
+  --model fal-ai/stable-audio \
+  --input '{"prompt": "upbeat electronic background music, 120 bpm", "duration_in_seconds": 15}' \
+  --out public/music.mp3
+```
+
+### Other models
+
+```bash
+# ControlNet
+oanim assets run \
+  --model fal-ai/flux/dev/controlnet \
+  --input '{"prompt": "...", "control_image_url": "https://..."}' \
+  --out public/controlled.png
+
+# IP Adapter (style transfer)
+oanim assets run \
+  --model fal-ai/flux/dev/ip-adapter \
+  --input '{"prompt": "...", "ip_adapter_image_url": "https://..."}' \
+  --out public/styled.png
+
+# LoRA
+oanim assets run \
+  --model fal-ai/lora \
+  --input '{"prompt": "...", "lora_url": "https://..."}' \
+  --out public/lora.png
+```
+
+If `--out` is provided and the model returns a URL, the file is downloaded. Otherwise the raw JSON response is printed to stdout.
 
 ## When to use each command
 
@@ -94,14 +146,33 @@ oanim assets run --model fal-ai/flux/schnell --input '{"prompt": "a mountain"}' 
 | Product screenshots with edits | `edit-image` |
 | Product photos for compositing | `remove-bg` |
 | Low-res logos or icons | `upscale` |
+| Video clips for compositions | `run` with a video model |
+| Background music or sound effects | `run` with `stable-audio` |
 | Any other fal.ai model | `run` |
+
+## Supported models
+
+30+ models across image, video, audio, and more. See [Credits & Billing](/platform/credits-and-billing) for the full model list and per-operation costs.
+
+### Highlights
+
+| Category | Models |
+|---|---|
+| Image generation | Flux Schnell, Flux Dev, Flux Pro, Recraft v3, Ideogram v2, Stable Diffusion 3.5 |
+| Image editing | Flux image-to-image, Flux inpainting, Flux fill |
+| Video generation | Kling v1/v1.5, Runway Gen-3, Hunyuan Video, Luma Dream Machine, MiniMax, Veo2 |
+| Audio | Stable Audio |
+| Upscaling | Creative Upscaler, Clarity Upscaler |
+| Background removal | BiRefNet, rembg |
+| Other | ControlNet, IP Adapter, LoRA |
 
 ## Tips
 
 - Generate backgrounds at your video resolution (1920x1080 by default)
 - Use `staticFile()` in Remotion to reference files in `public/`
 - Remove backgrounds on product shots so they composite cleanly over gradient backgrounds
-- For text-heavy videos, generate abstract/blurred backgrounds that don't compete with text
+- Generate short video clips with Kling/Runway and composite them into your Remotion project
+- Use Stable Audio for background music, then add it with Remotion's `<Audio>` component
 
 ## Pricing
 
