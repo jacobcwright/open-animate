@@ -724,7 +724,8 @@
         "Skill installable from each registry",
         "Agent can use skill to generate assets end-to-end"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "Added YAML frontmatter to SKILL.md per agentskills.io spec. Added .claude-plugin/plugin.json for Claude Code plugin directory. Verified install via `npx skills add jacobcwright/open-animate` — detected by 41 agents. ClawHub publish blocked by rate limit (new account cooldown) — retry later. Claude plugin directory submission is a Google Form (manual). SkillsMP and other aggregators auto-index from GitHub."
     },
     {
       "id": "OANIM-041",

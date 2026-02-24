@@ -622,3 +622,27 @@ Ran 4 parallel research agents auditing: CLI commands, core library exports, API
 - Switched Mintlify theme from `mint` to `maple`
 
 **Commits:** `77a8c22` (naming), `b267166` (initial agent reframe), `1ab9902` (full reframe), `9a184c3` (maple theme)
+
+### Publish agent skills (OANIM-040)
+
+**SKILL.md frontmatter:**
+- Added YAML frontmatter per agentskills.io spec: `name: animate-skill`, description (creative suite for agents positioning), license, metadata (author, version, homepage, docs, repository)
+- Rewrote body: removed ASCII art, added Capabilities table covering all CLI commands and @oanim/core features, added template durations
+
+**Claude Code plugin manifest:**
+- Created `.claude-plugin/plugin.json` with name, description, author, homepage, repository, license, keywords
+
+**skills.sh verification:**
+- `npx skills add jacobcwright/open-animate` — SUCCESS
+- Found 1 skill (animate-skill), displayed description correctly
+- Detected 41 compatible agents (Claude Code, Codex, Cursor, Windsurf, Gemini CLI, GitHub Copilot, etc.)
+- Install targets: Universal `.agents/skills/` (7 agents) + optional individual agent dirs
+
+**ClawHub:**
+- `clawhub login` — authenticated as @jacobcwright
+- `clawhub publish` — blocked by rate limit (likely new-account cooldown). Retry later.
+
+**Claude plugin directory:**
+- Submission is via Google Form at `forms.gle/rDSt7kudt7G9MrKB7` — manual submission needed
+
+**Commit:** `2d5423e`
