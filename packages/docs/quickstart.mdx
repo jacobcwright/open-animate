@@ -1,23 +1,18 @@
 ---
 title: Quickstart
-description: Create your first Open Animate video in 60 seconds
+description: Create and render a video in 60 seconds
 ---
 
 <Steps>
 
-## Install and scaffold
+## Scaffold
 
 ```bash
 npx oanim init my-video
 cd my-video
 ```
 
-This creates a Remotion project pre-configured with `@oanim/core`, including:
-
-- `src/Root.tsx` — Remotion root with a starter composition
-- `src/MyComp.tsx` — A component using `fadeUp`, `Background`, and `SafeArea`
-- `animate.json` — Render configuration (fps, resolution, codec, props)
-- `package.json` — Dependencies already installed
+This creates a Remotion project with `@oanim/core` — animation presets, transitions, components, and design tokens pre-configured.
 
 ## Preview
 
@@ -25,15 +20,15 @@ This creates a Remotion project pre-configured with `@oanim/core`, including:
 npx remotion studio
 ```
 
-Opens Remotion Studio in your browser at `http://localhost:3000`. You'll see a live preview of your composition with timeline scrubbing.
+Opens Remotion Studio at `localhost:3000` with live preview and timeline scrubbing.
 
-## Edit your composition
+## Compose
 
-Open `src/MyComp.tsx` and start composing:
+Edit `src/MyComp.tsx`:
 
 ```tsx
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
-import { fadeUp, popIn, Background, SafeArea, palettes } from '@oanim/core';
+import { fadeUp, Background, SafeArea, palettes } from '@oanim/core';
 
 const colors = palettes.dark;
 
@@ -51,7 +46,7 @@ export const MyComp: React.FC = () => {
           fontWeight: 700,
           color: colors.text,
         }}>
-          Hello, oanim
+          Hello World
         </div>
       </SafeArea>
     </AbsoluteFill>
@@ -59,31 +54,22 @@ export const MyComp: React.FC = () => {
 };
 ```
 
-Changes appear instantly in Remotion Studio.
-
-## Render to MP4
+## Render
 
 ```bash
 npx oanim render
 ```
 
-This reads `animate.json` for render settings and outputs to `out/MyComp.mp4`.
-
-Override settings with flags:
+Outputs `out/MyComp.mp4`. Override with flags:
 
 ```bash
-npx oanim render --fps 60 --res 3840x2160 --codec h265 --out out/4k.mp4
+npx oanim render --fps 60 --res 3840x2160 --codec h265
 ```
 
 ## Generate assets (optional)
 
-Create AI-generated images for backgrounds, product shots, and more:
-
 ```bash
-# Requires authentication
 npx oanim login
-
-# Generate a background
 npx oanim assets gen-image --prompt "dark abstract gradient, purple and blue" --out public/bg.png
 ```
 
@@ -92,16 +78,16 @@ npx oanim assets gen-image --prompt "dark abstract gradient, purple and blue" --
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Element Animations" href="/core/element-animations">
-    All 8 animation presets with usage examples.
+  <Card title="Animation Presets" href="/core/element-animations">
+    8 animations, 7 springs, 5 easings.
   </Card>
   <Card title="Transitions" href="/core/transitions">
-    14 transition presets for scene changes.
+    14 drop-in transition presets.
   </Card>
   <Card title="Composition Patterns" href="/guides/composition-patterns">
     Multi-scene architecture and layering.
   </Card>
   <Card title="Examples" href="/examples">
-    Browse 6 working example projects.
+    6 working example projects.
   </Card>
 </CardGroup>
