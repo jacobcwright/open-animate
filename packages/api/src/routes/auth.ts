@@ -70,7 +70,7 @@ auth.get('/cli/login', async (c) => {
   ></script>
   <script>
     window.addEventListener('load', async () => {
-      await window.Clerk.load();
+      await window.Clerk.load({ proxyUrl: 'https://${clerkDomain}' });
       if (window.Clerk.user) {
         const token = await window.Clerk.session.getToken();
         const email = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
@@ -118,7 +118,7 @@ auth.get('/cli/callback', async (c) => {
   type="text/javascript"></script>
 <script>
 window.addEventListener('load', async () => {
-  await window.Clerk.load();
+  await window.Clerk.load({ proxyUrl: 'https://${clerkDomain}' });
   if (window.Clerk.session) {
     const token = await window.Clerk.session.getToken();
     const email = window.Clerk.user?.primaryEmailAddress?.emailAddress || '';
