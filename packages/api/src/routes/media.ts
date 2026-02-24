@@ -66,6 +66,9 @@ async function falRequest(model: string, input: Record<string, unknown>): Promis
 
 interface FalQueueSubmitResponse {
   request_id: string;
+  status_url?: string;
+  response_url?: string;
+  cancel_url?: string;
 }
 
 interface FalQueueStatusResponse {
@@ -75,7 +78,7 @@ interface FalQueueStatusResponse {
   logs?: Array<{ message: string; level: string; source: string; timestamp: string }>;
 }
 
-async function falQueueSubmit(model: string, input: Record<string, unknown>): Promise<string> {
+async function falQueueSubmit(model: string, input: Record<string, unknown>): Promise<FalQueueSubmitResponse> {
   const res = await fetch(`https://queue.fal.run/${model}`, {
     method: 'POST',
     headers: falHeaders(),
@@ -87,15 +90,11 @@ async function falQueueSubmit(model: string, input: Record<string, unknown>): Pr
     throw new Error(`fal.ai queue submit error (${res.status}): ${text}`);
   }
 
-  const data = (await res.json()) as FalQueueSubmitResponse;
-  return data.request_id;
+  return (await res.json()) as FalQueueSubmitResponse;
 }
 
-async function falQueueStatus(model: string, requestId: string): Promise<FalQueueStatusResponse> {
-  const res = await fetch(
-    `https://queue.fal.run/${model}/requests/${requestId}/status`,
-    { headers: falAuthHeader() },
-  );
+async function falQueueStatus(statusUrl: string): Promise<FalQueueStatusResponse> {
+  const res = await fetch(statusUrl, { headers: falAuthHeader() });
 
   if (!res.ok) {
     const text = await res.text();
@@ -105,18 +104,15 @@ async function falQueueStatus(model: string, requestId: string): Promise<FalQueu
   return (await res.json()) as FalQueueStatusResponse;
 }
 
-async function falQueueResult(model: string, requestId: string): Promise<FalResult> {
-  const res = await fetch(
-    `https://queue.fal.run/${model}/requests/${requestId}`,
-    { headers: falAuthHeader() },
-  );
+async function falQueueResult(responseUrl: string): Promise<FalResult> {
+  const res = await fetch(responseUrl, { headers: falAuthHeader() });
 
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`fal.ai queue result error (${res.status}): ${text}`);
   }
 
-  // Queue result wraps output in a `response` key (unlike synchronous endpoint)
+  // Queue result may wrap output in a `response` key
   const data = (await res.json()) as { response?: FalResult } & FalResult;
   return data.response ?? data;
 }
@@ -190,14 +186,16 @@ media.post('/submit', async (c) => {
   if (!model) return c.json({ error: 'Missing model' }, 400);
   if (!input) return c.json({ error: 'Missing input' }, 400);
 
-  const requestId = await falQueueSubmit(model, input);
+  const submit = await falQueueSubmit(model, input);
 
   // Track usage at submit time (deduct credits upfront)
   const cost = getModelCost(model);
   await trackUsage(user.id, 'fal.ai', model, 'run', cost);
 
   return c.json({
-    requestId,
+    requestId: submit.request_id,
+    statusUrl: submit.status_url,
+    responseUrl: submit.response_url,
     model,
     provider: 'fal.ai',
     estimatedCostUsd: cost,
@@ -207,15 +205,21 @@ media.post('/submit', async (c) => {
 media.get('/status/:requestId', async (c) => {
   const requestId = c.req.param('requestId');
   const model = c.req.query('model');
+  const statusUrl = c.req.query('statusUrl');
+  const responseUrl = c.req.query('responseUrl');
 
   if (!model) return c.json({ error: 'Missing model query parameter' }, 400);
   if (!requestId) return c.json({ error: 'Missing requestId' }, 400);
 
+  // Use fal.ai-provided URLs if available, otherwise construct them
+  const effectiveStatusUrl = statusUrl ?? `https://queue.fal.run/${model}/requests/${requestId}/status`;
+  const effectiveResponseUrl = responseUrl ?? `https://queue.fal.run/${model}/requests/${requestId}`;
+
   try {
-    const status = await falQueueStatus(model, requestId);
+    const status = await falQueueStatus(effectiveStatusUrl);
 
     if (status.status === 'COMPLETED') {
-      const result = await falQueueResult(model, requestId);
+      const result = await falQueueResult(effectiveResponseUrl);
       const url = getMediaUrl(result);
       return c.json({
         status: 'COMPLETED',

@@ -18,6 +18,8 @@ interface PlatformRunResponse {
 
 interface PlatformSubmitResponse {
   requestId: string;
+  statusUrl?: string;
+  responseUrl?: string;
   model: string;
   provider: string;
   estimatedCostUsd: number;
@@ -102,16 +104,19 @@ export class PlatformProvider implements MediaProvider {
       throw err;
     }
 
-    // Poll for completion
+    // Poll for completion — pass fal.ai-provided URLs for reliable status checks
     const deadline = Date.now() + QUEUE_TIMEOUT_MS;
     let interval = POLL_INITIAL_MS;
+    const statusParams = new URLSearchParams({ model });
+    if (submit.statusUrl) statusParams.set('statusUrl', submit.statusUrl);
+    if (submit.responseUrl) statusParams.set('responseUrl', submit.responseUrl);
 
     while (Date.now() < deadline) {
       await sleep(interval);
 
       const status = await this.client.request<PlatformStatusResponse>(
         'GET',
-        `/api/v1/media/status/${submit.requestId}?model=${encodeURIComponent(model)}`,
+        `/api/v1/media/status/${submit.requestId}?${statusParams.toString()}`,
       );
 
       if (status.status === 'COMPLETED') {
