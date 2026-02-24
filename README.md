@@ -27,7 +27,7 @@ Claude Code &middot; Cursor &middot; Codex &middot; Windsurf &middot; any agent 
 
 | | |
 |---|---|
-| **AI Media Generation** | Generate images, video, and audio. Edit photos, remove backgrounds, upscale. Run any fal.ai model via `oanim assets run`. Multi-provider media gateway with 30+ supported models. |
+| **AI Media Generation** | Generate images, video, and audio. Edit photos, remove backgrounds, upscale. Run any ai model via `oanim assets run`. Multi-provider media gateway with 30+ supported models. |
 | **Video Composition** | Compose React-based videos with [Remotion](https://remotion.dev). 8 animation presets, 14 transitions, typography, and production-ready UI components via `@oanim/core`. |
 | **Design System** | 5 color palettes, font stacks, spacing scale, and components tuned for 1920x1080 |
 | **Cloud Rendering** | Render locally or `oanim render --cloud` — no Chromium or ffmpeg needed |
