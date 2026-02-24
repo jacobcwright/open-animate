@@ -13,15 +13,28 @@ import { fadeUp } from '@oanim/core';
 <div style={fadeUp({ frame, fps, spring: 'bouncy' })}>Bouncy entrance</div>
 ```
 
-| Preset | Feel | Best for |
-|---|---|---|
-| `snappy` | Quick, precise | Default, UI elements |
-| `bouncy` | Playful overshoot | Badges, icons, CTAs |
-| `gentle` | Slow, smooth | Backgrounds, large elements |
-| `stiff` | Very fast, no overshoot | Micro-interactions |
-| `wobbly` | Lots of bounce | Playful animations |
-| `smooth` | Medium, no overshoot | Text, panels |
-| `poppy` | Fast with slight bounce | Buttons, cards |
+| Preset | Feel | Best for | Config |
+|---|---|---|---|
+| `snappy` | Quick, precise | Default, UI elements | mass 1, damping 20, stiffness 300 |
+| `bouncy` | Playful overshoot | Badges, icons, CTAs | mass 1, damping 12, stiffness 200 |
+| `gentle` | Slow, smooth | Backgrounds, large elements | mass 1, damping 20, stiffness 100 |
+| `stiff` | Very fast, no overshoot | Micro-interactions | mass 1, damping 30, stiffness 400 |
+| `wobbly` | Lots of bounce | Playful animations | mass 1, damping 8, stiffness 180 |
+| `smooth` | Medium, no overshoot | Text, panels | mass 1, damping 26, stiffness 170 |
+| `poppy` | Fast with slight bounce | Buttons, cards | mass 1, damping 14, stiffness 250 |
+
+### Default springs per animation
+
+Each animation uses a spring that matches its character:
+
+| Animation | Default Spring |
+|---|---|
+| `fadeUp`, `fadeDown` | `'snappy'` |
+| `slideInLeft`, `slideInRight` | `'snappy'` |
+| `popIn` | `'bouncy'` |
+| `blurIn` | `'smooth'` |
+| `elasticScale` | `'wobbly'` |
+| `perspectiveRotateIn` | `'smooth'` |
 
 ## Easing presets
 
@@ -67,6 +80,9 @@ import { springInterpolate } from '@oanim/core';
 
 const rotation = springInterpolate({ frame, fps }, [0, 360]);
 // rotation goes from 0 to 360 with spring physics
+
+const scale = springInterpolate({ frame, fps, delay: 0.2, spring: 'bouncy' }, [0.5, 1]);
+// scale goes from 0.5 to 1 with bouncy spring physics
 ```
 
 ## When to use springs vs easings

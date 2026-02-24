@@ -15,8 +15,8 @@ Output:
 
 ```
 Name:   ci-pipeline
-Prefix: oan_abc1...
-Key:    oan_abc123def456...
+Prefix: anim_a1b2c3d4
+Key:    anim_a1b2c3d4_e5f6g7h8i9j0k1l2m3n4o5p6
 
 ⚠ Save this key — it will not be shown again.
 ```
@@ -46,7 +46,7 @@ Immediately invalidates the key. Any requests using it will fail.
 ### Environment variable (recommended)
 
 ```bash
-export ANIMATE_API_KEY=oan_abc123def456...
+export ANIMATE_API_KEY=anim_a1b2c3d4_e5f6g7h8...
 oanim assets gen-image --prompt "gradient" --out bg.png
 ```
 
@@ -63,6 +63,20 @@ This saves the key to `~/.oanim/credentials.yaml` so subsequent commands use it 
 When making API calls, the CLI resolves credentials in this order:
 
 1. `ANIMATE_API_KEY` environment variable
-2. `~/.oanim/credentials.yaml` (saved by `oanim login`)
+2. `api_key` in `~/.oanim/credentials.yaml` (saved by `oanim login`)
 
 Set the env var in your CI secrets to avoid needing `oanim login` in pipelines.
+
+## Key format
+
+API keys use the `anim_` prefix followed by a short identifier and a secret:
+
+```
+anim_{8 chars}_{24 chars}
+```
+
+Only the prefix is stored on the server — the full key is hashed with SHA-256. This means if you lose it, you'll need to create a new one.
+
+## Limits
+
+Each account can have up to **10 API keys**. Revoke unused keys to make room for new ones.

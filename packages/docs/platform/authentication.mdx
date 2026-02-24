@@ -9,13 +9,27 @@ description: Sign in to the oanim platform via browser OAuth or API key
 oanim login
 ```
 
-Opens your browser for OAuth authentication. After signing in, credentials are saved to `~/.oanim/credentials.yaml` (file permissions: `0600`).
+Opens your browser for OAuth authentication via Clerk. After signing in, an API key is generated and saved to `~/.oanim/credentials.yaml` (file permissions: `0600`).
 
-The flow:
-1. CLI starts a local HTTP server on a random port
-2. Browser opens `api.oanim.dev/api/v1/auth/cli/login?port=<port>`
-3. After OAuth, the API sends an API key back to the local server
-4. CLI verifies the key and saves it
+<Steps>
+
+### CLI starts a local server
+
+The CLI opens a local HTTP server on a random port to receive the callback.
+
+### Browser authenticates
+
+Your browser opens `api.oanim.dev/api/v1/auth/cli/login?port=<port>` where you sign in via Clerk OAuth.
+
+### API key is issued
+
+After authentication, the platform generates a new API key (prefixed `anim_`) and sends it back to the local server.
+
+### Credentials are saved
+
+The CLI saves the key to `~/.oanim/credentials.yaml`. All subsequent commands use it automatically.
+
+</Steps>
 
 ## Token-based login
 
@@ -34,20 +48,21 @@ When the CLI makes API calls, credentials resolve in this order:
 | Priority | Source | Description |
 |---|---|---|
 | 1 | `ANIMATE_API_KEY` env var | Environment variable — highest priority |
-| 2 | `~/.oanim/credentials.yaml` `api_key` | Saved by `oanim login` |
-| 3 | `~/.oanim/credentials.yaml` `token` | Legacy token field |
+| 2 | `api_key` in `~/.oanim/credentials.yaml` | Saved by `oanim login` |
 
 For asset generation only, there's an additional bypass:
 
 | Priority | Source | Description |
 |---|---|---|
-| Special | `ANIMATE_FAL_KEY` env var | Goes direct to fal.ai, skipping the platform |
+| Special | `ANIMATE_FAL_KEY` env var | Goes direct to fal.ai, skipping the platform entirely |
 
 ## Check who you're logged in as
 
 ```bash
 oanim whoami
 ```
+
+Shows your email, user ID, credit balance, and account creation date.
 
 ## Log out
 
@@ -59,12 +74,14 @@ Clears saved credentials from `~/.oanim/credentials.yaml`.
 
 ## Configuration
 
-The API URL defaults to `https://api.oanim.dev`. Override it with:
+The API URL defaults to `https://api.oanim.dev`. Override it for self-hosted instances:
 
-- `ANIMATE_API_URL` environment variable
+- `ANIMATE_API_URL` environment variable (highest priority)
 - `api_url` field in `~/.oanim/config.yaml`
 
 ```yaml
 # ~/.oanim/config.yaml
 api_url: http://localhost:8000
 ```
+
+The full resolution order: `ANIMATE_API_URL` env var → `config.yaml` → `https://api.oanim.dev`.

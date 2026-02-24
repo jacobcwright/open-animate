@@ -3,7 +3,7 @@ title: Cloud Rendering
 description: Render videos in the cloud without local infrastructure
 ---
 
-Cloud rendering lets you export videos without needing Chromium or ffmpeg installed locally. Your project is bundled, uploaded, and rendered on hosted infrastructure.
+Cloud rendering lets you export videos without needing Chromium or ffmpeg installed locally. Your project is bundled, uploaded, and rendered on hosted infrastructure using Remotion Lambda.
 
 ## Usage
 
@@ -17,11 +17,29 @@ Cloud rendering requires authentication. Run `oanim login` first, or set `ANIMAT
 
 ## How it works
 
-1. **Bundle** — Remotion bundles your project locally (`remotion bundle`)
-2. **Upload** — The bundle tarball is uploaded to the platform via `/api/v1/render/upload`
-3. **Render** — The platform renders your composition using your `animate.json` settings
-4. **Stream progress** — The CLI polls for progress updates and displays a percentage
-5. **Download** — The rendered video is downloaded to your output path
+<Steps>
+
+### Bundle
+
+Remotion bundles your project locally (`remotion bundle`), creating a static site with your compositions.
+
+### Upload
+
+The bundle tarball is uploaded to the platform via `/api/v1/render/upload`.
+
+### Render
+
+The platform renders your composition on AWS Lambda using Remotion's distributed rendering. Your `animate.json` settings (resolution, codec, fps, props) are applied.
+
+### Stream progress
+
+The CLI polls for progress updates every 2 seconds and displays a percentage.
+
+### Download
+
+The rendered MP4 is downloaded to your output path via a presigned S3 URL.
+
+</Steps>
 
 ## Options
 

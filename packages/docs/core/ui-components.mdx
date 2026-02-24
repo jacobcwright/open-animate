@@ -7,7 +7,7 @@ description: Composable building blocks for scene layouts
 
 ## SafeArea
 
-Title-safe padding container. Keeps content within broadcast-safe margins.
+Title-safe padding container. Keeps content within broadcast-safe margins (~5% on all sides).
 
 ```tsx
 import { SafeArea } from '@oanim/core';
@@ -16,6 +16,12 @@ import { SafeArea } from '@oanim/core';
   <div>Content stays within safe margins</div>
 </SafeArea>
 ```
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `children` | `ReactNode` | required | Content to render inside safe margins |
+| `mode` | `'title' \| 'action'` | `'title'` | Safe area mode — `title` for tighter margins, `action` for wider |
+| `style` | `CSSProperties` | `{}` | Additional styles on the container |
 
 Use `SafeArea` as the content layer in every scene to ensure text and UI elements don't get clipped at edges.
 
@@ -33,11 +39,16 @@ import { Background, palettes } from '@oanim/core';
 <Background color="#0a0a0a" />
 ```
 
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `gradient` | `string` | — | CSS gradient string |
+| `color` | `string` | — | Solid background color |
+
 Place `Background` as the first child inside `AbsoluteFill` so it sits behind all other layers.
 
 ## GlowOrb
 
-Animated glowing orb for ambient visual interest.
+Animated glowing orb for ambient visual interest. Drifts slowly with a gentle floating animation.
 
 ```tsx
 import { GlowOrb } from '@oanim/core';
@@ -45,27 +56,46 @@ import { GlowOrb } from '@oanim/core';
 <GlowOrb color="rgba(99, 102, 241, 0.2)" x={30} y={40} />
 ```
 
-| Prop | Type | Description |
-|---|---|---|
-| `color` | `string` | Glow color (use with alpha for subtlety) |
-| `x` | `number` | Horizontal position (percentage) |
-| `y` | `number` | Vertical position (percentage) |
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `color` | `string` | required | Glow color (use with alpha for subtlety) |
+| `x` | `number` | required | Horizontal position (percentage) |
+| `y` | `number` | required | Vertical position (percentage) |
+| `size` | `number` | `300` | Orb diameter in pixels |
+| `drift` | `number` | `20` | Maximum drift distance in pixels |
+| `opacity` | `number` | `1` | Opacity multiplier |
 
 Place between `Background` and content layers for a soft ambient effect.
 
 ## Terminal
 
-Typewriter-style terminal window. Pairs naturally with `TypewriterText`.
+Terminal window with typewriter line animation. Lines appear one at a time with a typing effect.
 
 ```tsx
-import { Terminal, TypewriterText } from '@oanim/core';
+import { Terminal } from '@oanim/core';
 
-<Terminal>
-  <TypewriterText text="npm install @oanim/core" delay={0.5} />
-</Terminal>
+<Terminal
+  lines={[
+    'npm install @oanim/core',
+    'npx oanim init my-video',
+    'npx remotion studio',
+  ]}
+  delay={0.3}
+/>
 ```
 
-Renders a dark terminal chrome with a title bar. Content is displayed in monospace font.
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `lines` | `string[]` | required | Lines to type out sequentially |
+| `delay` | `number` | `0` | Seconds before typing starts |
+| `charsPerSecond` | `number` | `40` | Typing speed |
+| `title` | `string` | `'Terminal'` | Title bar text |
+| `bg` | `string` | `'rgba(0,0,0,0.8)'` | Background color |
+| `textColor` | `string` | `'#e2e8f0'` | Text color |
+| `fontSize` | `number` | `18` | Font size in pixels |
+| `style` | `CSSProperties` | `{}` | Additional styles on the container |
+
+Renders a dark terminal chrome with a title bar and monospace font.
 
 ## Card
 
@@ -80,18 +110,38 @@ import { Card } from '@oanim/core';
 </Card>
 ```
 
-Cards have a frosted glass effect with subtle borders. Use for feature highlights, metric displays, and content grouping.
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `children` | `ReactNode` | required | Card content |
+| `bg` | `string` | `'rgba(255,255,255,0.05)'` | Background color |
+| `borderColor` | `string` | `'rgba(255,255,255,0.1)'` | Border color |
+| `padding` | `number` | `24` | Inner padding in pixels |
+| `borderRadius` | `number` | `12` | Border radius in pixels |
+| `spring` | `SpringPreset` | `'snappy'` | Entrance animation spring |
+| `style` | `CSSProperties` | `{}` | Additional styles |
+
+Cards have a frosted glass effect with subtle borders and an automatic spring entrance animation. Use for feature highlights, metric displays, and content grouping.
 
 ## Badge
 
-Pill-shaped label component.
+Pill-shaped label component with spring entrance.
 
 ```tsx
 import { Badge } from '@oanim/core';
 
 <Badge>NEW</Badge>
-<Badge>v2.0</Badge>
+<Badge bg="#6366f1" textColor="#fff">v2.0</Badge>
 ```
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `children` | `ReactNode` | required | Badge content |
+| `bg` | `string` | `'rgba(255,255,255,0.1)'` | Background color |
+| `textColor` | `string` | `'#e2e8f0'` | Text color |
+| `borderColor` | `string` | `'rgba(255,255,255,0.2)'` | Border color |
+| `fontSize` | `number` | `14` | Font size in pixels |
+| `spring` | `SpringPreset` | `'snappy'` | Entrance animation spring |
+| `style` | `CSSProperties` | `{}` | Additional styles |
 
 Small pill-shaped labels. Use for version numbers, tags, categories, or status indicators.
 
@@ -103,7 +153,15 @@ Subtle background grid overlay.
 import { Grid } from '@oanim/core';
 
 <Grid />
+<Grid cellSize={40} color="rgba(255,255,255,0.08)" animated />
 ```
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `cellSize` | `number` | `60` | Grid cell size in pixels |
+| `color` | `string` | `'rgba(255,255,255,0.05)'` | Line color |
+| `lineWidth` | `number` | `1` | Line width in pixels |
+| `animated` | `boolean` | `false` | Animate grid with a subtle drift |
 
 Renders a faint grid pattern. Place between `Background` and content layers for a technical/engineered aesthetic.
 
@@ -115,11 +173,13 @@ Edge-darkening overlay.
 import { Vignette } from '@oanim/core';
 
 <Vignette intensity={0.4} />
+<Vignette intensity={0.6} color="rgba(0, 0, 30, 1)" />
 ```
 
-| Prop | Type | Description |
-|---|---|---|
-| `intensity` | `number` | Darkness level (0 = none, 1 = fully dark edges) |
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `intensity` | `number` | `0.5` | Darkness level (0 = none, 1 = fully dark edges) |
+| `color` | `string` | `'rgba(0,0,0,1)'` | Vignette color (defaults to black) |
 
 Place as one of the last layers to subtly draw focus to the center of the frame.
 

@@ -3,13 +3,12 @@ title: Quickstart
 description: Create your first oanim video in 60 seconds
 ---
 
+<Steps>
+
 ## Install and scaffold
 
 ```bash
-# Scaffold a new project
 npx oanim init my-video
-
-# Enter the project
 cd my-video
 ```
 
@@ -17,7 +16,7 @@ This creates a Remotion project pre-configured with `@oanim/core`, including:
 
 - `src/Root.tsx` — Remotion root with a starter composition
 - `src/MyComp.tsx` — A component using `fadeUp`, `Background`, and `SafeArea`
-- `animate.json` — Render configuration (fps, resolution, codec)
+- `animate.json` — Render configuration (fps, resolution, codec, props)
 - `package.json` — Dependencies already installed
 
 ## Preview
@@ -87,6 +86,8 @@ npx oanim login
 # Generate a background
 npx oanim assets gen-image --prompt "dark abstract gradient, purple and blue" --out public/bg.png
 ```
+
+</Steps>
 
 ## Next steps
 

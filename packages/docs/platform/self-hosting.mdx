@@ -10,11 +10,15 @@ oanim is fully open source (Apache 2.0). You can run the entire platform on your
 - Node.js 18+
 - PostgreSQL 15+
 - A [fal.ai](https://fal.ai) API key (for asset generation)
-- AWS credentials with S3 access (for cloud rendering)
+- AWS credentials with S3 + Lambda access (for cloud rendering)
+- A [Stripe](https://stripe.com) account (for billing, optional)
+- A [Clerk](https://clerk.com) application (for authentication)
 
 ## Quick start with Docker
 
-### 1. Start the database
+<Steps>
+
+### Start the database
 
 ```bash
 git clone https://github.com/jacobcwright/open-animate.git
@@ -25,7 +29,7 @@ docker-compose up -d
 
 This starts PostgreSQL 15 on port 5432.
 
-### 2. Configure environment
+### Configure environment
 
 Create `.env` from the example:
 
@@ -33,7 +37,7 @@ Create `.env` from the example:
 cp .env.example .env
 ```
 
-Edit `.env`:
+Edit `.env` with your values:
 
 ```bash
 # Database
@@ -42,6 +46,9 @@ DATABASE_URL=postgres://oanim:oanim@localhost:5432/oanim
 # Authentication (Clerk)
 CLERK_DOMAIN=your-app.clerk.accounts.dev
 CLERK_PUBLISHABLE_KEY=pk_test_...
+
+# Media Gateway (fal.ai)
+FAL_KEY=your-fal-ai-key
 
 # Storage (S3-compatible)
 AWS_ACCESS_KEY_ID=your-key
@@ -52,11 +59,15 @@ S3_BUCKET=oanim-renders
 # Cloud rendering (Remotion Lambda)
 REMOTION_FUNCTION_NAME=remotion-render-xxx
 
+# Billing (Stripe) — optional
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
 # Server
 PORT=8000
 ```
 
-### 3. Start the API
+### Start the API
 
 ```bash
 pnpm install
@@ -64,7 +75,7 @@ pnpm build
 pnpm start
 ```
 
-### 4. Point the CLI at your instance
+### Point the CLI at your instance
 
 ```bash
 # Via environment variable
@@ -79,8 +90,10 @@ Then use the CLI normally:
 
 ```bash
 oanim login
-oanim assets gen-image --prompt "gradient" --out bg.png
+oanim assets gen-image --prompt "gradient" --out public/bg.png
 ```
+
+</Steps>
 
 ## Environment variables
 
@@ -88,13 +101,20 @@ oanim assets gen-image --prompt "gradient" --out bg.png
 |---|---|---|
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `CLERK_DOMAIN` | Yes | Clerk OAuth domain |
-| `CLERK_PUBLISHABLE_KEY` | Yes | Clerk publishable key |
+| `CLERK_PUBLISHABLE_KEY` | Yes | Clerk publishable key for browser auth |
+| `FAL_KEY` | Yes | fal.ai API key for media gateway |
 | `AWS_ACCESS_KEY_ID` | For cloud render | AWS access key |
 | `AWS_SECRET_ACCESS_KEY` | For cloud render | AWS secret key |
-| `AWS_REGION` | For cloud render | AWS region |
-| `S3_BUCKET` | For cloud render | S3 bucket for render uploads |
+| `AWS_REGION` | For cloud render | AWS region (default: `us-east-1`) |
+| `S3_BUCKET` | For cloud render | S3 bucket for render bundles and outputs |
 | `REMOTION_FUNCTION_NAME` | For cloud render | Remotion Lambda function name |
-| `PORT` | No | Server port (default: 8000) |
+| `STRIPE_SECRET_KEY` | For billing | Stripe secret key |
+| `STRIPE_WEBHOOK_SECRET` | For billing | Stripe webhook signing secret |
+| `PORT` | No | Server port (default: `8000`) |
+
+<Note>
+New users receive a $5.00 credit balance on signup. Without Stripe configured, users won't be able to purchase additional credits, but existing balances still work.
+</Note>
 
 ## Direct provider keys
 
@@ -128,4 +148,11 @@ volumes:
   pgdata:
 ```
 
-For production, add proper passwords, SSL, and backup configuration.
+## Production considerations
+
+For production deployments:
+
+- **Database**: Use strong passwords, enable SSL, and set up regular backups
+- **Stripe webhooks**: Configure the webhook endpoint at `https://your-domain/api/v1/billing/webhook`
+- **Rate limiting**: The API includes in-memory rate limiting (60 req/min for media, 10 req/min for auth). For multi-instance deployments, consider adding a Redis-backed rate limiter
+- **HTTPS**: Place the API behind a reverse proxy (nginx, Caddy) with TLS

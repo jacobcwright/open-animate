@@ -13,6 +13,10 @@ oanim billing
 
 Shows your current credit balance and recent purchase history.
 
+<Note>
+New accounts receive **$5.00 in free credits** on signup. No credit card required to get started.
+</Note>
+
 ## Purchase credits
 
 ```bash
@@ -29,6 +33,14 @@ oanim billing buy --amount 25
 
 The command opens a Stripe checkout page in your browser. After payment completes, credits are added to your account immediately.
 
+## What happens when credits run out
+
+When your balance reaches $0, asset generation and cloud render requests will fail with an insufficient credits error. Local operations (`oanim init`, `oanim render` without `--cloud`) are always free and unaffected.
+
+To continue using platform services, either:
+- Purchase more credits: `oanim billing buy --amount 10`
+- Use a direct provider key: `export ANIMATE_FAL_KEY=your-key`
+
 ## Asset generation costs
 
 Costs are per-operation and vary by model:
@@ -41,9 +53,12 @@ Costs are per-operation and vary by model:
 | `fal-ai/flux/dev` | $0.025 |
 | `fal-ai/flux-pro/v1.1` | $0.04 |
 | `fal-ai/flux-pro/v1.1-ultra` | $0.06 |
+| `fal-ai/flux-realism` | $0.025 |
 | `fal-ai/recraft-v3` | $0.04 |
 | `fal-ai/ideogram/v2` | $0.08 |
 | `fal-ai/stable-diffusion-v35-large` | $0.035 |
+| `fal-ai/stable-diffusion-v35-medium` | $0.02 |
+| `fal-ai/aura-flow` | $0.01 |
 
 ### Image editing
 
@@ -73,6 +88,7 @@ Costs are per-operation and vary by model:
 |---|---|
 | `fal-ai/kling-video/v1/standard/text-to-video` | $0.10 |
 | `fal-ai/kling-video/v1/pro/text-to-video` | $0.35 |
+| `fal-ai/kling-video/v1.5/pro/text-to-video` | $0.35 |
 | `fal-ai/minimax-video/video-01-live` | $0.30 |
 | `fal-ai/hunyuan-video` | $0.50 |
 | `fal-ai/luma-dream-machine` | $0.30 |
@@ -86,7 +102,18 @@ Costs are per-operation and vary by model:
 | `fal-ai/stable-audio` | $0.04 |
 | `fal-ai/flux/dev/controlnet` | $0.03 |
 | `fal-ai/flux/dev/ip-adapter` | $0.03 |
+| `fal-ai/lora` | $0.02 |
 | Unknown models | $0.05 (default) |
+
+## Cost controls
+
+Set a per-session cost limit to prevent runaway spending:
+
+```bash
+export ANIMATE_MAX_USD_PER_RUN=5.00
+```
+
+The CLI will refuse any operation that would push the session total over this limit.
 
 ## Direct provider key
 

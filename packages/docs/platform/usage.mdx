@@ -36,9 +36,9 @@ Shows per-record usage with provider, model, operation, and cost:
 
 ```
   Date         Provider   Model               Operation        Cost
-  2026-02-22   fal.ai     flux/schnell        gen-image        $0.0030
-  2026-02-22   fal.ai     flux/dev/i2i        edit-image       $0.0250
-  2026-02-21   fal.ai     birefnet            remove-bg        $0.0050
+  2026-02-22   fal.ai     flux/schnell        generateImage    $0.0030
+  2026-02-22   fal.ai     flux/dev/i2i        editImage        $0.0250
+  2026-02-21   fal.ai     birefnet            removeBackground $0.0050
 ```
 
 ### Options
@@ -52,6 +52,17 @@ Shows per-record usage with provider, model, operation, and cost:
 # Show last 50 records from the past 90 days
 oanim usage history --limit 50 --days 90
 ```
+
+## How usage is tracked
+
+Usage is tracked per-operation and reported to the platform in real time. Each media gateway call (image generation, editing, background removal, upscaling) records:
+
+- **Provider** — `fal.ai` (or `oanim` for platform-routed requests)
+- **Model** — The specific AI model used
+- **Operation** — `generateImage`, `editImage`, `removeBackground`, `upscale`, or `run`
+- **Cost** — Estimated cost based on the model pricing table
+
+Credits are deducted from your balance as operations complete.
 
 ## Low balance
 

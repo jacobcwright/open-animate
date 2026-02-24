@@ -48,8 +48,12 @@ Every oanim project has an `animate.json` at the root:
 | `render.width` | number | `1920` | Video width in px |
 | `render.height` | number | `1080` | Video height in px |
 | `render.codec` | string | `"h264"` | `h264`, `h265`, `vp8`, `vp9` |
-| `render.crf` | number | `18` | Constant Rate Factor (lower = higher quality) |
+| `render.crf` | number | `18` | Constant Rate Factor (quality) |
 | `props` | object | `{}` | inputProps passed to the composition |
+
+<Note>
+**CRF (Constant Rate Factor)** controls video quality vs file size. Lower values = higher quality but larger files. `18` is visually lossless for most content. Use `23` for smaller files, or `12-15` for maximum quality.
+</Note>
 
 ## Common resolution presets
 

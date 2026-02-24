@@ -22,11 +22,13 @@ const { fps } = useVideoConfig();
 | `frame` | `number` | required | Current frame from `useCurrentFrame()` |
 | `fps` | `number` | required | FPS from `useVideoConfig()` |
 | `delay` | `number` | `0` | Delay in seconds before animation starts |
-| `spring` | `SpringPreset` | `'snappy'` | Spring preset name |
+| `spring` | `SpringPreset` | varies | Spring preset name (see defaults per animation below) |
 
 ## fadeUp
 
 Fades in while moving up 20px. The default go-to for text and UI elements.
+
+- **Default spring:** `'snappy'`
 
 ```tsx
 import { fadeUp } from '@oanim/core';
@@ -38,6 +40,8 @@ import { fadeUp } from '@oanim/core';
 
 Fades in while moving down 20px. Good for dropdown menus and secondary info.
 
+- **Default spring:** `'snappy'`
+
 ```tsx
 import { fadeDown } from '@oanim/core';
 
@@ -46,7 +50,9 @@ import { fadeDown } from '@oanim/core';
 
 ## slideInLeft / slideInRight
 
-Slides in from the left or right with fade. Good for side-by-side comparisons.
+Slides in 30px from the left or right with fade. Good for side-by-side comparisons.
+
+- **Default spring:** `'snappy'`
 
 ```tsx
 import { slideInLeft, slideInRight } from '@oanim/core';
@@ -59,6 +65,8 @@ import { slideInLeft, slideInRight } from '@oanim/core';
 
 Spring-based scale entrance (0.5 to 1) with bounce. Great for badges, icons, and CTAs.
 
+- **Default spring:** `'bouncy'`
+
 ```tsx
 import { popIn } from '@oanim/core';
 
@@ -68,6 +76,8 @@ import { popIn } from '@oanim/core';
 ## blurIn
 
 Fades in from blurry to sharp. Cinematic feel, good for hero text.
+
+- **Default spring:** `'smooth'`
 
 ```tsx
 import { blurIn } from '@oanim/core';
@@ -79,6 +89,8 @@ import { blurIn } from '@oanim/core';
 
 Wobbly spring scale entrance. Playful and attention-grabbing.
 
+- **Default spring:** `'wobbly'`
+
 ```tsx
 import { elasticScale } from '@oanim/core';
 
@@ -89,11 +101,26 @@ import { elasticScale } from '@oanim/core';
 
 3D rotation entrance from below. Dramatic, good for cards and panels.
 
+- **Default spring:** `'smooth'`
+
 ```tsx
 import { perspectiveRotateIn } from '@oanim/core';
 
 <div style={perspectiveRotateIn({ frame, fps, delay: 0.3 })}>Card</div>
 ```
+
+## Default springs per animation
+
+| Animation | Default Spring |
+|---|---|
+| `fadeUp` | `'snappy'` |
+| `fadeDown` | `'snappy'` |
+| `slideInLeft` | `'snappy'` |
+| `slideInRight` | `'snappy'` |
+| `popIn` | `'bouncy'` |
+| `blurIn` | `'smooth'` |
+| `elasticScale` | `'wobbly'` |
+| `perspectiveRotateIn` | `'smooth'` |
 
 ## Staggering multiple elements
 

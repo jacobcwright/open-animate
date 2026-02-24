@@ -12,13 +12,13 @@ oanim is an **open-core platform** — everything is open source (Apache 2.0), a
     Multi-provider AI image generation. Currently backed by fal.ai with Runway and other providers planned. Handles routing, cost metering, and usage tracking.
   </Card>
   <Card title="Cloud Rendering" icon="cloud">
-    `oanim render --cloud` sends your composition to hosted infrastructure and streams back the rendered MP4. No local Chromium or ffmpeg needed.
+    `oanim render --cloud` sends your composition to hosted infrastructure (Remotion Lambda) and streams back the rendered MP4. No local Chromium or ffmpeg needed.
   </Card>
   <Card title="Authentication" icon="lock">
-    Browser-based OAuth via `oanim login`. API keys for CI/CD and programmatic access.
+    Browser-based OAuth via `oanim login`. API keys (prefixed `anim_`) for CI/CD and programmatic access.
   </Card>
   <Card title="Usage & Billing" icon="chart-bar">
-    Pay-as-you-go credits with per-operation cost tracking. Purchase credits via Stripe with a 10% bonus on purchases over $50.
+    Pay-as-you-go credits with per-operation cost tracking. New accounts start with $5.00 in credits. Purchase more via Stripe with a 10% bonus on purchases over $50.
   </Card>
 </CardGroup>
 
@@ -35,9 +35,16 @@ oanim CLI → api.oanim.dev → fal.ai (media generation)
 
 Credentials resolve in this order:
 
-1. Explicit `ANIMATE_API_KEY` environment variable
+1. `ANIMATE_API_KEY` environment variable
 2. `~/.oanim/credentials.yaml` (saved by `oanim login`)
 3. Direct provider key (`ANIMATE_FAL_KEY`) — bypasses platform, goes direct to fal.ai
+
+## Rate limits
+
+| Endpoint | Limit |
+|---|---|
+| Media gateway (`/api/v1/media/*`) | 60 requests/minute per user |
+| Auth endpoints (`/api/v1/auth/cli/*`) | 10 requests/minute per IP |
 
 ## Free vs Hosted
 
@@ -56,7 +63,7 @@ Credentials resolve in this order:
 # Sign in
 oanim login
 
-# Check your balance
+# Check your balance ($5.00 free credits on signup)
 oanim usage
 
 # Purchase credits
