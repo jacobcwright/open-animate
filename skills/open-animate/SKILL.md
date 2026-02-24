@@ -1,5 +1,5 @@
 ---
-name: animate-skill
+name: open-animate
 description: Open Animate — the creative suite for AI agents. Create professional motion graphics, generate images, and render MP4 videos. Use when the user wants to make videos, animations, motion graphics, social clips, product launches, explainers, or any visual content. Supports asset generation (images, backgrounds, upscaling) and video composition with animation presets, transitions, and components.
 license: Apache-2.0
 compatibility: Requires Node.js 18+

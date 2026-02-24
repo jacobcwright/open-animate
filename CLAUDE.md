@@ -36,7 +36,7 @@ oanim is evolving into an **open-core platform** (Supabase model — all open so
 ### Current state (v0.1)
 - **@oanim/core** — animation presets, transitions, typography, UI components, design tokens
 - **oanim CLI** — `init`, `render`, `assets` (via platform media gateway)
-- **animate-skill/** — agent skill with references + templates
+- **skills/open-animate/** — agent skill with references + templates
 - **6 working examples** — hello-world, launch-video, logo-reveal, meme-caption, explainer, investor-update
 
 ### Planned platform additions
@@ -66,10 +66,11 @@ open-animate/
     cli/            # oanim CLI (bin: oanim)
     gateway/        # (planned) media gateway — multi-provider routing
     auth/           # (planned) shared auth module (Clerk OAuth)
-  animate-skill/
-    SKILL.md        # Agent skill entry point
-    references/     # workflow, scene-config, animation-cookbook, etc.
-    templates/      # launch-video, explainer, logo-reveal, etc.
+  skills/
+    open-animate/
+      SKILL.md        # Agent skill entry point
+      references/     # workflow, scene-config, animation-cookbook, etc.
+      templates/      # launch-video, explainer, logo-reveal, etc.
   examples/         # Working Remotion projects (6 currently)
   progress.md       # Append-only session log
   prd.json          # Ticket tracker (title, description, requirements, tests, status)

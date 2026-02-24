@@ -5,7 +5,7 @@
 .git
 .DS_Store
 examples/
-animate-skill/
+skills/
 packages/core/
 packages/cli/
 packages/gateway/
