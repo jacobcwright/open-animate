@@ -18,7 +18,7 @@ auth.get('/cli/login', async (c) => {
   const port = c.req.query('port');
   if (!port) return c.json({ error: 'Missing port parameter' }, 400);
 
-  const clerkDomain = process.env.CLERK_DOMAIN;
+  const clerkDomain = process.env.CLERK_DOMAIN?.replace(/^https?:\/\//, '');
   const clerkPubKey = process.env.CLERK_PUBLISHABLE_KEY ?? '';
   if (!clerkDomain) return c.json({ error: 'Server misconfigured' }, 500);
 
@@ -106,7 +106,7 @@ auth.get('/cli/callback', async (c) => {
   // Clerk's forceRedirectUrl lands here without a token.
   // Serve a tiny page that loads the Clerk session and re-submits with the JWT.
   if (!clerkToken) {
-    const clerkDomain = process.env.CLERK_DOMAIN;
+    const clerkDomain = process.env.CLERK_DOMAIN?.replace(/^https?:\/\//, '');
     const clerkPubKey = process.env.CLERK_PUBLISHABLE_KEY ?? '';
     return c.html(`<!DOCTYPE html>
 <html><head><title>oanim — Completing sign-in…</title>
@@ -155,7 +155,7 @@ window.addEventListener('load', async () => {
 
   // Verify Clerk JWT
   try {
-    const clerkDomain = process.env.CLERK_DOMAIN;
+    const clerkDomain = process.env.CLERK_DOMAIN?.replace(/^https?:\/\//, '');
     if (!clerkDomain) return c.json({ error: 'Server misconfigured' }, 500);
 
     const JWKS = createRemoteJWKSet(new URL(`https://${clerkDomain}/.well-known/jwks.json`));
