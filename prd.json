@@ -624,7 +624,7 @@
         "Code examples are accurate and tested"
       ],
       "status": "done",
-      "notes": "21-page Mintlify docs site at packages/docs/. Two tabs: Documentation (14 pages) and Platform (7 pages). Live at docs.open-animate.com. Comprehensive audit completed: fixed Terminal component API (lines prop, not children), added all missing UI component props, corrected default spring values per animation, fixed API key prefix (anim_ not oan_), added spring config values, added missing env vars to self-hosting, added Steps/Note components, added cost controls and credit depletion docs."
+      "notes": "21-page Mintlify docs site at packages/docs/. Two tabs: Documentation (14 pages) and Platform (7 pages). Live at docs.open-animate.com. Comprehensive audit completed with 14 pages of fixes. Reframed docs as 'creative suite for agents' to match landing page (open-animate.com). Renamed examples→templates, merged Animation Presets+Components nav into single Reference group, agent-first intro ('Works with Claude Code, Cursor, Codex, Windsurf'). Maple theme. All project references use 'Open Animate', CLI/package refs stay 'oanim'/'@oanim/core'."
     },
     {
       "id": "OANIM-036",

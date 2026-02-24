@@ -597,3 +597,28 @@ Ran 4 parallel research agents auditing: CLI commands, core library exports, API
 - **quickstart.mdx** — Added Steps component for better UX. Added `props` to animate.json description.
 
 **Build verified:** `pnpm build` succeeds. Live site verified at docs.open-animate.com.
+
+---
+
+## Session 11 — 2026-02-23
+
+### Docs reframing: creative suite for agents (OANIM-035 follow-up)
+
+**Naming consistency (16 files):**
+- Updated all project/platform references from "oanim" to "Open Animate" across all 16 affected docs pages
+- CLI commands (`oanim init`, `oanim render`) and package names (`@oanim/core`) unchanged
+- Updated logos (light.svg, dark.svg) from "oanim" to "open animate", widened viewBox
+- Updated favicon from "o" to "oa"
+- Updated docs.json name from "oanim" to "Open Animate"
+
+**Agent-first reframing (12 files):**
+- Rewrote `index.mdx` to match landing page (open-animate.com): "The creative suite for agents." / "Works with Claude Code · Cursor · Codex · Windsurf"
+- "What agents can build" cards replace feature inventory (Product Launch, Explainer, Metrics Dashboard, Meme Caption)
+- Renamed `examples.mdx` → `templates.mdx` with landing page copy ("Gradient background, logo pop-in, CTA slide. The 5-second clip every startup needs.")
+- Restructured nav: merged "Animation Presets" + "Components" groups into single "Reference" group
+- Stripped Remotion-centric language from CLI descriptions (init: "Scaffold a new video project", render: "Export your composition to MP4", assets: "Generate and manipulate images with AI")
+- Rewrote `guides/agent-skill.mdx` — removed Remotion skills prerequisite framing, focused on capabilities
+- Tightened `quickstart.mdx` — "Your agent writes src/MyComp.tsx", next steps link to Templates and Asset Generation
+- Switched Mintlify theme from `mint` to `maple`
+
+**Commits:** `77a8c22` (naming), `b267166` (initial agent reframe), `1ab9902` (full reframe), `9a184c3` (maple theme)
