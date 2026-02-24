@@ -206,29 +206,32 @@ media.get('/status/:requestId', async (c) => {
   if (!model) return c.json({ error: 'Missing model query parameter' }, 400);
   if (!requestId) return c.json({ error: 'Missing requestId' }, 400);
 
-  const status = await falQueueStatus(model, requestId);
+  try {
+    const status = await falQueueStatus(model, requestId);
 
-  if (status.status === 'COMPLETED') {
-    // Fetch the full result
-    const result = await falQueueResult(model, requestId);
-    const url = getMediaUrl(result);
+    if (status.status === 'COMPLETED') {
+      const result = await falQueueResult(model, requestId);
+      const url = getMediaUrl(result);
+      return c.json({
+        status: 'COMPLETED',
+        url,
+        result,
+        provider: 'fal.ai',
+        model,
+        estimatedCostUsd: getModelCost(model),
+      });
+    }
+
     return c.json({
-      status: 'COMPLETED',
-      url,
-      result,
+      status: status.status,
+      queuePosition: status.queue_position ?? null,
       provider: 'fal.ai',
       model,
-      estimatedCostUsd: getModelCost(model),
     });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    return c.json({ error: message }, 500);
   }
-
-  // Still processing — return status only
-  return c.json({
-    status: status.status,
-    queuePosition: status.queue_position ?? null,
-    provider: 'fal.ai',
-    model,
-  });
 });
 
 media.post('/generate', async (c) => {
