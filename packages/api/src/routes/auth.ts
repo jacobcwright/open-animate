@@ -76,7 +76,11 @@ auth.get('/cli/login', async (c) => {
       });
     }
     window.addEventListener('load', async () => {
-      await window.Clerk.load();
+      var cbUrl = '${callbackUrl}?state=${state}';
+      await window.Clerk.load({
+        signInForceRedirectUrl: cbUrl,
+        signUpForceRedirectUrl: cbUrl,
+      });
       if (window.Clerk.user) {
         redirectWithToken();
       } else {
@@ -86,7 +90,10 @@ auth.get('/cli/login', async (c) => {
             redirectWithToken();
           }
         });
-        window.Clerk.mountSignIn(document.getElementById('clerk-container'));
+        window.Clerk.mountSignIn(document.getElementById('clerk-container'), {
+          forceRedirectUrl: cbUrl,
+          signUpForceRedirectUrl: cbUrl,
+        });
       }
     });
   </script>
