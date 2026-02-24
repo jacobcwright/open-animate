@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Open Animate",
-  "theme": "mint",
+  "theme": "maple",
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
