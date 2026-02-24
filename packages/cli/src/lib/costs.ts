@@ -1,7 +1,9 @@
 /**
- * fal.ai model cost estimates (USD per run).
- * Used for cost limit checks and usage tracking.
+ * fal.ai base model costs (USD per run).
+ * Platform margin is applied in getModelCost().
  */
+export const PLATFORM_MARGIN = 0.4; // 40%
+
 export const FAL_MODEL_COSTS: Record<string, number> = {
   // Image generation
   'fal-ai/flux/schnell': 0.003,
@@ -28,18 +30,18 @@ export const FAL_MODEL_COSTS: Record<string, number> = {
   'fal-ai/creative-upscaler': 0.025,
   'fal-ai/clarity-upscaler': 0.025,
 
-  // Video generation
-  'fal-ai/kling-video/v1/standard/text-to-video': 0.1,
-  'fal-ai/kling-video/v1/pro/text-to-video': 0.35,
-  'fal-ai/kling-video/v1.5/pro/text-to-video': 0.35,
-  'fal-ai/minimax-video/video-01-live': 0.3,
-  'fal-ai/hunyuan-video': 0.5,
-  'fal-ai/luma-dream-machine': 0.3,
-  'fal-ai/runway-gen3/turbo/image-to-video': 0.25,
-  'fal-ai/veo2': 0.5,
+  // Video generation (per-second models use 5s default)
+  'fal-ai/kling-video/v1/standard/text-to-video': 0.225, // $0.045/sec × 5s
+  'fal-ai/kling-video/v1/pro/text-to-video': 0.50, // $0.10/sec × 5s
+  'fal-ai/kling-video/v1.5/pro/text-to-video': 0.50, // $0.10/sec × 5s
+  'fal-ai/minimax-video/video-01-live': 0.50, // flat per video
+  'fal-ai/hunyuan-video': 0.40, // flat per video
+  'fal-ai/luma-dream-machine': 0.50, // flat per video (v1.5)
+  'fal-ai/runway-gen3/turbo/image-to-video': 0.25, // may be discontinued
+  'fal-ai/veo2': 2.50, // $0.50/sec × 5s
 
   // Audio / music
-  'fal-ai/stable-audio': 0.04,
+  'fal-ai/stable-audio': 0.0, // free on fal.ai
 
   // ControlNet / IP-Adapter
   'fal-ai/flux/dev/controlnet': 0.03,
@@ -52,5 +54,6 @@ export const FAL_MODEL_COSTS: Record<string, number> = {
 export const DEFAULT_COST = 0.05;
 
 export function getModelCost(model: string): number {
-  return FAL_MODEL_COSTS[model] ?? DEFAULT_COST;
+  const base = FAL_MODEL_COSTS[model] ?? DEFAULT_COST;
+  return base * (1 + PLATFORM_MARGIN);
 }
