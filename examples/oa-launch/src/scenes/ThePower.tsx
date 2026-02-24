@@ -14,6 +14,7 @@ import {
   Vignette,
   palettes,
 } from '@oanim/core';
+import { spaceGrotesk } from '../fonts';
 
 const colors = palettes.sunset;
 
@@ -69,6 +70,7 @@ export const ThePower: React.FC = () => {
                 ...fadeUp({ frame, fps, delay: 0.3 + i * 0.5 }),
                 fontSize: 72,
                 fontWeight: 800,
+                fontFamily: spaceGrotesk,
                 color: i === 0 ? colors.primary : colors.text,
                 textAlign: 'center',
               }}

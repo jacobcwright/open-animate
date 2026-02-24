@@ -2,6 +2,7 @@ import React from 'react';
 import { AbsoluteFill, Audio, staticFile } from 'remotion';
 import { TransitionSeries, springTiming } from '@remotion/transitions';
 import { wipe, scaleFade, morphExpand, clipCircle, fadeBlur } from '@oanim/core';
+import { inter } from './fonts';
 import { TheProblem } from './scenes/TheProblem';
 import { TheReveal } from './scenes/TheReveal';
 import { ThePower } from './scenes/ThePower';
@@ -17,7 +18,7 @@ import { TheCTA } from './scenes/TheCTA';
  */
 export const OALaunch: React.FC = () => {
   return (
-    <AbsoluteFill style={{ backgroundColor: '#0c0a09' }}>
+    <AbsoluteFill style={{ backgroundColor: '#0c0a09', fontFamily: inter }}>
       <Audio src={staticFile('bg-music.mp3')} volume={0.25} />
 
       <TransitionSeries>

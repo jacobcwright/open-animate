@@ -12,6 +12,7 @@ import {
   Vignette,
   palettes,
 } from '@oanim/core';
+import { spaceGrotesk, jetBrainsMono } from '../fonts';
 
 const colors = palettes.sunset;
 
@@ -44,6 +45,7 @@ export const TheCTA: React.FC = () => {
           style={{
             fontSize: 80,
             fontWeight: 800,
+            fontFamily: spaceGrotesk,
             color: colors.text,
             textAlign: 'center',
             lineHeight: 1.1,
@@ -56,7 +58,7 @@ export const TheCTA: React.FC = () => {
           style={{
             ...fadeUp({ frame, fps, delay: 1.2 }),
             fontSize: 28,
-            fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+            fontFamily: jetBrainsMono,
             color: colors.primary,
             textAlign: 'center',
             padding: '16px 32px',
@@ -77,6 +79,7 @@ export const TheCTA: React.FC = () => {
             style={{
               fontSize: 48,
               fontWeight: 700,
+              fontFamily: spaceGrotesk,
               color: colors.text,
               textAlign: 'center',
             }}

@@ -11,6 +11,7 @@ import {
   Vignette,
   palettes,
 } from '@oanim/core';
+import { spaceGrotesk } from '../fonts';
 
 const colors = palettes.sunset;
 
@@ -43,6 +44,7 @@ export const TheStack: React.FC = () => {
           style={{
             fontSize: 64,
             fontWeight: 800,
+            fontFamily: spaceGrotesk,
             color: colors.text,
             textAlign: 'center',
             lineHeight: 1.2,

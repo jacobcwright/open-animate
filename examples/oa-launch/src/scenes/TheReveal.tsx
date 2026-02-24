@@ -11,6 +11,7 @@ import {
   Vignette,
   palettes,
 } from '@oanim/core';
+import { spaceGrotesk } from '../fonts';
 
 const colors = palettes.sunset;
 
@@ -68,6 +69,7 @@ export const TheReveal: React.FC = () => {
           style={{
             fontSize: 120,
             fontWeight: 800,
+            fontFamily: spaceGrotesk,
             color: colors.text,
             textAlign: 'center',
             lineHeight: 1.1,

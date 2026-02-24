@@ -1,5 +1,6 @@
 import React from 'react';
 import { Composition } from 'remotion';
+import './fonts';
 import { OALaunch } from './OALaunch';
 
 export const RemotionRoot: React.FC = () => {
