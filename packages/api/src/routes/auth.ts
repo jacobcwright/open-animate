@@ -41,55 +41,73 @@ auth.get('/cli/login', async (c) => {
   const html = `<!DOCTYPE html>
 <html>
 <head>
-  <title>oanim — Sign In</title>
+  <title>Open Animate — Sign In</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     body {
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       margin: 0;
-      background: #0a0a0a;
+      background: #000;
       color: #fafafa;
     }
     .container { min-width: 340px; max-width: 380px; text-align: center; }
-    .container h1 { font-size: 1.4rem; margin-bottom: 4px; }
-    .container p.sub { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
+    .logo {
+      font-size: 1.05rem; font-weight: 600; letter-spacing: -0.4px;
+      color: #fff; margin-bottom: 32px;
+    }
+    .card {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-radius: 16px;
+      padding: 32px 28px;
+    }
+    .card h1 { font-size: 1.3rem; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.3px; }
+    .card p.sub { color: #666; font-size: 0.85rem; margin: 0 0 24px; }
     .oauth-btn {
       display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; padding: 10px 16px; margin-bottom: 10px;
-      border: 1px solid #333; border-radius: 8px; background: #141414;
-      color: #fafafa; font-size: 0.95rem; cursor: pointer; transition: background 0.15s;
+      width: 100%; padding: 11px 16px; margin-bottom: 10px;
+      border: 1px solid #222; border-radius: 8px; background: #111;
+      color: #fafafa; font-family: inherit; font-size: 0.9rem; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
     }
-    .oauth-btn:hover { background: #1e1e1e; }
+    .oauth-btn:hover { background: #181818; border-color: #333; }
     .oauth-btn:disabled { opacity: 0.5; cursor: wait; }
-    .oauth-btn img { width: 20px; height: 20px; }
-    .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: #555; font-size: 0.85rem; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #333; }
-    .field { text-align: left; margin-bottom: 12px; }
-    .field label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 4px; }
+    .oauth-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: #444; font-size: 0.8rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #222; }
+    .field { text-align: left; margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: 500; }
     .field input {
-      width: 100%; padding: 9px 12px; border: 1px solid #333; border-radius: 6px;
-      background: #141414; color: #fafafa; font-size: 0.95rem; box-sizing: border-box;
+      width: 100%; padding: 10px 12px; border: 1px solid #222; border-radius: 8px;
+      background: #111; color: #fafafa; font-family: inherit; font-size: 0.9rem; box-sizing: border-box;
+      transition: border-color 0.15s;
     }
-    .field input:focus { outline: none; border-color: #555; }
+    .field input:focus { outline: none; border-color: #ff8700; }
     .submit-btn {
-      width: 100%; padding: 10px; border: none; border-radius: 8px;
-      background: #fafafa; color: #0a0a0a; font-size: 0.95rem; font-weight: 600;
+      width: 100%; padding: 11px; border: none; border-radius: 8px;
+      background: linear-gradient(90deg, #ff8700, #ffb347, #ff8700);
+      color: #000; font-family: inherit; font-size: 0.9rem; font-weight: 600;
       cursor: pointer; transition: opacity 0.15s;
     }
     .submit-btn:hover { opacity: 0.9; }
     .submit-btn:disabled { opacity: 0.5; cursor: wait; }
-    .status { color: #888; font-size: 0.9rem; margin-top: 16px; }
-    .error { color: #f87171; font-size: 0.85rem; margin-top: 8px; display: none; }
+    .status { color: #666; font-size: 0.85rem; margin-top: 16px; }
+    .error { color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Sign in to oanim</h1>
+    <div class="logo">open animate</div>
+    <div class="card">
+    <h1>Sign in</h1>
     <p class="sub">to continue to the CLI</p>
     <div id="auth-ui">
       <button class="oauth-btn" id="github-btn">
@@ -114,6 +132,7 @@ auth.get('/cli/login', async (c) => {
       </form>
     </div>
     <div class="error" id="error"></div>
+    </div>
     <div class="status" id="status">Loading...</div>
   </div>
   <script
@@ -370,6 +389,56 @@ auth.get('/me', requireAuth, async (c) => {
     credit_balance_usd: parseFloat(user.creditBalanceUsd),
     created_at: user.createdAt.toISOString(),
   });
+});
+
+/**
+ * GET /api/v1/auth/cli/logout
+ * Serves a page that signs the user out of Clerk in the browser, then shows confirmation.
+ */
+auth.get('/cli/logout', async (c) => {
+  const clerkPubKey = process.env.CLERK_PUBLISHABLE_KEY ?? '';
+  const clerkDomain = clerkFapi(clerkPubKey);
+
+  return c.html(`<!DOCTYPE html>
+<html>
+<head>
+  <title>Open Animate — Signed Out</title>
+  <meta charset="utf-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Space Grotesk', system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #000; color: #fafafa; text-align: center; }
+    .logo { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 32px; }
+    .card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 16px; padding: 32px 28px; min-width: 300px; }
+    h1 { font-size: 1.3rem; font-weight: 600; margin: 0 0 8px; letter-spacing: -0.3px; }
+    p { color: #666; font-size: 0.85rem; margin: 0; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="logo">open animate</div>
+    <div class="card">
+      <h1 id="title">Signing out...</h1>
+      <p id="msg">Please wait</p>
+    </div>
+  </div>
+  <script async crossorigin="anonymous" data-clerk-publishable-key="${clerkPubKey}"
+    src="https://${clerkDomain}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
+  <script>
+    window.addEventListener('load', async () => {
+      try {
+        await window.Clerk.load();
+        if (window.Clerk.user) {
+          await window.Clerk.signOut();
+        }
+      } catch(e) {}
+      document.getElementById('title').textContent = 'Signed out';
+      document.getElementById('msg').textContent = 'You can close this window and return to the terminal.';
+    });
+  </script>
+</body>
+</html>`);
 });
 
 export { auth as authRoutes };
