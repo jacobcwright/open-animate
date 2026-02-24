@@ -754,3 +754,45 @@ Assets generated:
 Frame math: (120+150+165+165+135+180) − (18+15+18+15+20) = 915 − 86 = 829
 
 **Build verified:** `pnpm build` passes
+
+---
+
+## Session 13 — 2026-02-23
+
+### Queue-based media API fix (OANIM-048)
+
+Fixed the 504 Gateway Timeout issue for slow-running fal.ai models (video, audio).
+
+**Root cause:** nginx reverse proxy on Porter has ~60s timeout. Video models (kling-video: 2-5min) and audio (stable-audio: 1-2min) exceeded this.
+
+**Solution:** Queue-based submit+poll pattern:
+- API: `POST /submit` queues job to fal.ai, returns requestId + fal.ai-provided status/response URLs
+- API: `GET /status/:requestId` polls fal.ai queue, returns result when COMPLETED
+- CLI: `PlatformProvider.submitAndPoll()` with exponential backoff (2s initial → 10s max, 10min timeout)
+- Falls back to synchronous `/run` if `/submit` returns 404 (backward compat)
+
+**Key bug found:** fal.ai queue URLs use a different path than the model identifier — e.g., model `fal-ai/flux/schnell` uses queue path `fal-ai/flux` (variant stripped). Fixed by using the `status_url` and `response_url` returned in fal.ai's submit response instead of constructing URLs manually.
+
+**Other fixes along the way:**
+- Removed `Content-Type: application/json` from GET requests (caused 405 on fal.ai)
+- Queue result endpoint wraps output in `response` key (handled with `data.response ?? data`)
+- Added try/catch error handling to `/status` endpoint for better error surfacing
+
+Files changed:
+- `packages/api/src/routes/media.ts` — Added `falAuthHeader()`, `falQueueSubmit/Status/Result()`, `POST /submit`, `GET /status/:requestId`
+- `packages/cli/src/lib/providers/platform.ts` — Added `submitAndPoll()` with polling, `PlatformSubmitResponse`/`PlatformStatusResponse` interfaces
+- `packages/cli/src/lib/providers/fal.ts` — Renamed `getImageUrl` → `getMediaUrl` (handles video.url, audio_file.url)
+
+**Verified:** All 3 asset types generate successfully through the CLI:
+- `oanim assets run --model fal-ai/flux/schnell` → image (fast, ~2s)
+- `oanim assets run --model fal-ai/kling-video/v1/standard/text-to-video` → video (queued, ~3min)
+- `oanim assets run --model fal-ai/stable-audio` → audio (queued, ~1min)
+
+### Launch video assets finalized
+
+Generated the missing video asset (`abstract-clip.mp4`) via kling-video now that the queue API works. All 3 AI-generated assets verified in `examples/oa-launch/public/`:
+- `bg-gradient.png` (52KB) — warm gradient for TheReveal background
+- `abstract-clip.mp4` (2.9MB) — flowing liquid shapes for ThePower background
+- `bg-music.mp3` (5.0MB) — ambient electronic for global audio track
+
+Verified in Remotion Studio: all 6 scenes render, video plays as background, audio visible in timeline, duration 00:27.19 (829 frames).

@@ -881,7 +881,8 @@
         "oanim assets run --model fal-ai/stable-audio produces MP3",
         "No 504 errors for any supported model"
       ],
-      "status": "todo"
+      "status": "done",
+      "notes": "Implemented queue-based submit+poll pattern. API: POST /submit queues to fal.ai, GET /status/:requestId polls. Uses fal.ai-provided status_url/response_url (model paths differ between sync and queue endpoints). CLI: PlatformProvider.submitAndPoll() with exponential backoff (2s→10s, 10min timeout). Falls back to sync /run for old API versions."
     }
   ]
 }
