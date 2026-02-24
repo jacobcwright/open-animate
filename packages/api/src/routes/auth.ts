@@ -154,18 +154,19 @@ auth.get('/cli/login', async (c) => {
       }
 
       // Handle SSO callback (returning from OAuth provider via Clerk)
-      var params = new URLSearchParams(window.location.search);
-      if (window.Clerk.client && window.Clerk.client.signIn && window.Clerk.client.signIn.status === 'needs_identifier') {
-        // No pending sign-in, skip
-      } else if (!window.Clerk.user) {
-        // There might be a pending sign-in from OAuth callback
+      // Only call handleRedirectCallback when Clerk's SSO params are present in the URL
+      var hash = window.location.hash || '';
+      var search = window.location.search || '';
+      var hasSsoParams = hash.includes('__clerk') || search.includes('__clerk')
+        || (window.Clerk.client?.signIn?.status && window.Clerk.client.signIn.status !== 'needs_identifier');
+      if (hasSsoParams && !window.Clerk.user) {
         try {
           await window.Clerk.handleRedirectCallback({
             signInForceRedirectUrl: callbackUrl,
             signUpForceRedirectUrl: callbackUrl,
           });
         } catch(e) {
-          // Not an SSO callback, ignore
+          // Not an SSO callback or failed, continue to show sign-in UI
         }
       }
 
