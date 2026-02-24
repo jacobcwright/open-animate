@@ -69,18 +69,24 @@ auth.get('/cli/login', async (c) => {
     type="text/javascript"
   ></script>
   <script>
+    function redirectWithToken() {
+      return window.Clerk.session.getToken().then(function(token) {
+        var email = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
+        window.location.href = '${callbackUrl}?state=${state}&token=' + encodeURIComponent(token) + '&email=' + encodeURIComponent(email);
+      });
+    }
     window.addEventListener('load', async () => {
       await window.Clerk.load();
       if (window.Clerk.user) {
-        const token = await window.Clerk.session.getToken();
-        const email = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
-        window.location.href = '${callbackUrl}?state=${state}&token=' + encodeURIComponent(token) + '&email=' + encodeURIComponent(email);
+        redirectWithToken();
       } else {
         document.getElementById('clerk-container').innerHTML = '';
-        window.Clerk.mountSignIn(document.getElementById('clerk-container'), {
-          forceRedirectUrl: '${callbackUrl}?state=${state}',
-          signUpForceRedirectUrl: '${callbackUrl}?state=${state}',
+        window.Clerk.addListener(function(event) {
+          if (event.user && event.session) {
+            redirectWithToken();
+          }
         });
+        window.Clerk.mountSignIn(document.getElementById('clerk-container'));
       }
     });
   </script>
