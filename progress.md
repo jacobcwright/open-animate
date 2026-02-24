@@ -647,4 +647,23 @@ Ran 4 parallel research agents auditing: CLI commands, core library exports, API
 **Claude plugin directory:**
 - Submission is via Google Form at `forms.gle/rDSt7kudt7G9MrKB7` — manual submission needed
 
-**Commit:** `2d5423e`
+**Commit:** `2d5423e`, `72dcaa1` (ClawHub live)
+
+### README revamp
+
+Rewrote root README.md to match "creative suite for agents" positioning now that docs, landing page, and npm packages are all live.
+
+**Before:** Library-focused — listed every animation, transition, component inline. Title was "oanim (open-animate)".
+
+**After:**
+- Hero: "The open-source creative suite for AI agents" with npm version badges
+- Links to open-animate.com, docs.open-animate.com, npmjs.com
+- "Works with" line: Claude Code, Cursor, Codex, Windsurf
+- Capabilities table (asset gen, video composition, design system, cloud rendering)
+- Templates section with landing page copy (replaces exhaustive API lists)
+- Agent skill install instructions (`npx skills add` + `clawhub install`)
+- Full CLI command table (11 commands including login, billing, usage, api-keys)
+- Platform section with $5 free credits, link to docs
+- Cut ~45% of content — inline API reference moved to docs site
+
+**Commit:** `74deaae`
