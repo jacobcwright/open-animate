@@ -36,6 +36,8 @@ auth.get('/cli/login', async (c) => {
   const baseUrl = `https://${host}`;
   const callbackUrl = `${baseUrl}/api/v1/auth/cli/callback`;
 
+  const loginPageUrl = `${baseUrl}/api/v1/auth/cli/login?port=${port}`;
+
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -53,13 +55,66 @@ auth.get('/cli/login', async (c) => {
       background: #0a0a0a;
       color: #fafafa;
     }
-    #clerk-container { min-width: 360px; }
-    .loading { text-align: center; color: #888; }
+    .container { min-width: 340px; max-width: 380px; text-align: center; }
+    .container h1 { font-size: 1.4rem; margin-bottom: 4px; }
+    .container p.sub { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
+    .oauth-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 10px 16px; margin-bottom: 10px;
+      border: 1px solid #333; border-radius: 8px; background: #141414;
+      color: #fafafa; font-size: 0.95rem; cursor: pointer; transition: background 0.15s;
+    }
+    .oauth-btn:hover { background: #1e1e1e; }
+    .oauth-btn:disabled { opacity: 0.5; cursor: wait; }
+    .oauth-btn img { width: 20px; height: 20px; }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: #555; font-size: 0.85rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #333; }
+    .field { text-align: left; margin-bottom: 12px; }
+    .field label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 4px; }
+    .field input {
+      width: 100%; padding: 9px 12px; border: 1px solid #333; border-radius: 6px;
+      background: #141414; color: #fafafa; font-size: 0.95rem; box-sizing: border-box;
+    }
+    .field input:focus { outline: none; border-color: #555; }
+    .submit-btn {
+      width: 100%; padding: 10px; border: none; border-radius: 8px;
+      background: #fafafa; color: #0a0a0a; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .submit-btn:hover { opacity: 0.9; }
+    .submit-btn:disabled { opacity: 0.5; cursor: wait; }
+    .status { color: #888; font-size: 0.9rem; margin-top: 16px; }
+    .error { color: #f87171; font-size: 0.85rem; margin-top: 8px; display: none; }
   </style>
 </head>
 <body>
-  <div id="clerk-container">
-    <div class="loading">Loading sign-in...</div>
+  <div class="container">
+    <h1>Sign in to oanim</h1>
+    <p class="sub">to continue to the CLI</p>
+    <div id="auth-ui">
+      <button class="oauth-btn" id="github-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.694.825.576C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        Continue with GitHub
+      </button>
+      <button class="oauth-btn" id="google-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <div class="divider">or</div>
+      <form id="email-form">
+        <div class="field">
+          <label>Email address</label>
+          <input type="email" id="email" required />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="password" required />
+        </div>
+        <button type="submit" class="submit-btn" id="email-btn">Continue</button>
+      </form>
+    </div>
+    <div class="error" id="error"></div>
+    <div class="status" id="status">Loading...</div>
   </div>
   <script
     async
@@ -69,32 +124,112 @@ auth.get('/cli/login', async (c) => {
     type="text/javascript"
   ></script>
   <script>
+    var callbackUrl = '${callbackUrl}?state=${state}';
+    var thisPageUrl = '${loginPageUrl}';
+
     function redirectWithToken() {
+      document.getElementById('status').textContent = 'Completing sign-in...';
       return window.Clerk.session.getToken().then(function(token) {
         var email = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
-        window.location.href = '${callbackUrl}?state=${state}&token=' + encodeURIComponent(token) + '&email=' + encodeURIComponent(email);
+        window.location.href = callbackUrl + '&token=' + encodeURIComponent(token) + '&email=' + encodeURIComponent(email);
       });
     }
+
+    function showError(msg) {
+      var el = document.getElementById('error');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function setLoading(btnId, loading) {
+      document.getElementById(btnId).disabled = loading;
+    }
+
     window.addEventListener('load', async () => {
-      var cbUrl = '${callbackUrl}?state=${state}';
-      await window.Clerk.load({
-        signInForceRedirectUrl: cbUrl,
-        signUpForceRedirectUrl: cbUrl,
-      });
-      if (window.Clerk.user) {
-        redirectWithToken();
-      } else {
-        document.getElementById('clerk-container').innerHTML = '';
-        window.Clerk.addListener(function(event) {
-          if (event.user && event.session) {
-            redirectWithToken();
-          }
-        });
-        window.Clerk.mountSignIn(document.getElementById('clerk-container'), {
-          forceRedirectUrl: cbUrl,
-          signUpForceRedirectUrl: cbUrl,
-        });
+      try {
+        await window.Clerk.load();
+      } catch(e) {
+        showError('Failed to load authentication. Please try again.');
+        return;
       }
+
+      // Handle SSO callback (returning from OAuth provider via Clerk)
+      var params = new URLSearchParams(window.location.search);
+      if (window.Clerk.client && window.Clerk.client.signIn && window.Clerk.client.signIn.status === 'needs_identifier') {
+        // No pending sign-in, skip
+      } else if (!window.Clerk.user) {
+        // There might be a pending sign-in from OAuth callback
+        try {
+          await window.Clerk.handleRedirectCallback({
+            signInForceRedirectUrl: callbackUrl,
+            signUpForceRedirectUrl: callbackUrl,
+          });
+        } catch(e) {
+          // Not an SSO callback, ignore
+        }
+      }
+
+      // Already signed in (second run, or just completed SSO)
+      if (window.Clerk.user) {
+        document.getElementById('auth-ui').style.display = 'none';
+        redirectWithToken();
+        return;
+      }
+
+      document.getElementById('status').textContent = '';
+
+      // OAuth: GitHub
+      document.getElementById('github-btn').addEventListener('click', async () => {
+        setLoading('github-btn', true);
+        try {
+          await window.Clerk.client.signIn.authenticateWithRedirect({
+            strategy: 'oauth_github',
+            redirectUrl: thisPageUrl,
+            redirectUrlComplete: thisPageUrl,
+          });
+        } catch(e) {
+          showError(e.message || 'GitHub sign-in failed');
+          setLoading('github-btn', false);
+        }
+      });
+
+      // OAuth: Google
+      document.getElementById('google-btn').addEventListener('click', async () => {
+        setLoading('google-btn', true);
+        try {
+          await window.Clerk.client.signIn.authenticateWithRedirect({
+            strategy: 'oauth_google',
+            redirectUrl: thisPageUrl,
+            redirectUrlComplete: thisPageUrl,
+          });
+        } catch(e) {
+          showError(e.message || 'Google sign-in failed');
+          setLoading('google-btn', false);
+        }
+      });
+
+      // Email/password
+      document.getElementById('email-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setLoading('email-btn', true);
+        try {
+          var result = await window.Clerk.client.signIn.create({
+            strategy: 'password',
+            identifier: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+          });
+          if (result.status === 'complete') {
+            await window.Clerk.setActive({ session: result.createdSessionId });
+            redirectWithToken();
+          } else {
+            showError('Additional verification required. Please use OAuth sign-in.');
+            setLoading('email-btn', false);
+          }
+        } catch(e) {
+          showError(e.errors?.[0]?.longMessage || e.message || 'Sign-in failed');
+          setLoading('email-btn', false);
+        }
+      });
     });
   </script>
 </body>
