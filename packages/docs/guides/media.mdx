@@ -1,0 +1,246 @@
+---
+title: Working with Media
+description: Generate images, video, and audio with AI, then composite them into your Remotion compositions
+---
+
+The full oanim pipeline: **generate media with AI → place in `public/` → use via `staticFile()`**.
+
+## The pattern
+
+Every media type follows the same 3-step workflow:
+
+1. **Generate** — use `oanim assets` to create the file
+2. **Place** — save it to your project's `public/` directory
+3. **Use** — reference it with `staticFile()` in your Remotion component
+
+## Images
+
+### Generate
+
+```bash
+oanim assets gen-image \
+  --prompt "abstract warm gradient, deep orange and amber, dark background, 16:9" \
+  --out public/bg.png
+```
+
+### Use in a composition
+
+```tsx
+import { AbsoluteFill, Img, staticFile } from 'remotion';
+
+export const Scene: React.FC = () => {
+  return (
+    <AbsoluteFill>
+      {/* Full-bleed background image */}
+      <Img
+        src={staticFile('bg.png')}
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
+
+      {/* Dark overlay for text readability */}
+      <AbsoluteFill style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />
+
+      {/* Content on top */}
+    </AbsoluteFill>
+  );
+};
+```
+
+<Tip>
+  Use `objectFit: 'cover'` to fill the frame without distortion. The image will be cropped to fit 1920x1080.
+</Tip>
+
+## Video
+
+### Generate
+
+```bash
+oanim assets run \
+  --model fal-ai/kling-video/v1/standard/text-to-video \
+  --input '{"prompt":"slow cinematic zoom, flowing shapes, warm tones on dark bg","duration":"5"}' \
+  --out public/clip.mp4
+```
+
+Other video models:
+- `fal-ai/minimax-video/video-01-live` — fast generation
+- `fal-ai/hunyuan-video` — high quality
+
+### Use in a composition
+
+```tsx
+import { AbsoluteFill, OffthreadVideo, staticFile } from 'remotion';
+
+export const Scene: React.FC = () => {
+  return (
+    <AbsoluteFill>
+      {/* Full-bleed video background */}
+      <OffthreadVideo
+        src={staticFile('clip.mp4')}
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
+
+      {/* Dark overlay */}
+      <AbsoluteFill style={{ backgroundColor: 'rgba(0, 0, 0, 0.45)' }} />
+
+      {/* Content on top */}
+    </AbsoluteFill>
+  );
+};
+```
+
+<Note>
+  Use `<OffthreadVideo>` instead of `<Video>` — it decodes on a separate thread and prevents frame drops during rendering.
+</Note>
+
+## Audio
+
+### Generate
+
+```bash
+oanim assets run \
+  --model fal-ai/stable-audio \
+  --input '{"prompt":"minimal ambient electronic, warm pads, cinematic, no vocals","duration_in_seconds":30}' \
+  --out public/bg-music.mp3
+```
+
+### Use in a composition
+
+Add `<Audio>` at the **composition level** (outside TransitionSeries) so it plays across all scenes:
+
+```tsx
+import { AbsoluteFill, Audio, staticFile } from 'remotion';
+import { TransitionSeries } from '@remotion/transitions';
+
+export const MyVideo: React.FC = () => {
+  return (
+    <AbsoluteFill>
+      <Audio src={staticFile('bg-music.mp3')} volume={0.25} />
+
+      <TransitionSeries>
+        {/* Scenes here — music plays across all of them */}
+      </TransitionSeries>
+    </AbsoluteFill>
+  );
+};
+```
+
+### Volume animation
+
+Fade audio in/out using Remotion's `interpolate`:
+
+```tsx
+import { Audio, staticFile, interpolate, useCurrentFrame } from 'remotion';
+
+const frame = useCurrentFrame();
+
+<Audio
+  src={staticFile('bg-music.mp3')}
+  volume={interpolate(frame, [0, 30, 810, 840], [0, 0.25, 0.25, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })}
+/>
+```
+
+## Layer order
+
+When combining multiple media types, layer from back to front:
+
+```tsx
+<AbsoluteFill>
+  {/* 1. Video or image background */}
+  <OffthreadVideo src={staticFile('clip.mp4')} style={{...}} />
+
+  {/* 2. Dark overlay */}
+  <AbsoluteFill style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />
+
+  {/* 3. Ambient elements */}
+  <GlowOrb color="rgba(249, 115, 22, 0.2)" x={50} y={50} size={700} />
+
+  {/* 4. Vignette */}
+  <Vignette intensity={0.5} />
+
+  {/* 5. Content */}
+  <SafeArea style={{ justifyContent: 'center', alignItems: 'center' }}>
+    <div style={fadeUp({ frame, fps, delay: 0.2 })}>
+      Your text here
+    </div>
+  </SafeArea>
+
+  {/* 6. Audio (position doesn't matter — it's not visual) */}
+  <Audio src={staticFile('bg-music.mp3')} volume={0.25} />
+</AbsoluteFill>
+```
+
+## Complete example
+
+A scene combining all 3 media types:
+
+```tsx
+import {
+  AbsoluteFill,
+  Img,
+  OffthreadVideo,
+  Audio,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+} from 'remotion';
+import { fadeUp, SafeArea, GlowOrb, Vignette, palettes } from '@oanim/core';
+
+const colors = palettes.sunset;
+
+export const MediaScene: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  return (
+    <AbsoluteFill>
+      {/* AI-generated video background */}
+      <OffthreadVideo
+        src={staticFile('abstract-clip.mp4')}
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
+
+      {/* Darken for text */}
+      <AbsoluteFill style={{ backgroundColor: 'rgba(12, 10, 9, 0.5)' }} />
+
+      <GlowOrb color="rgba(249, 115, 22, 0.2)" x={50} y={50} size={700} />
+      <Vignette intensity={0.5} />
+
+      <SafeArea style={{ justifyContent: 'center', alignItems: 'center', gap: 24 }}>
+        {/* AI-generated image as a floating card */}
+        <Img
+          src={staticFile('product-shot.png')}
+          style={{
+            ...fadeUp({ frame, fps, delay: 0.3 }),
+            width: 600,
+            borderRadius: 16,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+          }}
+        />
+
+        <div style={{
+          ...fadeUp({ frame, fps, delay: 0.8 }),
+          fontSize: 48,
+          fontWeight: 700,
+          color: colors.text,
+        }}>
+          Your product, in motion
+        </div>
+      </SafeArea>
+
+      {/* Global audio track */}
+      <Audio src={staticFile('bg-music.mp3')} volume={0.25} />
+    </AbsoluteFill>
+  );
+};
+```
+
+## Tips
+
+- **Generate at video resolution** — for backgrounds, use 1920x1080 prompts to avoid upscaling artifacts
+- **`objectFit: 'cover'`** — fills the frame, crops excess. Use `'contain'` if you need the full image visible
+- **Trim video clips** — use Remotion's `startFrom` prop to skip the beginning: `<OffthreadVideo startFrom={30} ... />`
+- **Keep audio subtle** — `volume={0.2}` to `volume={0.3}` for background music. Let content dominate
+- **Layer overlays** — always add a semi-transparent dark overlay between media and text for readability

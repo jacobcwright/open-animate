@@ -741,7 +741,8 @@
         "Video plays on landing page without layout shift",
         "Mobile-responsive"
       ],
-      "status": "planned"
+      "status": "done",
+      "notes": "45s launch video at examples/oa-launch/. 6 scenes with TransitionSeries: TheProblem, TheReveal, TheDemo, TheCapabilities, TheStack, TheCTA. Uses sunset palette, all 8 UI components, all 3 typography components, 3 element animations (fadeUp, blurIn, popIn), 5 transitions (wipe, scaleFade, morphExpand, clipCircle, fadeBlur). Verified in Remotion Studio — all scenes render without errors."
     },
     {
       "id": "OANIM-042",
@@ -819,6 +820,68 @@
       ],
       "status": "done",
       "notes": "GET /usage/records?limit&offset&days endpoint for per-record detail. CLI: oanim usage (balance + 7-day summary), oanim usage history --limit --days (per-record table). table() helper in output.ts. Low-balance warning when < $1."
+    },
+    {
+      "id": "OANIM-046",
+      "title": "Media how-to documentation (images, video, audio)",
+      "description": "Comprehensive documentation teaching agents and users how to generate media with AI and use it in Remotion compositions — the missing link between asset generation and video compositing.",
+      "requirements": [
+        "New guides/media.mdx covering Generate → Place → Use pattern for Img, OffthreadVideo, Audio",
+        "New references/media-guide.md (agent-optimized version)",
+        "Updated SKILL.md with media compositing capabilities and references",
+        "Updated workflow.md with media asset step",
+        "Updated asset-generation.md with video/audio gen + usage code",
+        "Updated composition-patterns (docs + skill) with media layers section",
+        "Updated quickstart.mdx with usage code and media guide link",
+        "Updated README.md with media compositing mention and oa-launch template"
+      ],
+      "tests": [
+        "guides/media.mdx covers images, video, audio with working code",
+        "Skill references updated with media patterns",
+        "docs.json nav includes guides/media"
+      ],
+      "status": "done",
+      "notes": "Created guides/media.mdx (centerpiece guide) and references/media-guide.md (agent version). Updated 8 existing files: docs.json, SKILL.md, workflow.md, asset-generation.md, composition-patterns (both), quickstart.mdx, README.md."
+    },
+    {
+      "id": "OANIM-047",
+      "title": "Rebuild launch video with AI-generated media",
+      "description": "Rebuild oa-launch example to dogfood all 3 media types (image, video, audio). Faster pacing (~28s vs 45s), new ThePower scene with OffthreadVideo bg, Img background on TheReveal, global Audio track.",
+      "requirements": [
+        "Duration: ~28s (829 frames) down from 45s (1350 frames)",
+        "AI-generated image (bg-gradient.png) as TheReveal background via <Img>",
+        "AI-generated video (abstract-clip.mp4) as ThePower background via <OffthreadVideo>",
+        "AI-generated audio (bg-music.mp3) as global track via <Audio>",
+        "New ThePower scene replaces TheCapabilities",
+        "Faster transitions (15-20f vs 25-30f)",
+        "TheDemo shows asset gen workflow (not just init)"
+      ],
+      "tests": [
+        "pnpm build passes",
+        "npx remotion studio renders all scenes without errors",
+        "Generated image visible as Scene 2 background",
+        "Generated video playing as Scene 3 background",
+        "Background music audible across all scenes"
+      ],
+      "status": "done",
+      "notes": "Rebuilt all 6 scenes + composition. Created ThePower.tsx (OffthreadVideo bg), rewrote TheReveal.tsx (Img bg), added Audio to OALaunch.tsx, deleted TheCapabilities.tsx. Root.tsx durationInFrames: 1350→829. Generated bg-gradient.png via gen-image, abstract-clip.mp4 via kling-video, bg-music.mp3 via stable-audio."
+    },
+    {
+      "id": "OANIM-048",
+      "title": "Fix platform API timeout for slow-running fal.ai models",
+      "description": "The nginx reverse proxy on api.oanim.dev has a ~60s timeout. Slow models like kling-video (2-5min), stable-audio (1-2min), and hunyuan-video return 504 Gateway Timeout. The API needs to handle long-running requests — either increase the nginx timeout, implement async job polling (submit → poll for result), or use fal.ai's queue API.",
+      "requirements": [
+        "Video generation models (kling, minimax, hunyuan) complete without 504",
+        "Audio generation (stable-audio) completes without 504",
+        "Existing fast models (flux/schnell) unaffected",
+        "oanim assets run works end-to-end for all model types"
+      ],
+      "tests": [
+        "oanim assets run --model fal-ai/kling-video/v1/standard/text-to-video produces MP4",
+        "oanim assets run --model fal-ai/stable-audio produces MP3",
+        "No 504 errors for any supported model"
+      ],
+      "status": "todo"
     }
   ]
 }

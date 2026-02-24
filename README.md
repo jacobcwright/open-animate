@@ -28,7 +28,7 @@ Claude Code &middot; Cursor &middot; Codex &middot; Windsurf &middot; any agent 
 | | |
 |---|---|
 | **AI Media Generation** | Generate images, video, and audio. Edit photos, remove backgrounds, upscale. Run any ai model via `oanim assets run`. Multi-provider media gateway with 30+ supported models. |
-| **Video Composition** | Compose React-based videos with [Remotion](https://remotion.dev). 8 animation presets, 14 transitions, typography, and production-ready UI components via `@oanim/core`. |
+| **Video Composition** | Compose React-based videos with [Remotion](https://remotion.dev). Use `<Img>`, `<OffthreadVideo>`, and `<Audio>` with generated media. 8 animation presets, 14 transitions, typography, and production-ready UI components via `@oanim/core`. |
 | **Design System** | 5 color palettes, font stacks, spacing scale, and components tuned for 1920x1080 |
 | **Cloud Rendering** | Render locally or `oanim render --cloud` — no Chromium or ffmpeg needed |
 
@@ -40,6 +40,7 @@ Claude Code &middot; Cursor &middot; Codex &middot; Windsurf &middot; any agent 
 | [Explainer](examples/explainer) | Numbered steps with staggered entrances and transitions | 20s |
 | [Logo Reveal](examples/logo-reveal) | GlowOrb builds, logo snaps in with elasticScale | 5s |
 | [Metrics Dashboard](examples/investor-update) | CountUp animations for revenue, users, and growth | 15s |
+| [OA Launch](examples/oa-launch) | AI-generated image, video, and audio backgrounds | 28s |
 | [Meme Caption](examples/meme-caption) | Vertical 1080x1920 — bold text, shake, zoom | 6s |
 
 ## Packages

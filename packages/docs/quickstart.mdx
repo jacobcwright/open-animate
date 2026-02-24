@@ -66,12 +66,25 @@ Outputs `out/MyComp.mp4`. Override with flags:
 npx oanim render --fps 60 --res 3840x2160 --codec h265
 ```
 
-## Generate assets (optional)
+## Generate and use media (optional)
 
 ```bash
 npx oanim login
 npx oanim assets gen-image --prompt "dark abstract gradient, purple and blue" --out public/bg.png
 ```
+
+Then use in your composition:
+
+```tsx
+import { Img, staticFile } from 'remotion';
+
+<Img
+  src={staticFile('bg.png')}
+  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+/>
+```
+
+You can also generate video and audio — see the [Working with Media](/guides/media) guide.
 
 </Steps>
 
@@ -84,8 +97,8 @@ npx oanim assets gen-image --prompt "dark abstract gradient, purple and blue" --
   <Card title="Animation Presets" href="/core/element-animations">
     8 animations, 7 springs, 5 easings.
   </Card>
-  <Card title="Asset Generation" href="/cli/assets">
-    Generate and edit images with AI.
+  <Card title="Working with Media" href="/guides/media">
+    Generate images, video, and audio with AI.
   </Card>
   <Card title="Composition Patterns" href="/guides/composition-patterns">
     Multi-scene architecture and layering.

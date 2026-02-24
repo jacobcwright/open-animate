@@ -47,9 +47,23 @@ npx remotion studio
 npx oanim render
 ```
 
-### 5. Generate assets (optional)
+### 5. Generate and use media assets (optional)
 ```bash
+# Generate image, video, or audio
 npx oanim assets gen-image --prompt "dark gradient abstract" --out public/bg.png
+npx oanim assets run --model fal-ai/kling-video/v1/standard/text-to-video \
+  --input '{"prompt":"cinematic abstract motion","duration":"5"}' --out public/clip.mp4
+npx oanim assets run --model fal-ai/stable-audio \
+  --input '{"prompt":"ambient electronic, no vocals","duration_in_seconds":30}' --out public/music.mp3
+```
+
+Then use in your composition:
+```tsx
+import { Img, OffthreadVideo, Audio, staticFile } from 'remotion';
+
+<Img src={staticFile('bg.png')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+<OffthreadVideo src={staticFile('clip.mp4')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+<Audio src={staticFile('music.mp3')} volume={0.25} />
 ```
 
 ## Capabilities
@@ -65,6 +79,9 @@ npx oanim assets gen-image --prompt "dark gradient abstract" --out public/bg.png
 | Rendering to video | `oanim render` |
 | Cloud rendering | `oanim render --cloud` |
 | AI image generation | `oanim assets gen-image` |
+| AI video generation | `oanim assets run` (kling, minimax, hunyuan models) |
+| AI audio generation | `oanim assets run` (stable-audio model) |
+| Media compositing | `<Img>`, `<OffthreadVideo>`, `<Audio>` via `staticFile()` |
 | Image editing | `oanim assets edit-image` |
 | Background removal | `oanim assets remove-bg` |
 | Image upscaling | `oanim assets upscale` |
@@ -77,6 +94,7 @@ npx oanim assets gen-image --prompt "dark gradient abstract" --out public/bg.png
 - `references/composition-patterns.md` — Multi-scene composition architecture
 - `references/animation-cookbook.md` — Full `@oanim/core` presets reference
 - `references/asset-generation.md` — AI asset generation guide
+- `references/media-guide.md` — Using generated media in compositions (Img, Video, Audio)
 
 ## Templates
 

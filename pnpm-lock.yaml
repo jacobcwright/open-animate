@@ -176,6 +176,34 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
+  examples/oa-launch:
+    dependencies:
+      '@oanim/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@remotion/cli':
+        specifier: ^4.0.0
+        version: 4.0.427(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@remotion/transitions':
+        specifier: ^4.0.0
+        version: 4.0.427(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.4(react@19.2.4)
+      remotion:
+        specifier: ^4.0.0
+        version: 4.0.427(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.14
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+
   packages/api:
     dependencies:
       '@aws-sdk/client-s3':

@@ -95,3 +95,48 @@ Each scene should follow this layering:
 
 Use `springTiming` with high damping (200) for smooth transitions.
 Use `linearTiming` when you want constant-speed transitions.
+
+## Media layers
+
+When using AI-generated media (images, video, audio), layer them into the scene structure:
+
+### Video or image background
+```tsx
+import { OffthreadVideo, Img, staticFile } from 'remotion';
+
+// Video background
+<OffthreadVideo
+  src={staticFile('clip.mp4')}
+  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+/>
+
+// Or image background
+<Img
+  src={staticFile('bg.png')}
+  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+/>
+
+// Always add dark overlay for text readability
+<AbsoluteFill style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} />
+```
+
+### Global audio track
+Place `<Audio>` at the composition level (outside TransitionSeries) so it plays across all scenes:
+```tsx
+import { Audio, staticFile } from 'remotion';
+
+<AbsoluteFill>
+  <Audio src={staticFile('bg-music.mp3')} volume={0.25} />
+  <TransitionSeries>
+    {/* Scenes here */}
+  </TransitionSeries>
+</AbsoluteFill>
+```
+
+### Full layer order (back to front)
+1. `<OffthreadVideo>` or `<Img>` — media background
+2. Dark overlay — `rgba(0, 0, 0, 0.5)`
+3. `<GlowOrb>` — ambient glow
+4. `<Vignette>` — edge darkening
+5. `<SafeArea>` — content
+6. `<Audio>` — non-visual, position doesn't matter

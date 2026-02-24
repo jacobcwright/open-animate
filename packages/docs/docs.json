@@ -51,7 +51,7 @@
           },
           {
             "group": "Guides",
-            "pages": ["guides/composition-patterns", "guides/agent-skill"]
+            "pages": ["guides/media", "guides/composition-patterns", "guides/agent-skill"]
           }
         ]
       },
