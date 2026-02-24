@@ -463,7 +463,7 @@ function userTable(rows, editable) {
       '<td><span class="cell-credits">' + fmtUsd(r.creditBalanceUsd) + '</span></td>' +
       '<td>' + (r.keyCount ?? '—') + '</td>' +
       '<td>' + fmtDate(r.createdAt) + '</td>';
-    if (editable) h += '<td><button class="btn btn-sm" onclick="editUser(\'' + rid + '\',this)">Edit</button></td>';
+    if (editable) h += '<td><button class="btn btn-sm" onclick="editUser(&#39;' + rid + '&#39;,this)">Edit</button></td>';
     h += '</tr>';
   });
   h += '</table>';
