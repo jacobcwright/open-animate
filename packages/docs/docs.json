@@ -32,23 +32,18 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["index", "quickstart", "examples"]
+            "pages": ["index", "quickstart", "templates"]
           },
           {
             "group": "CLI",
             "pages": ["cli/init", "cli/render", "cli/assets"]
           },
           {
-            "group": "Animation Presets",
+            "group": "Reference",
             "pages": [
               "core/element-animations",
               "core/springs-and-easings",
-              "core/transitions"
-            ]
-          },
-          {
-            "group": "Components",
-            "pages": [
+              "core/transitions",
               "core/typography",
               "core/ui-components",
               "core/design-tokens"

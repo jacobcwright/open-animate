@@ -1,23 +1,9 @@
 ---
 title: Agent Skill
-description: Teach AI agents to compose motion graphics with Open Animate
+description: Structured references and templates that teach agents to create videos
 ---
 
-The `animate-skill/` directory contains an agent skill that teaches AI agents how to compose professional motion graphics using Remotion + `@oanim/core`.
-
-## What is an agent skill?
-
-An agent skill is a structured set of references, templates, and workflow instructions that an AI coding agent (like Claude) can use to produce high-quality output in a specific domain. The Open Animate skill teaches agents the workflow, animation presets, composition patterns, and best practices.
-
-## Prerequisites
-
-The Open Animate skill builds on top of **Remotion skills** for core Remotion API knowledge:
-
-```bash
-npx skills add remotion-dev/skills
-```
-
-Open Animate adds premium animation presets, components, and a workflow CLI on top of Remotion's foundations.
+The `animate-skill/` directory is an agent skill — a structured set of references, templates, and workflow instructions that any coding agent can use to produce professional motion graphics.
 
 ## Skill structure
 
@@ -40,29 +26,26 @@ animate-skill/
 
 ## Agent workflow
 
-The skill instructs agents to follow this workflow:
-
 1. **Initialize** — `oanim init my-video`
 2. **Compose** — Write scenes using `@oanim/core` presets and components
 3. **Preview** — `npx remotion studio`
 4. **Render** — `oanim render`
 5. **Assets** (optional) — `oanim assets gen-image`
 
-## When to use what
+## What the skill provides
 
-| Need | Tool |
+| Capability | Source |
 |---|---|
-| Core Remotion API (`interpolate`, `spring`, `Sequence`) | Remotion skills |
 | Animation presets (`fadeUp`, `popIn`, springs) | `@oanim/core` |
-| Ready-made components (`Terminal`, `Card`, `Badge`) | `@oanim/core` |
-| Scene transitions (`fadeBlur`, `clipCircle`) | `@oanim/core` + `@remotion/transitions` |
+| Components (`Terminal`, `Card`, `Badge`) | `@oanim/core` |
+| Scene transitions (`fadeBlur`, `clipCircle`) | `@oanim/core` |
 | Project scaffolding | `oanim init` |
 | Rendering to video | `oanim render` |
 | AI asset generation | `oanim assets` |
 
 ## Templates
 
-Templates provide full scene-by-scene blueprints for common video types:
+Each template includes complete code for every scene, recommended transitions, and duration guidelines.
 
 | Template | Description |
 |---|---|
@@ -71,5 +54,3 @@ Templates provide full scene-by-scene blueprints for common video types:
 | `logo-reveal` | Logo animation with glow effects |
 | `meme-caption` | Quick vertical social clip |
 | `investor-update` | Metrics dashboard with CountUp numbers |
-
-Each template includes complete code for every scene, recommended transitions, and duration guidelines.

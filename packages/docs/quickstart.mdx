@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-description: Create and render a video in 60 seconds
+description: Your agent's first video is 60 seconds away
 ---
 
 <Steps>
@@ -12,19 +12,11 @@ npx oanim init my-video
 cd my-video
 ```
 
-This creates a Remotion project with `@oanim/core` — animation presets, transitions, components, and design tokens pre-configured.
-
-## Preview
-
-```bash
-npx remotion studio
-```
-
-Opens Remotion Studio at `localhost:3000` with live preview and timeline scrubbing.
+Creates a project with `@oanim/core` — animation presets, transitions, components, and design tokens pre-configured.
 
 ## Compose
 
-Edit `src/MyComp.tsx`:
+Your agent writes `src/MyComp.tsx`:
 
 ```tsx
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
@@ -54,6 +46,14 @@ export const MyComp: React.FC = () => {
 };
 ```
 
+## Preview
+
+```bash
+npx remotion studio
+```
+
+Opens a live preview at `localhost:3000` with timeline scrubbing.
+
 ## Render
 
 ```bash
@@ -78,16 +78,16 @@ npx oanim assets gen-image --prompt "dark abstract gradient, purple and blue" --
 ## Next steps
 
 <CardGroup cols={2}>
+  <Card title="Templates" href="/templates">
+    5 pre-built compositions to start from.
+  </Card>
   <Card title="Animation Presets" href="/core/element-animations">
     8 animations, 7 springs, 5 easings.
   </Card>
-  <Card title="Transitions" href="/core/transitions">
-    14 drop-in transition presets.
+  <Card title="Asset Generation" href="/cli/assets">
+    Generate and edit images with AI.
   </Card>
   <Card title="Composition Patterns" href="/guides/composition-patterns">
     Multi-scene architecture and layering.
-  </Card>
-  <Card title="Examples" href="/examples">
-    6 working example projects.
   </Card>
 </CardGroup>

@@ -3,61 +3,70 @@ title: Introduction
 description: The open-source creative suite for AI agents
 ---
 
-# Open Animate
+# The creative suite for agents.
 
-**The open-source creative suite for AI agents.**
-
-Give Claude Code, Codex, and other coding agents the ability to generate images, compose videos, and render motion graphics — all through code.
+Open-source toolkit that turns any coding agent into a motion designer. Describe what you want. Get an MP4.
 
 ```bash
 npx oanim init my-video
 ```
 
-## Capabilities
+Your agent writes React. [Remotion](https://remotion.dev) renders frames. You get an MP4.
+
+## Works with
+
+Claude Code · Cursor · Codex · Windsurf · any agent that writes code
+
+## What agents can build
 
 <CardGroup cols={2}>
-  <Card title="Asset Generation" icon="images">
-    Generate images, edit photos, remove backgrounds, upscale — multi-provider AI media gateway with fal.ai, Runway, and more.
+  <Card title="Product Launch" icon="rocket" href="/templates#product-launch">
+    Gradient background, logo pop-in, CTA slide. The 5-second clip every startup needs.
   </Card>
-  <Card title="Video Composition" icon="film">
-    Compose React-based videos with Remotion. 8 animation presets, 14 transitions, typography, and production-ready UI components.
+  <Card title="Explainer" icon="list-ol" href="/templates#explainer">
+    Numbered steps with staggered entrances and transitions between scenes.
   </Card>
-  <Card title="Design System" icon="palette">
-    5 color palettes, font stacks, spacing scale, and components like Terminal, Card, Badge — all tuned for 1920x1080.
+  <Card title="Metrics Dashboard" icon="chart-line" href="/templates#metrics-dashboard">
+    CountUp animations for revenue, users, and growth.
   </Card>
-  <Card title="Cloud Rendering" icon="cloud">
-    Render locally or ship to the cloud. No Chromium or ffmpeg install needed for `oanim render --cloud`.
+  <Card title="Meme Caption" icon="mobile" href="/templates#meme-caption">
+    Vertical 1080x1920. Bold text, shake entrance, zoom. Ship to Reels.
   </Card>
 </CardGroup>
 
-## How it works
+[Browse all templates →](/templates)
 
-```
-oanim init        → scaffold a Remotion project with @oanim/core
-oanim render      → export MP4 (local or --cloud)
-oanim assets      → generate and manipulate images with AI
-```
+## Capabilities
+
+<CardGroup cols={2}>
+  <Card title="Asset Generation" icon="images" href="/cli/assets">
+    Generate images, edit photos, remove backgrounds, upscale — multi-provider AI media gateway.
+  </Card>
+  <Card title="Video Composition" icon="film" href="/core/element-animations">
+    8 animation presets, 14 transitions, typography, and production-ready components.
+  </Card>
+  <Card title="Design System" icon="palette" href="/core/design-tokens">
+    5 color palettes, font stacks, spacing, and components tuned for 1920x1080.
+  </Card>
+  <Card title="Cloud Rendering" icon="cloud" href="/platform/cloud-rendering">
+    Render locally or in the cloud. No Chromium or ffmpeg needed for `--cloud`.
+  </Card>
+</CardGroup>
 
 ## Packages
 
 | Package | Description |
 |---------|-------------|
-| `oanim` | CLI — project scaffolding, rendering, asset generation |
-| `@oanim/core` | Animation presets, transitions, components, design tokens for Remotion |
+| `oanim` | CLI — scaffolding, rendering, asset generation |
+| `@oanim/core` | Animation presets, transitions, components, design tokens |
 
-## Platform
+## Open core
 
-Open Animate is **open-core** — everything is open source (Apache 2.0) and self-hostable. The hosted platform at `api.oanim.dev` handles auth, billing, cloud rendering, and the media gateway so you don't have to.
+Everything is Apache 2.0 and self-hostable. The [hosted platform](/platform/overview) handles auth, billing, and cloud rendering.
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/quickstart">
+  <Card title="Quickstart" icon="bolt" href="/quickstart">
     First video in 60 seconds.
-  </Card>
-  <Card title="Examples" icon="grid-2" href="/examples">
-    6 working example projects.
-  </Card>
-  <Card title="Platform" icon="server" href="/platform/overview">
-    Cloud rendering, billing, API keys.
   </Card>
   <Card title="GitHub" icon="github" href="https://github.com/jacobcwright/open-animate">
     Source code and issues.
