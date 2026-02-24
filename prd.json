@@ -624,7 +624,7 @@
         "Code examples are accurate and tested"
       ],
       "status": "done",
-      "notes": "21-page Mintlify docs site at packages/docs/. Two tabs: Documentation (14 pages — quickstart, CLI, core presets, components, tokens, guides) and Platform (7 pages — overview, auth, API keys, cloud rendering, billing, usage, self-hosting). All content sourced from existing references, source code, and README. Orange branding (#FF8000), GitHub link. pnpm build passes."
+      "notes": "21-page Mintlify docs site at packages/docs/. Two tabs: Documentation (14 pages) and Platform (7 pages). Live at docs.open-animate.com. Comprehensive audit completed: fixed Terminal component API (lines prop, not children), added all missing UI component props, corrected default spring values per animation, fixed API key prefix (anim_ not oan_), added spring config values, added missing env vars to self-hosting, added Steps/Note components, added cost controls and credit depletion docs."
     },
     {
       "id": "OANIM-036",

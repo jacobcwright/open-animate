@@ -568,3 +568,32 @@ Note: Also added `credit_balance_usd` to whoami output (was missing).
 - `platform/self-hosting.mdx` — docker-compose + env vars + direct provider keys
 
 **Verification:** `pnpm build` passes (docs package has no build step — `echo` only)
+
+**Config fix:** Initial `docs.json` used legacy `mint.json` format (flat navigation arrays, deprecated `topbarLinks`/`footerSocials`). Rewrote to new format with `theme`, recursive `navigation.tabs[].groups` structure, `navbar`/`footer`. Site live at docs.open-animate.com.
+
+---
+
+## Session 10 — 2026-02-23
+
+### Comprehensive documentation audit and fixes (OANIM-035 follow-up)
+
+Ran 4 parallel research agents auditing: CLI commands, core library exports, API/platform features, and all 21 docs pages cross-referenced against source code.
+
+**Critical fixes (14 pages updated):**
+
+- **core/ui-components.mdx** — Fixed Terminal component API: uses `lines: string[]` prop (not children). Added all missing props: SafeArea `mode`, GlowOrb `size`/`drift`/`opacity`, Terminal `title`/`bg`/`textColor`/`fontSize`/`style`, Card `bg`/`borderColor`/`padding`/`borderRadius`/`spring`/`style`, Badge `bg`/`textColor`/`borderColor`/`fontSize`/`spring`/`style`, Grid `cellSize`/`color`/`lineWidth`/`animated`, Vignette `color`. Added Background props table.
+- **core/element-animations.mdx** — Fixed default spring values: popIn='bouncy', blurIn='smooth', elasticScale='wobbly', perspectiveRotateIn='smooth' (docs incorrectly said all use 'snappy'). Added "Default springs per animation" reference table. Fixed slideIn distance (30px not 20px).
+- **core/springs-and-easings.mdx** — Added spring config values (mass/damping/stiffness) to presets table. Added "Default springs per animation" cross-reference table.
+- **core/typography.mdx** — Added missing `style` prop to all 3 components, `cursorChar` prop to TypewriterText.
+- **platform/api-keys.mdx** — Fixed key prefix from `oan_` to `anim_`. Added key format section and 10-key limit.
+- **platform/self-hosting.mdx** — Added missing env vars: `FAL_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`. Added Steps component, $5 default credit note, production considerations section.
+- **platform/authentication.mdx** — Clarified auth flow with Steps component. Removed legacy `token` field from resolution table. Added `anim_` prefix mention. Added API URL resolution chain.
+- **platform/overview.mdx** — Added rate limits table, `anim_` prefix, $5 signup credits, API URL.
+- **platform/credits-and-billing.mdx** — Added missing models (flux-realism, sd-v35-medium, aura-flow, kling-v1.5, lora). Added "What happens when credits run out" section. Added `ANIMATE_MAX_USD_PER_RUN` cost controls section.
+- **platform/usage.mdx** — Added "How usage is tracked" section explaining per-operation tracking.
+- **platform/cloud-rendering.mdx** — Added Steps component for workflow. Added Remotion Lambda mention.
+- **cli/render.mdx** — Added CRF explanation note.
+- **index.mdx** — Removed redundant `# oanim` heading. Added Platform section with link to platform tab.
+- **quickstart.mdx** — Added Steps component for better UX. Added `props` to animate.json description.
+
+**Build verified:** `pnpm build` succeeds. Live site verified at docs.open-animate.com.
