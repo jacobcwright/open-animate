@@ -1,0 +1,21 @@
+{
+  "name": "open-animate",
+  "description": "The creative suite for AI agents — motion graphics, asset generation, and video rendering via Remotion + @oanim/core",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jacob Wright",
+    "url": "https://github.com/jacobcwright"
+  },
+  "homepage": "https://open-animate.com",
+  "repository": "https://github.com/jacobcwright/open-animate",
+  "license": "Apache-2.0",
+  "keywords": [
+    "video",
+    "animation",
+    "remotion",
+    "motion-graphics",
+    "asset-generation",
+    "creative-suite",
+    "agent-skill"
+  ]
+}
