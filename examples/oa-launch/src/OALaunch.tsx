@@ -1,9 +1,9 @@
 import React from 'react';
 import { AbsoluteFill, Audio, staticFile } from 'remotion';
 import { TransitionSeries, springTiming } from '@remotion/transitions';
-import { wipe, scaleFade, morphExpand, clipCircle, fadeBlur } from '@oanim/core';
+import { wipe, scaleFade, clipPolygon, zoomThrough, fadeBlur } from '@oanim/core';
 import { inter } from './fonts';
-import { TheProblem } from './scenes/TheProblem';
+import { TheIntro } from './scenes/TheIntro';
 import { TheReveal } from './scenes/TheReveal';
 import { ThePower } from './scenes/ThePower';
 import { TheDemo } from './scenes/TheDemo';
@@ -11,10 +11,10 @@ import { TheStack } from './scenes/TheStack';
 import { TheCTA } from './scenes/TheCTA';
 
 /**
- * Open Animate Launch Video — 6 scenes, 5 transitions, 829 frames (~28s @ 30fps).
+ * Open Animate Launch Video — 6 scenes, 5 transitions, 801 frames (~27s @ 30fps).
  *
  * Frame math:
- *   (120+150+165+165+135+180) - (18+15+18+15+20) = 915 - 86 = 829
+ *   (150+120+120+210+105+150) - (12+10+10+10+12) = 855 - 54 = 801
  */
 export const OALaunch: React.FC = () => {
   return (
@@ -22,58 +22,58 @@ export const OALaunch: React.FC = () => {
       <Audio src={staticFile('bg-music.mp3')} volume={0.25} />
 
       <TransitionSeries>
-        {/* Scene 1: The Problem — 4s (120f) */}
-        <TransitionSeries.Sequence durationInFrames={120}>
-          <TheProblem />
+        {/* Scene 1: The Intro — 5s (150f) */}
+        <TransitionSeries.Sequence durationInFrames={150}>
+          <TheIntro />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
-          presentation={wipe({ direction: 'left' })}
-          timing={springTiming({ config: { damping: 200 }, durationInFrames: 18 })}
+          presentation={zoomThrough()}
+          timing={springTiming({ config: { damping: 150 }, durationInFrames: 12 })}
         />
 
-        {/* Scene 2: The Reveal — 5s (150f) */}
-        <TransitionSeries.Sequence durationInFrames={150}>
+        {/* Scene 2: The Reveal — 4s (120f) */}
+        <TransitionSeries.Sequence durationInFrames={120}>
           <TheReveal />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
-          presentation={scaleFade()}
-          timing={springTiming({ config: { damping: 200 }, durationInFrames: 15 })}
+          presentation={clipPolygon()}
+          timing={springTiming({ config: { damping: 150 }, durationInFrames: 10 })}
         />
 
-        {/* Scene 3: The Power — 5.5s (165f) */}
-        <TransitionSeries.Sequence durationInFrames={165}>
+        {/* Scene 3: The Power — 4s (120f) */}
+        <TransitionSeries.Sequence durationInFrames={120}>
           <ThePower />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
-          presentation={morphExpand()}
-          timing={springTiming({ config: { damping: 200 }, durationInFrames: 18 })}
+          presentation={wipe({ direction: 'left' })}
+          timing={springTiming({ config: { damping: 150 }, durationInFrames: 10 })}
         />
 
-        {/* Scene 4: The Demo — 5.5s (165f) */}
-        <TransitionSeries.Sequence durationInFrames={165}>
+        {/* Scene 4: The Demo — 7s (210f) */}
+        <TransitionSeries.Sequence durationInFrames={210}>
           <TheDemo />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
-          presentation={clipCircle()}
-          timing={springTiming({ config: { damping: 200 }, durationInFrames: 15 })}
+          presentation={scaleFade()}
+          timing={springTiming({ config: { damping: 150 }, durationInFrames: 10 })}
         />
 
-        {/* Scene 5: The Stack — 4.5s (135f) */}
-        <TransitionSeries.Sequence durationInFrames={135}>
+        {/* Scene 5: The Stack — 3.5s (105f) */}
+        <TransitionSeries.Sequence durationInFrames={105}>
           <TheStack />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
-          presentation={fadeBlur()}
-          timing={springTiming({ config: { damping: 200 }, durationInFrames: 20 })}
+          presentation={zoomThrough()}
+          timing={springTiming({ config: { damping: 150 }, durationInFrames: 12 })}
         />
 
-        {/* Scene 6: The CTA — 6s (180f) */}
-        <TransitionSeries.Sequence durationInFrames={180}>
+        {/* Scene 6: The CTA — 5s (150f) */}
+        <TransitionSeries.Sequence durationInFrames={150}>
           <TheCTA />
         </TransitionSeries.Sequence>
       </TransitionSeries>

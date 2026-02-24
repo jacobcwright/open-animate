@@ -15,10 +15,10 @@ import { spaceGrotesk } from '../fonts';
 
 const colors = palettes.sunset;
 
-const agents = ['Claude Code', 'Cursor', 'Codex', 'Windsurf'];
+const agents = ['Claude Code', 'Cursor', 'Codex', 'OpenClaw'];
 
 /**
- * Scene 5: The Stack — 135 frames (4.5s)
+ * Scene 5: The Stack — 105 frames (3.5s)
  * AnimatedCharacters "Works with every agent" → Agent badges → tagline
  */
 export const TheStack: React.FC = () => {
@@ -50,7 +50,7 @@ export const TheStack: React.FC = () => {
             lineHeight: 1.2,
           }}
         >
-          <AnimatedCharacters text="Works with every agent" delay={0.15} stagger={0.025} />
+          <AnimatedCharacters text="Works with every agent" delay={0.1} stagger={0.02} />
         </div>
 
         <div
@@ -62,7 +62,7 @@ export const TheStack: React.FC = () => {
           }}
         >
           {agents.map((agent, i) => (
-            <div key={agent} style={blurIn({ frame, fps, delay: 1.0 + i * 0.18 })}>
+            <div key={agent} style={blurIn({ frame, fps, delay: 0.7 + i * 0.12 })}>
               <Badge
                 fontSize={18}
                 bg="rgba(249, 115, 22, 0.1)"
@@ -77,14 +77,14 @@ export const TheStack: React.FC = () => {
 
         <div
           style={{
-            ...fadeUp({ frame, fps, delay: 2.5 }),
+            ...fadeUp({ frame, fps, delay: 1.6 }),
             fontSize: 26,
             color: colors.primary,
             textAlign: 'center',
             fontWeight: 600,
           }}
         >
-          Open-source motion graphics for code agents.
+          Open-source creative suite for agents.
         </div>
       </SafeArea>
     </AbsoluteFill>

@@ -17,7 +17,7 @@ import { spaceGrotesk, jetBrainsMono } from '../fonts';
 const colors = palettes.sunset;
 
 /**
- * Scene 6: The CTA — 180 frames (6s)
+ * Scene 6: The CTA — 150 frames (5s)
  * AnimatedCharacters "Start creating" → TypewriterText command → URL → closing
  */
 export const TheCTA: React.FC = () => {
@@ -51,12 +51,12 @@ export const TheCTA: React.FC = () => {
             lineHeight: 1.1,
           }}
         >
-          <AnimatedCharacters text="Start creating" delay={0.15} stagger={0.035} />
+          <AnimatedCharacters text="Start creating" delay={0.1} stagger={0.025} />
         </div>
 
         <div
           style={{
-            ...fadeUp({ frame, fps, delay: 1.2 }),
+            ...fadeUp({ frame, fps, delay: 0.9 }),
             fontSize: 28,
             fontFamily: jetBrainsMono,
             color: colors.primary,
@@ -69,12 +69,12 @@ export const TheCTA: React.FC = () => {
         >
           <TypewriterText
             text="npx oanim init my-video"
-            delay={1.5}
-            charsPerSecond={20}
+            delay={1.1}
+            charsPerSecond={25}
           />
         </div>
 
-        <div style={popIn({ frame, fps, delay: 3.5 })}>
+        <div style={popIn({ frame, fps, delay: 2.5 })}>
           <div
             style={{
               fontSize: 48,
@@ -90,7 +90,7 @@ export const TheCTA: React.FC = () => {
 
         <div
           style={{
-            ...fadeUp({ frame, fps, delay: 4.8 }),
+            ...fadeUp({ frame, fps, delay: 3.5 }),
             fontSize: 20,
             color: colors.textMuted,
             textAlign: 'center',

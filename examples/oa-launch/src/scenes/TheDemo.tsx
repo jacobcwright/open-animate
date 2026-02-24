@@ -14,7 +14,7 @@ import { spaceGrotesk } from '../fonts';
 const colors = palettes.sunset;
 
 /**
- * Scene 4: The Demo — 165 frames (5.5s)
+ * Scene 4: The Demo — 210 frames (7s)
  * Terminal showing asset generation + render workflow
  */
 export const TheDemo: React.FC = () => {
@@ -59,17 +59,20 @@ export const TheDemo: React.FC = () => {
           <Terminal
             title="oanim"
             delay={0.7}
-            charsPerSecond={30}
+            charsPerSecond={60}
             lines={[
-              '$ oanim assets gen-image --prompt "gradient bg" --out public/bg.png',
-              '  ✓ Generated bg.png (1920×1080)',
+              '$ npx skills add jacobcwright/open-animate',
+              '  ✓ Skill added to Claude Code',
               '',
-              '$ oanim assets run --model fal-ai/kling-video/v1/standard/text-to-video',
-              '  ✓ Generated clip.mp4 (5s)',
+              '> "Create a launch video for my startup"',
               '',
+              '$ oanim assets gen-image --prompt "gradient bg"',
+              '  ✓ bg.png (1920×1080)',
+              '$ oanim assets gen-video --prompt "particles"',
+              '  ✓ clip.mp4 (5s)',
               '$ oanim render',
               '  ████████████████████████ 100%',
-              '  ✓ Output: out/video.mp4',
+              '  ✓ out/video.mp4',
             ]}
             bg="rgba(12, 10, 9, 0.9)"
             textColor={colors.text}

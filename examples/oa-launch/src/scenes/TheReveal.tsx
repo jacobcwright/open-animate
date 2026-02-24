@@ -16,7 +16,7 @@ import { spaceGrotesk } from '../fonts';
 const colors = palettes.sunset;
 
 /**
- * Scene 2: The Reveal — 150 frames (5s)
+ * Scene 2: The Reveal — 120 frames (4s)
  * AI-generated image background + "open animate" reveal
  */
 export const TheReveal: React.FC = () => {
@@ -54,7 +54,7 @@ export const TheReveal: React.FC = () => {
       >
         <div
           style={{
-            ...fadeUp({ frame, fps, delay: 0.15 }),
+            ...fadeUp({ frame, fps, delay: 0.1 }),
             fontSize: 20,
             fontWeight: 600,
             color: colors.textMuted,
@@ -75,12 +75,12 @@ export const TheReveal: React.FC = () => {
             lineHeight: 1.1,
           }}
         >
-          <AnimatedCharacters text="open animate" delay={0.35} stagger={0.035} />
+          <AnimatedCharacters text="open animate" delay={0.25} stagger={0.03} />
         </div>
 
         <div
           style={{
-            ...fadeUp({ frame, fps, delay: 2.0 }),
+            ...fadeUp({ frame, fps, delay: 1.4 }),
             fontSize: 32,
             color: colors.textMuted,
             textAlign: 'center',
@@ -90,7 +90,7 @@ export const TheReveal: React.FC = () => {
           The creative suite for agents.
         </div>
 
-        <div style={blurIn({ frame, fps, delay: 3.2 })}>
+        <div style={blurIn({ frame, fps, delay: 2.2 })}>
           <Badge
             fontSize={16}
             bg="rgba(249, 115, 22, 0.12)"

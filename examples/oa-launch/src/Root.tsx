@@ -8,7 +8,7 @@ export const RemotionRoot: React.FC = () => {
     <Composition
       id="OALaunch"
       component={OALaunch}
-      durationInFrames={829}
+      durationInFrames={801}
       fps={30}
       width={1920}
       height={1080}

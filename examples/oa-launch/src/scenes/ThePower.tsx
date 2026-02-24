@@ -19,7 +19,7 @@ import { spaceGrotesk } from '../fonts';
 const colors = palettes.sunset;
 
 /**
- * Scene 3: The Power — 165 frames (5.5s)
+ * Scene 3: The Power — 120 frames (4s)
  * AI-generated video background + "Generate. Compose. Render." overlay
  */
 export const ThePower: React.FC = () => {
@@ -67,7 +67,7 @@ export const ThePower: React.FC = () => {
             <div
               key={word}
               style={{
-                ...fadeUp({ frame, fps, delay: 0.3 + i * 0.5 }),
+                ...fadeUp({ frame, fps, delay: 0.2 + i * 0.35 }),
                 fontSize: 72,
                 fontWeight: 800,
                 fontFamily: spaceGrotesk,
@@ -82,7 +82,7 @@ export const ThePower: React.FC = () => {
 
         <div
           style={{
-            ...fadeUp({ frame, fps, delay: 2.5 }),
+            ...fadeUp({ frame, fps, delay: 1.6 }),
             fontSize: 26,
             color: colors.textMuted,
             textAlign: 'center',
