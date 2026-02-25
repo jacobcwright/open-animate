@@ -185,19 +185,22 @@ auth.get('/cli/login', async (c) => {
             return;
           }
         } catch(transferErr) {
-          showError('Account creation failed: ' + (transferErr.errors?.[0]?.longMessage || transferErr.message || 'Unknown error'));
+          // Don't show a dead-end error — fall through to handleRedirectCallback
+          // which will redirect back to this page and retry with a fresh Clerk state.
         }
       }
 
-      // Handle SSO callback for existing users (returning from OAuth provider via Clerk)
+      // Handle SSO callback (new or existing users returning from OAuth provider).
+      // Redirect back to this page (not callbackUrl) so the next load finds the user
+      // signed in and calls redirectWithToken() directly — avoids the fragile token bridge.
       var hash = window.location.hash || '';
       var search = window.location.search || '';
       var hasSsoParams = hash.includes('__clerk') || search.includes('__clerk');
       if (hasSsoParams && !window.Clerk.user) {
         try {
           await window.Clerk.handleRedirectCallback({
-            signInForceRedirectUrl: callbackUrl,
-            signUpForceRedirectUrl: callbackUrl,
+            signInForceRedirectUrl: thisPageUrl,
+            signUpForceRedirectUrl: thisPageUrl,
           });
         } catch(e) {
           // Not an SSO callback or failed

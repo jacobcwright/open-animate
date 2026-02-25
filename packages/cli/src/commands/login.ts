@@ -123,6 +123,12 @@ export const loginCommand = new Command('login')
     } catch (err) {
       spinner.fail('Login failed');
       log.error(String(err));
+      if (String(err).includes('timed out')) {
+        log.info(
+          'If the browser login completed successfully, try running `oanim login` again — ' +
+            'the second attempt usually works immediately.',
+        );
+      }
       process.exit(1);
     }
   });
