@@ -185,7 +185,32 @@ auth.get('/cli/login', async (c) => {
             signUpForceRedirectUrl: callbackUrl,
           });
         } catch(e) {
-          // Not an SSO callback or failed, continue to show sign-in UI
+          // handleRedirectCallback can fail when OAuth results in a new user (sign-up transfer).
+          // Check if there's a transferable sign-up and complete it.
+          try {
+            var signUp = window.Clerk.client?.signUp;
+            var extAccount = signUp?.verifications?.externalAccount;
+            if (extAccount?.status === 'transferable' || extAccount?.status === 'unverified') {
+              var result = await window.Clerk.client.signUp.create({ transfer: true });
+              if (result.status === 'complete') {
+                await window.Clerk.setActive({ session: result.createdSessionId });
+                redirectWithToken();
+                return;
+              }
+            }
+            // Also check if signIn has a transferable status (reverse direction)
+            var signIn = window.Clerk.client?.signIn;
+            if (signIn?.firstFactorVerification?.status === 'transferable') {
+              var result = await window.Clerk.client.signIn.create({ transfer: true });
+              if (result.status === 'complete') {
+                await window.Clerk.setActive({ session: result.createdSessionId });
+                redirectWithToken();
+                return;
+              }
+            }
+          } catch(transferErr) {
+            showError('Sign-in failed: ' + (transferErr.errors?.[0]?.longMessage || transferErr.message || 'Unknown error'));
+          }
         }
       }
 
