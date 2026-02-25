@@ -198,10 +198,11 @@ auth.get('/cli/login', async (c) => {
                 return;
               }
             }
-            // Also check if signIn has a transferable status (reverse direction)
+            // signIn is transferable (external_account_not_found) — user authenticated
+            // via OAuth but doesn't have a Clerk account yet. Transfer to signUp.
             var signIn = window.Clerk.client?.signIn;
             if (signIn?.firstFactorVerification?.status === 'transferable') {
-              var result = await window.Clerk.client.signIn.create({ transfer: true });
+              var result = await window.Clerk.client.signUp.create({ transfer: true });
               if (result.status === 'complete') {
                 await window.Clerk.setActive({ session: result.createdSessionId });
                 redirectWithToken();
