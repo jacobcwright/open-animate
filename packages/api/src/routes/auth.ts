@@ -172,54 +172,35 @@ auth.get('/cli/login', async (c) => {
         return;
       }
 
-      // After Clerk.load(), check client state for OAuth callbacks.
-      // Detection: transferable signIn (new user via OAuth) or __clerk params in URL.
+      // OAuth sign-up transfer: new user authenticated via OAuth but has no Clerk account.
+      // Handle manually — handleRedirectCallback navigates to Clerk's default URL instead of ours.
       var signInAttempt = window.Clerk.client?.signIn;
-      var needsTransfer = !window.Clerk.user
-        && signInAttempt?.firstFactorVerification?.status === 'transferable';
+      if (!window.Clerk.user && signInAttempt?.firstFactorVerification?.status === 'transferable') {
+        try {
+          document.getElementById('status').textContent = 'Creating account...';
+          var result = await window.Clerk.client.signUp.create({ transfer: true });
+          if (result.status === 'complete') {
+            await window.Clerk.setActive({ session: result.createdSessionId });
+            redirectWithToken();
+            return;
+          }
+        } catch(transferErr) {
+          showError('Account creation failed: ' + (transferErr.errors?.[0]?.longMessage || transferErr.message || 'Unknown error'));
+        }
+      }
+
+      // Handle SSO callback for existing users (returning from OAuth provider via Clerk)
       var hash = window.location.hash || '';
       var search = window.location.search || '';
       var hasSsoParams = hash.includes('__clerk') || search.includes('__clerk');
-
-      if (needsTransfer || (hasSsoParams && !window.Clerk.user)) {
+      if (hasSsoParams && !window.Clerk.user) {
         try {
-          // handleRedirectCallback handles both sign-in completion AND
-          // sign-up transfer (when firstFactorVerification is transferable).
           await window.Clerk.handleRedirectCallback({
             signInForceRedirectUrl: callbackUrl,
             signUpForceRedirectUrl: callbackUrl,
           });
         } catch(e) {
-          // handleRedirectCallback may fail — fall through to manual transfer
-        }
-
-        // If handleRedirectCallback completed the flow, user should be set
-        if (window.Clerk.user) {
-          document.getElementById('auth-ui').style.display = 'none';
-          redirectWithToken();
-          return;
-        }
-
-        // Manual fallback: transfer OAuth from signIn to signUp directly
-        if (signInAttempt?.firstFactorVerification?.status === 'transferable') {
-          try {
-            document.getElementById('status').textContent = 'Creating account...';
-            var signUpResource = window.Clerk.client?.signUp;
-            if (signUpResource && typeof signUpResource.create === 'function') {
-              var result = await signUpResource.create({ transfer: true });
-              if (result.status === 'complete') {
-                await window.Clerk.setActive({ session: result.createdSessionId });
-                redirectWithToken();
-                return;
-              } else if (result.status === 'missing_requirements') {
-                showError('Sign-up requires additional information. Please contact support.');
-              }
-            } else {
-              showError('Unable to complete sign-up. Please try again.');
-            }
-          } catch(transferErr) {
-            showError('Account creation failed: ' + (transferErr.errors?.[0]?.longMessage || transferErr.message || 'Unknown error'));
-          }
+          // Not an SSO callback or failed
         }
       }
 
