@@ -8,7 +8,9 @@
     "build": "pnpm -r build",
     "clean": "pnpm -r clean",
     "typecheck": "pnpm -r typecheck",
-    "lint": "pnpm -r lint"
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage"
   },
   "engines": {
     "node": ">=20",
