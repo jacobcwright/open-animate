@@ -172,8 +172,25 @@ auth.get('/cli/login', async (c) => {
         return;
       }
 
+      // OAuth sign-up transfer: if signIn has a transferable OAuth verification,
+      // the user authenticated via OAuth but doesn't have a Clerk account yet.
+      // Transfer to signUp BEFORE handleRedirectCallback (which doesn't handle this).
+      var signInAttempt = window.Clerk.client?.signIn;
+      if (!window.Clerk.user && signInAttempt?.firstFactorVerification?.status === 'transferable') {
+        try {
+          document.getElementById('status').textContent = 'Creating account...';
+          var result = await window.Clerk.client.signUp.create({ transfer: true });
+          if (result.status === 'complete') {
+            await window.Clerk.setActive({ session: result.createdSessionId });
+            redirectWithToken();
+            return;
+          }
+        } catch(transferErr) {
+          showError('Account creation failed: ' + (transferErr.errors?.[0]?.longMessage || transferErr.message || 'Unknown error'));
+        }
+      }
+
       // Handle SSO callback (returning from OAuth provider via Clerk)
-      // Only call handleRedirectCallback when Clerk's SSO params are present in the URL
       var hash = window.location.hash || '';
       var search = window.location.search || '';
       var hasSsoParams = hash.includes('__clerk') || search.includes('__clerk')
@@ -185,33 +202,7 @@ auth.get('/cli/login', async (c) => {
             signUpForceRedirectUrl: callbackUrl,
           });
         } catch(e) {
-          // handleRedirectCallback can fail when OAuth results in a new user (sign-up transfer).
-          // Check if there's a transferable sign-up and complete it.
-          try {
-            var signUp = window.Clerk.client?.signUp;
-            var extAccount = signUp?.verifications?.externalAccount;
-            if (extAccount?.status === 'transferable' || extAccount?.status === 'unverified') {
-              var result = await window.Clerk.client.signUp.create({ transfer: true });
-              if (result.status === 'complete') {
-                await window.Clerk.setActive({ session: result.createdSessionId });
-                redirectWithToken();
-                return;
-              }
-            }
-            // signIn is transferable (external_account_not_found) — user authenticated
-            // via OAuth but doesn't have a Clerk account yet. Transfer to signUp.
-            var signIn = window.Clerk.client?.signIn;
-            if (signIn?.firstFactorVerification?.status === 'transferable') {
-              var result = await window.Clerk.client.signUp.create({ transfer: true });
-              if (result.status === 'complete') {
-                await window.Clerk.setActive({ session: result.createdSessionId });
-                redirectWithToken();
-                return;
-              }
-            }
-          } catch(transferErr) {
-            showError('Sign-in failed: ' + (transferErr.errors?.[0]?.longMessage || transferErr.message || 'Unknown error'));
-          }
+          // Not an SSO callback or already handled above
         }
       }
 
