@@ -82,7 +82,7 @@ export async function getApiKeys(token: string) {
 }
 
 export async function createApiKey(token: string, name: string) {
-  return fetchApi<{ key: ApiKey; secret: string }>(
+  const res = await fetchApi<{ api_key: ApiKey; key: string }>(
     '/api/v1/api-keys',
     token,
     {
@@ -90,6 +90,7 @@ export async function createApiKey(token: string, name: string) {
       body: JSON.stringify({ name }),
     }
   );
+  return { key: res.api_key, secret: res.key };
 }
 
 export async function deleteApiKey(token: string, keyId: string) {
