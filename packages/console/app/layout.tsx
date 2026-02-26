@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Instrument_Serif, Geist_Mono } from 'next/font/google';
+import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import { dark } from '@clerk/themes';
 import { Toaster } from '@/components/ui/sonner';
@@ -9,27 +9,32 @@ const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
+  weight: ['400', '500', '600'],
 });
 
-const instrumentSerif = Instrument_Serif({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   display: 'swap',
-  weight: '400',
-  variable: '--font-instrument-serif',
+  variable: '--font-space-grotesk',
+  weight: ['500', '600', '700'],
 });
 
-const geistMono = Geist_Mono({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-geist-mono',
+  variable: '--font-jetbrains-mono',
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'oanim',
-    template: '%s | oanim',
+    default: 'open animate',
+    template: '%s | open animate',
   },
   description: 'Motion graphics platform — create, render, and manage video content',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+  },
 };
 
 export default function RootLayout({
@@ -45,7 +50,7 @@ export default function RootLayout({
     >
       <html
         lang="en"
-        className={`dark ${inter.variable} ${instrumentSerif.variable} ${geistMono.variable}`}
+        className={`dark ${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
       >
         <body className="antialiased">
           {children}

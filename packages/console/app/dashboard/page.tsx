@@ -57,7 +57,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="heading-1">Dashboard</h1>
         <p className="body-text mt-2">
-          Overview of your oanim account
+          Overview of your open animate account
         </p>
       </div>
 

@@ -53,52 +53,53 @@
   --radius-2xl: 0px;
 }
 
+/* Aligned with landing page: pure black bg, papaya accent */
 :root {
   --radius: 0px;
-  --background: #0D0D0F;
+  --background: #000000;
   --foreground: #FFFFFF;
-  --card: #141417;
+  --card: #0f0f0f;
   --card-foreground: #FFFFFF;
-  --popover: #141417;
+  --popover: #0f0f0f;
   --popover-foreground: #FFFFFF;
-  --primary: #F0F0F0;
-  --primary-foreground: #0D0D0F;
-  --secondary: #1A1A1E;
-  --secondary-foreground: #A1A1AA;
-  --muted: #27272A;
-  --muted-foreground: #71717A;
-  --accent: #1A1A1E;
+  --primary: #FF8700;
+  --primary-foreground: #000000;
+  --secondary: #161616;
+  --secondary-foreground: #B0B0B0;
+  --muted: #1c1c1c;
+  --muted-foreground: #707070;
+  --accent: #161616;
   --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
-  --border: #27272A;
-  --input: #1A1A1E;
-  --ring: #3B82F6;
-  --surface: #1A1A1F;
-  --elevated: #1A1A1E;
-  --subtle: #1E1E22;
-  --border-subtle: #1F1F23;
-  --border-strong: #3F3F46;
-  --border-focus: #D4D4D4;
-  --accent-primary: #D4D4D4;
+  --border: #1c1c1c;
+  --input: #161616;
+  --ring: #FF8700;
+  --surface: #0f0f0f;
+  --elevated: #161616;
+  --subtle: #0f0f0f;
+  --border-subtle: #1c1c1c;
+  --border-strong: #2a2a2a;
+  --border-focus: #FF8700;
+  --accent-primary: #FF8700;
   --accent-blue: #3B82F6;
   --accent-cyan: #06B6D4;
   --status-success: #22C55E;
   --status-warning: #F59E0B;
   --status-error: #EF4444;
   --status-info: #3B82F6;
-  --chart-1: #8B5CF6;
-  --chart-2: #3B82F6;
-  --chart-3: #06B6D4;
+  --chart-1: #FF8700;
+  --chart-2: #FF9B2E;
+  --chart-3: #CC6C00;
   --chart-4: #22C55E;
-  --chart-5: #F59E0B;
-  --sidebar: #0D0D0F;
-  --sidebar-foreground: #A1A1AA;
-  --sidebar-primary: #E5E5E5;
-  --sidebar-primary-foreground: #0D0D0F;
-  --sidebar-accent: #1A1A1E;
+  --chart-5: #3B82F6;
+  --sidebar: #000000;
+  --sidebar-foreground: #707070;
+  --sidebar-primary: #FFFFFF;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #161616;
   --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: #1F1F23;
-  --sidebar-ring: #E5E5E5;
+  --sidebar-border: #1c1c1c;
+  --sidebar-ring: #FF8700;
 }
 
 @layer base {
@@ -108,20 +109,26 @@
 
   html {
     --font-family-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-    --font-family-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
-    --font-family-mono: var(--font-geist-mono), ui-monospace, monospace;
+    --font-family-serif: var(--font-space-grotesk), system-ui, sans-serif;
+    --font-family-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+    color-scheme: dark;
   }
 
   body {
     @apply bg-background text-foreground antialiased font-sans;
   }
 
+  ::selection {
+    background: rgba(255, 135, 0, 0.3);
+    color: #fff;
+  }
+
   .heading-1 {
-    @apply text-3xl leading-tight text-foreground font-serif;
+    @apply text-3xl leading-tight text-foreground font-serif font-bold tracking-tight;
   }
 
   .heading-2 {
-    @apply text-xl leading-snug text-foreground font-serif;
+    @apply text-xl leading-snug text-foreground font-serif font-semibold tracking-tight;
   }
 
   .heading-3 {
@@ -153,10 +160,10 @@
   content: "";
   @apply absolute inset-0 pointer-events-none;
   background-image:
-    radial-gradient(ellipse 5px 1px at 6px 0.5px, theme(colors.zinc.600/0.35) 0%, theme(colors.zinc.600/0.35) 100%, transparent 100%),
-    radial-gradient(ellipse 1px 5px at 0.5px 6px, theme(colors.zinc.600/0.35) 0%, theme(colors.zinc.600/0.35) 100%, transparent 100%),
-    repeating-linear-gradient(to bottom, transparent 0px, transparent 23px, theme(colors.zinc.800/0.5) 23px, theme(colors.zinc.800/0.5) 24px, transparent 24px, transparent 47px, theme(colors.zinc.800/0.5) 47px, theme(colors.zinc.800/0.5) 48px, transparent 48px, transparent 72px),
-    repeating-linear-gradient(to right, transparent 0px, transparent 23px, theme(colors.zinc.800/0.5) 23px, theme(colors.zinc.800/0.5) 24px, transparent 24px, transparent 47px, theme(colors.zinc.800/0.5) 47px, theme(colors.zinc.800/0.5) 48px, transparent 48px, transparent 72px);
+    radial-gradient(ellipse 5px 1px at 6px 0.5px, rgba(113, 113, 122, 0.06) 0%, rgba(113, 113, 122, 0.06) 100%, transparent 100%),
+    radial-gradient(ellipse 1px 5px at 0.5px 6px, rgba(113, 113, 122, 0.06) 0%, rgba(113, 113, 122, 0.06) 100%, transparent 100%),
+    repeating-linear-gradient(to bottom, transparent 0px, transparent 23px, rgba(63, 63, 70, 0.07) 23px, rgba(63, 63, 70, 0.07) 24px, transparent 24px, transparent 47px, rgba(63, 63, 70, 0.07) 47px, rgba(63, 63, 70, 0.07) 48px, transparent 48px, transparent 72px),
+    repeating-linear-gradient(to right, transparent 0px, transparent 23px, rgba(63, 63, 70, 0.07) 23px, rgba(63, 63, 70, 0.07) 24px, transparent 24px, transparent 47px, rgba(63, 63, 70, 0.07) 47px, rgba(63, 63, 70, 0.07) 48px, transparent 48px, transparent 72px);
   background-size: 12px 72px, 72px 12px, 100% 72px, 72px 100%;
   background-position: 0 0, 0 0, 0 0, 0 0;
 }
@@ -164,7 +171,7 @@
 .bg-grid::after {
   content: "";
   @apply absolute inset-0 pointer-events-none;
-  background: radial-gradient(ellipse 75% 55% at 50% 50%, transparent 0%, transparent 40%, theme(colors.surface) 95%);
+  background: radial-gradient(ellipse 75% 55% at 50% 50%, transparent 0%, transparent 40%, var(--surface) 95%);
 }
 
 .status-badge {
@@ -200,7 +207,7 @@
 }
 
 .btn-primary {
-  @apply h-9 px-4 bg-foreground text-background font-medium hover:bg-zinc-200 active:bg-zinc-300 transition-all duration-150;
+  @apply h-9 px-4 bg-primary text-primary-foreground font-medium hover:bg-[#FF9B2E] active:bg-[#CC6C00] transition-all duration-150;
 }
 
 .btn-secondary {
@@ -216,9 +223,9 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-zinc-700;
+  background: #2a2a2a;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-zinc-600;
+  background: #404040;
 }

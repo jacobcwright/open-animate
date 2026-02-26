@@ -65,7 +65,7 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="heading-3">Plan</CardTitle>
-          <CardDescription>Your current oanim plan</CardDescription>
+          <CardDescription>Your current open animate plan</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-3">

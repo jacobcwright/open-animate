@@ -62,7 +62,7 @@ export default function BillingPage() {
       if (!parsed.hostname.endsWith('.stripe.com')) {
         throw new Error('Invalid checkout URL');
       }
-      window.location.href = checkoutUrl;
+      window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
     } catch {
       toast.error('Failed to create checkout session');
     } finally {

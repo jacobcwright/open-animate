@@ -55,11 +55,11 @@ export function Sidebar() {
       >
         <Link href="/dashboard" className="flex items-center">
           {isCollapsed ? (
-            <span className="text-lg font-serif text-foreground">o</span>
+            <span className="text-base font-serif font-semibold tracking-tight text-foreground">oa</span>
           ) : (
             <>
-              <span className="text-lg font-serif text-foreground">oanim</span>
-              <span className="ml-3.5 text-[10px] font-medium uppercase tracking-widest text-muted-foreground border border-border-strong px-1.5 py-0.5 leading-none">
+              <span className="text-base font-serif font-semibold tracking-tight text-foreground">open animate</span>
+              <span className="ml-3 text-[10px] font-medium uppercase tracking-widest text-muted-foreground border border-border-strong px-1.5 py-0.5 leading-none">
                 Beta
               </span>
             </>
