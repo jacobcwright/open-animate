@@ -48,7 +48,7 @@ export default function ApiKeysPage() {
       const token = await getToken();
       if (!token) return;
       const res = await getApiKeys(token);
-      setKeys(res.keys);
+      setKeys(res.api_keys);
       setError(false);
     } catch {
       setError(true);
@@ -212,11 +212,11 @@ export default function ApiKeysPage() {
                       </code>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {formatDate(key.created_at)}
+                      {formatDate(new Date(key.created_at))}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {key.last_used_at
-                        ? formatRelativeTime(key.last_used_at)
+                        ? formatRelativeTime(new Date(key.last_used_at))
                         : 'Never'}
                     </TableCell>
                     <TableCell className="text-right">

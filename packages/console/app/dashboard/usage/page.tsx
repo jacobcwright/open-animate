@@ -53,7 +53,7 @@ export default function UsagePage() {
     load();
   }, [getToken, range]);
 
-  const totalCost = usage?.reduce((acc, r) => acc + r.total_cost, 0) ?? 0;
+  const totalCost = usage?.reduce((acc, r) => acc + r.totalCostUsd, 0) ?? 0;
   const totalCalls = usage?.reduce((acc, r) => acc + r.count, 0) ?? 0;
 
   return (
@@ -135,14 +135,14 @@ export default function UsagePage() {
           <CardContent>
             <div className="flex items-end gap-1 h-32">
               {usage.map((day) => {
-                const maxCost = Math.max(...usage.map((d) => d.total_cost), 0.01);
-                const height = Math.max((day.total_cost / maxCost) * 100, 2);
+                const maxCost = Math.max(...usage.map((d) => d.totalCostUsd), 0.01);
+                const height = Math.max((day.totalCostUsd / maxCost) * 100, 2);
                 return (
                   <div
                     key={day.date}
                     className="flex-1 bg-chart-2 hover:bg-chart-1 transition-colors group relative"
                     style={{ height: `${height}%` }}
-                    title={`${formatDate(day.date)}: ${formatCurrency(day.total_cost)} (${day.count} calls)`}
+                    title={`${formatDate(day.date)}: ${formatCurrency(day.totalCostUsd)} (${day.count} calls)`}
                   />
                 );
               })}
@@ -195,10 +195,10 @@ export default function UsagePage() {
                       {record.provider}
                     </TableCell>
                     <TableCell className="text-right font-mono text-xs">
-                      {formatCurrency(record.estimated_cost_usd)}
+                      {formatCurrency(record.estimatedCostUsd)}
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground text-xs">
-                      {formatRelativeTime(record.created_at)}
+                      {formatRelativeTime(record.createdAt)}
                     </TableCell>
                   </TableRow>
                 ))}

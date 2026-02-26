@@ -38,7 +38,7 @@ export default function BillingPage() {
           getBalance(token),
           getPaymentHistory(token),
         ]);
-        setBalance(balanceRes.balance);
+        setBalance(balanceRes.creditBalanceUsd);
         setPayments(historyRes.payments);
         setError(false);
       } catch {
@@ -56,13 +56,13 @@ export default function BillingPage() {
     try {
       const token = await getToken();
       if (!token) return;
-      const { url } = await createCheckout(token, amount);
+      const { checkoutUrl } = await createCheckout(token, amount);
       // Validate checkout URL points to Stripe
-      const parsed = new URL(url);
+      const parsed = new URL(checkoutUrl);
       if (!parsed.hostname.endsWith('.stripe.com')) {
         throw new Error('Invalid checkout URL');
       }
-      window.location.href = url;
+      window.location.href = checkoutUrl;
     } catch {
       toast.error('Failed to create checkout session');
     } finally {
@@ -172,13 +172,13 @@ export default function BillingPage() {
                 {payments.map((payment) => (
                   <TableRow key={payment.id}>
                     <TableCell className="text-sm">
-                      {formatDate(payment.created_at)}
+                      {formatDate(payment.createdAt)}
                     </TableCell>
                     <TableCell className="font-mono text-sm">
-                      {formatCurrency(payment.amount_usd)}
+                      {formatCurrency(payment.amountUsd)}
                     </TableCell>
                     <TableCell className="font-mono text-sm">
-                      {formatCurrency(payment.credits_usd)}
+                      {formatCurrency(payment.creditsUsd)}
                     </TableCell>
                     <TableCell>
                       <Badge

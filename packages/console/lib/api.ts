@@ -1,4 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.oanim.dev';
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
 
 export class ApiError extends Error {
   status: number;
@@ -14,10 +15,12 @@ async function fetchApi<T>(
   token: string,
   options: RequestInit = {}
 ): Promise<T> {
+  // Prefer API key over Clerk JWT (works across Clerk instances)
+  const authToken = API_KEY || token;
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${authToken}`,
       'Content-Type': 'application/json',
       ...options.headers,
     },
@@ -35,7 +38,7 @@ async function fetchApi<T>(
 
 // Usage
 export async function getUsage(token: string, days = 30) {
-  return fetchApi<{ usage: UsageRecord[] }>(
+  return fetchApi<{ usage: UsageRecord[]; totalCostUsd: number }>(
     `/api/v1/usage?days=${days}`,
     token
   );
@@ -53,12 +56,12 @@ export async function getUsageRecords(
 }
 
 export async function getBalance(token: string) {
-  return fetchApi<{ balance: number }>('/api/v1/usage/balance', token);
+  return fetchApi<{ creditBalanceUsd: number }>('/api/v1/usage/balance', token);
 }
 
 // Billing
 export async function createCheckout(token: string, amount: number) {
-  return fetchApi<{ url: string }>('/api/v1/billing/checkout', token, {
+  return fetchApi<{ checkoutUrl: string; sessionId: string }>('/api/v1/billing/checkout', token, {
     method: 'POST',
     body: JSON.stringify({ amount }),
   });
@@ -69,7 +72,7 @@ export async function getPaymentHistory(
   limit = 50,
   offset = 0
 ) {
-  return fetchApi<{ payments: Payment[]; total: number }>(
+  return fetchApi<{ payments: Payment[]; totalPurchasedUsd: number }>(
     `/api/v1/billing/history?limit=${limit}&offset=${offset}`,
     token
   );
@@ -77,7 +80,7 @@ export async function getPaymentHistory(
 
 // API Keys
 export async function getApiKeys(token: string) {
-  return fetchApi<{ keys: ApiKey[] }>('/api/v1/api-keys', token);
+  return fetchApi<{ api_keys: ApiKey[] }>('/api/v1/api-keys', token);
 }
 
 export async function createApiKey(token: string, name: string) {
@@ -99,13 +102,13 @@ export async function deleteApiKey(token: string, keyId: string) {
 
 // Auth
 export async function getMe(token: string) {
-  return fetchApi<{ user: User }>('/api/v1/auth/me', token);
+  return fetchApi<User>('/api/v1/auth/me', token);
 }
 
-// Types
+// Types — match actual API response shapes (camelCase)
 export interface UsageRecord {
   date: string;
-  total_cost: number;
+  totalCostUsd: number;
   count: number;
 }
 
@@ -114,25 +117,25 @@ export interface UsageDetailRecord {
   provider: string;
   model: string;
   operation: string;
-  estimated_cost_usd: number;
-  created_at: string;
+  estimatedCostUsd: number;
+  createdAt: string;
 }
 
 export interface Payment {
   id: string;
-  amount_usd: number;
-  credits_usd: number;
+  amountUsd: number;
+  creditsUsd: number;
   status: 'pending' | 'completed' | 'failed';
-  created_at: string;
-  completed_at: string | null;
+  createdAt: string;
+  completedAt: string | null;
 }
 
 export interface ApiKey {
   id: string;
   prefix: string;
   name?: string;
-  last_used_at: string | null;
-  created_at: string;
+  last_used_at: number | null;
+  created_at: number;
 }
 
 export interface User {

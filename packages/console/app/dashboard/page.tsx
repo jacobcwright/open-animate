@@ -36,7 +36,7 @@ export default function DashboardPage() {
           getBalance(token),
           getUsage(token, 7),
         ]);
-        setBalance(balanceRes.balance);
+        setBalance(balanceRes.creditBalanceUsd);
         setUsage(usageRes.usage);
         setError(false);
       } catch {
@@ -48,7 +48,7 @@ export default function DashboardPage() {
     load();
   }, [getToken]);
 
-  const totalSpent7d = usage?.reduce((acc, r) => acc + r.total_cost, 0) ?? 0;
+  const totalSpent7d = usage?.reduce((acc, r) => acc + r.totalCostUsd, 0) ?? 0;
   const totalCalls7d = usage?.reduce((acc, r) => acc + r.count, 0) ?? 0;
 
   return (

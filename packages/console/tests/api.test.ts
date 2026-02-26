@@ -15,11 +15,11 @@ describe('API client', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () => Promise.resolve({ balance: 5.0 }),
+        json: () => Promise.resolve({ creditBalanceUsd: 5.0 }),
       });
 
       const result = await getBalance('test-token');
-      expect(result.balance).toBe(5.0);
+      expect(result.creditBalanceUsd).toBe(5.0);
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/usage/balance'),
         expect.objectContaining({
@@ -44,8 +44,8 @@ describe('API client', () => {
   describe('getApiKeys', () => {
     it('returns keys array on success', async () => {
       const mockKeys = {
-        keys: [
-          { id: '1', prefix: 'abc123', name: 'test', last_used_at: null, created_at: '2026-01-01' },
+        api_keys: [
+          { id: '1', prefix: 'anim_abc123', name: 'test', last_used_at: null, created_at: 1772047269482 },
         ],
       };
       mockFetch.mockResolvedValueOnce({
@@ -55,8 +55,8 @@ describe('API client', () => {
       });
 
       const result = await getApiKeys('test-token');
-      expect(result.keys).toHaveLength(1);
-      expect(result.keys[0].prefix).toBe('abc123');
+      expect(result.api_keys).toHaveLength(1);
+      expect(result.api_keys[0].prefix).toBe('anim_abc123');
     });
   });
 
@@ -65,11 +65,11 @@ describe('API client', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () => Promise.resolve({ url: 'https://checkout.stripe.com/test' }),
+        json: () => Promise.resolve({ checkoutUrl: 'https://checkout.stripe.com/test', sessionId: 'sess_123' }),
       });
 
       const result = await createCheckout('test-token', 25);
-      expect(result.url).toContain('stripe.com');
+      expect(result.checkoutUrl).toContain('stripe.com');
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/billing/checkout'),
         expect.objectContaining({
