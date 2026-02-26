@@ -803,6 +803,30 @@
       "status": "planned"
     },
     {
+      "id": "OANIM-052",
+      "title": "@oanim/console dashboard web app",
+      "description": "Next.js 16 dashboard for oanim users to manage account, usage, billing, API keys, and discover templates. Matches Castari design system (dark theme, 0px border radius, CSS variables). Clerk auth with protected routes.",
+      "requirements": [
+        "7 dashboard pages: Overview, Usage, Billing, API Keys, Templates, Renders, Settings",
+        "Clerk auth with middleware protecting all routes",
+        "Type-safe API client for all oanim API endpoints",
+        "shadcn/ui components (new-york style) with Radix UI",
+        "Recharts for usage analytics charts",
+        "Stripe checkout redirect for credit purchases",
+        "Collapsible sidebar with navigation",
+        "30+ unit tests (utils, API client, UI components)"
+      ],
+      "tests": [
+        "next build succeeds (all 10 routes)",
+        "vitest run — 30/30 tests pass",
+        "Clerk sign-in/sign-up flow works",
+        "API calls work against api.oanim.dev",
+        "Stripe checkout redirect works"
+      ],
+      "status": "done",
+      "notes": "PR #3 (feat/console branch). 41 files, +5155 lines. Stack: Next.js 16, React 19, Tailwind CSS v4, Clerk, shadcn/ui, Recharts, Sonner. Design system matches Castari exactly (CSS tokens, typography, 0px radius). Test suite: 30 tests across 3 files (utils, api, components)."
+    },
+    {
       "id": "OANIM-045",
       "title": "CLI usage & account commands",
       "description": "Add oanim usage command for credit balance, spending history, and account overview — all in the terminal. Postpones dashboard web app.",

@@ -849,3 +849,39 @@ Verified in Remotion Studio: all 6 scenes render, video plays as background, aud
 - Updated `.github/splash.svg` (README hero image) from purple/indigo color scheme to orange brand identity: `#ff8700`/`#ffb347` gradient on title text, accent line, and pill badges; pure black background; Space Grotesk font
 
 **Commits:** `7998bcc` (success page), `a246fa9` (splash SVG)
+
+---
+
+## Session 15 — 2026-02-26
+
+### @oanim/console dashboard (OANIM-052)
+
+Built a full dashboard web app at `packages/console/` for oanim users.
+
+**Stack:** Next.js 16 App Router, React 19, Tailwind CSS v4, Clerk auth, shadcn/ui (new-york), Recharts, Sonner
+
+**Design system:** Exact match of Castari design tokens — dark theme, 0px border radius, CSS variables (`--background: #0D0D0F`, `--surface: #1A1A1F`, `--border: #27272A`, `--chart-1: #8B5CF6`), bg-grid pattern, typography (Instrument Serif headings, Inter body, Geist Mono code).
+
+**Pages (7):**
+- `/dashboard` — Overview: 3 stat cards (balance, 7d spend, API calls), quick actions, getting started guide
+- `/dashboard/usage` — Time range selector (7d/30d/90d), daily cost bar chart, recent API calls table
+- `/dashboard/billing` — Balance card, 5 credit tiers via Stripe checkout, payment history
+- `/dashboard/api-keys` — Create/delete keys, show-once secret dialog, keys table
+- `/dashboard/templates` — 6 template cards with GitHub links and CLI usage
+- `/dashboard/renders` — Cloud render history (placeholder)
+- `/dashboard/settings` — Account info from Clerk
+
+**Infrastructure:**
+- Clerk middleware protecting all routes except /sign-in and /sign-up
+- Type-safe API client (`lib/api.ts`) for all oanim API endpoints
+- Collapsible sidebar with context provider
+- 10 UI components (Button, Card, Badge, Table, Input, Skeleton, Sonner, Dialog, Sidebar, DashboardContent)
+
+**Test suite (30 tests, all passing):**
+- `tests/utils.test.ts` — cn(), formatCurrency(), formatDate(), formatRelativeTime()
+- `tests/api.test.ts` — API client functions, error handling, ApiError class
+- `tests/components.test.tsx` — Button, Card, Badge, Input, Skeleton rendering + variants
+
+**Build:** `next build` succeeds (10 routes), `vitest run` 30/30 pass
+
+**PR:** #3 on `feat/console` branch — 41 files, +5155 lines
