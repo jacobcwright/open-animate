@@ -229,7 +229,7 @@ function GenerateImageTab() {
           </SelectField>
         </div>
         <div className="flex items-center justify-between">
-          <span className="caption">Est. cost: {formatModelCost(selectedModel.cost * numImages)}</span>
+          <span className="caption">Est. cost: {formatModelCost(selectedModel.cost)}</span>
           <Button onClick={handleGenerate} disabled={loading || !prompt.trim()} className="btn-primary">
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Wand2 className="w-4 h-4 mr-2" />}
             Generate

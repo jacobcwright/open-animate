@@ -1,5 +1,4 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.oanim.dev';
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
 
 export class ApiError extends Error {
   status: number;
@@ -15,8 +14,7 @@ async function fetchApi<T>(
   token: string,
   options: RequestInit = {}
 ): Promise<T> {
-  // Prefer API key over Clerk JWT (works across Clerk instances)
-  const authToken = API_KEY || token;
+  const authToken = token;
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers: {
