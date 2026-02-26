@@ -16,6 +16,8 @@ import {
   ExternalLink,
   Film,
   Layers,
+  Wand2,
+  Video,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSidebar } from './sidebar-provider';
@@ -25,6 +27,10 @@ const navItems = [
   { label: 'Home', href: '/dashboard', icon: Home },
   { label: 'Templates', href: '/dashboard/templates', icon: Layers },
   { label: 'Renders', href: '/dashboard/renders', icon: Film },
+  { label: 'divider', href: '', icon: Home },
+  { label: 'Generate', href: '/dashboard/generate', icon: Wand2 },
+  { label: 'Animate', href: '/dashboard/animate', icon: Video },
+  { label: 'divider', href: '', icon: Home },
   { label: 'Usage', href: '/dashboard/usage', icon: BarChart3 },
   { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
   { label: 'API Keys', href: '/dashboard/api-keys', icon: Key },
@@ -66,7 +72,15 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-2 flex flex-col">
         <ul className="space-y-1">
-          {navItems.map((item) => {
+          {navItems.map((item, i) => {
+            if (item.label === 'divider') {
+              return (
+                <li key={`divider-${i}`} className="py-1">
+                  <div className={cn('border-t border-border-subtle', isCollapsed ? 'mx-2' : 'mx-3')} />
+                </li>
+              );
+            }
+
             const isActive =
               item.href === '/dashboard'
                 ? pathname === '/dashboard'

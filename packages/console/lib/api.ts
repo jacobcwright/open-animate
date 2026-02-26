@@ -105,6 +105,95 @@ export async function getMe(token: string) {
   return fetchApi<User>('/api/v1/auth/me', token);
 }
 
+// ============================================================================
+// Media Generation
+// ============================================================================
+
+export interface MediaResult {
+  url: string | null;
+  result?: Record<string, unknown>;
+  provider: string;
+  model: string;
+  estimatedCostUsd: number;
+}
+
+export interface MediaSubmitResult {
+  requestId: string;
+  statusUrl?: string;
+  responseUrl?: string;
+  model: string;
+  provider: string;
+  estimatedCostUsd: number;
+}
+
+export interface MediaStatusResult {
+  status: 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETED';
+  queuePosition?: number | null;
+  url?: string | null;
+  result?: Record<string, unknown>;
+  provider?: string;
+  model?: string;
+  estimatedCostUsd?: number;
+}
+
+export async function runModel(
+  token: string,
+  model: string,
+  input: Record<string, unknown>
+): Promise<MediaResult> {
+  return fetchApi('/api/v1/media/run', token, {
+    method: 'POST',
+    body: JSON.stringify({ model, input }),
+  });
+}
+
+export async function removeBackground(
+  token: string,
+  imageUrl: string
+): Promise<MediaResult> {
+  return fetchApi('/api/v1/media/remove-background', token, {
+    method: 'POST',
+    body: JSON.stringify({ imageUrl }),
+  });
+}
+
+export async function upscaleImage(
+  token: string,
+  imageUrl: string,
+  scale?: number
+): Promise<MediaResult> {
+  return fetchApi('/api/v1/media/upscale', token, {
+    method: 'POST',
+    body: JSON.stringify({ imageUrl, scale }),
+  });
+}
+
+export async function submitJob(
+  token: string,
+  model: string,
+  input: Record<string, unknown>
+): Promise<MediaSubmitResult> {
+  return fetchApi('/api/v1/media/submit', token, {
+    method: 'POST',
+    body: JSON.stringify({ model, input }),
+  });
+}
+
+export async function getJobStatus(
+  token: string,
+  requestId: string,
+  model: string,
+  statusUrl?: string,
+  responseUrl?: string
+): Promise<MediaStatusResult> {
+  const params = new URLSearchParams({ model });
+  if (statusUrl) params.set('statusUrl', statusUrl);
+  if (responseUrl) params.set('responseUrl', responseUrl);
+  return fetchApi(`/api/v1/media/status/${requestId}?${params.toString()}`, token, {
+    headers: { 'Content-Type': '' },
+  });
+}
+
 // Types — match actual API response shapes (camelCase)
 export interface UsageRecord {
   date: string;
