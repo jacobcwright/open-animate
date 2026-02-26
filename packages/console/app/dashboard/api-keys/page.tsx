@@ -208,7 +208,7 @@ export default function ApiKeysPage() {
                     </TableCell>
                     <TableCell>
                       <code className="text-xs font-mono text-muted-foreground">
-                        anim_{key.prefix}...
+                        {key.prefix}...
                       </code>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">

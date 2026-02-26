@@ -65,6 +65,7 @@ export default function BillingPage() {
       window.location.href = url;
     } catch {
       toast.error('Failed to create checkout session');
+    } finally {
       setPurchasing(null);
     }
   }
