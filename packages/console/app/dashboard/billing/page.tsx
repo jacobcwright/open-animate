@@ -1,11 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth, useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -16,18 +24,25 @@ import {
 } from '@/components/ui/table';
 import { getBalance, getPaymentHistory, createCheckout, type Payment } from '@/lib/api';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { DollarSign, Plus, ExternalLink } from 'lucide-react';
+import { DollarSign, Plus, ExternalLink, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 
 const CREDIT_AMOUNTS = [5, 10, 25, 50, 100];
+const MIN_AMOUNT = 5;
+const MAX_AMOUNT = 10_000;
+const ENTERPRISE_THRESHOLD = 10_000;
 
 export default function BillingPage() {
   const { getToken } = useAuth();
+  const { user } = useUser();
   const [balance, setBalance] = useState<number | null>(null);
   const [payments, setPayments] = useState<Payment[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<number | null>(null);
   const [error, setError] = useState(false);
+  const [customAmount, setCustomAmount] = useState('');
+  const [contactOpen, setContactOpen] = useState(false);
+  const [contactMessage, setContactMessage] = useState('');
 
   useEffect(() => {
     async function load() {
@@ -121,10 +136,10 @@ export default function BillingPage() {
         <CardHeader>
           <CardTitle className="heading-3">Add Credits</CardTitle>
           <CardDescription>
-            Select an amount to purchase via Stripe
+            Select an amount or enter a custom value to purchase via Stripe
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {CREDIT_AMOUNTS.map((amount) => (
               <Button
@@ -143,8 +158,110 @@ export default function BillingPage() {
               </Button>
             ))}
           </div>
+
+          <div className="border-t border-border pt-4">
+            <p className="text-sm text-muted-foreground mb-3">Or enter a custom amount</p>
+            <div className="flex gap-3 items-start">
+              <div className="flex-1 max-w-xs">
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+                  <Input
+                    type="number"
+                    min={MIN_AMOUNT}
+                    max={MAX_AMOUNT}
+                    step="1"
+                    placeholder="50"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    className="pl-7 font-mono"
+                  />
+                </div>
+                {customAmount && Number(customAmount) > 0 && Number(customAmount) < MIN_AMOUNT && (
+                  <p className="text-xs text-destructive mt-1">Minimum amount is ${MIN_AMOUNT}</p>
+                )}
+              </div>
+              <Button
+                className="btn-primary"
+                onClick={() => {
+                  const amount = Number(customAmount);
+                  if (amount > ENTERPRISE_THRESHOLD) {
+                    setContactOpen(true);
+                    return;
+                  }
+                  handlePurchase(amount);
+                }}
+                disabled={
+                  purchasing !== null ||
+                  !customAmount ||
+                  Number(customAmount) < MIN_AMOUNT
+                }
+              >
+                {Number(customAmount) > ENTERPRISE_THRESHOLD ? 'Contact Sales' : 'Purchase'}
+              </Button>
+            </div>
+            {Number(customAmount) >= 50 && Number(customAmount) <= ENTERPRISE_THRESHOLD && (
+              <p className="text-xs text-chart-4 mt-2">+10% bonus included</p>
+            )}
+          </div>
         </CardContent>
       </Card>
+
+      {/* Enterprise Contact Dialog */}
+      <Dialog open={contactOpen} onOpenChange={setContactOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enterprise Credits</DialogTitle>
+            <DialogDescription>
+              For purchases over ${ENTERPRISE_THRESHOLD.toLocaleString()}, reach out to our team and we&apos;ll set up volume pricing and dedicated support.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Amount needed</label>
+              <Input
+                value={`$${customAmount}`}
+                disabled
+                className="font-mono"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Message</label>
+              <textarea
+                value={contactMessage}
+                onChange={(e) => setContactMessage(e.target.value)}
+                placeholder="Tell us about your use case, expected volume, or any questions..."
+                rows={4}
+                className="flex w-full bg-input border border-border px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-border-focus resize-none"
+              />
+            </div>
+            <Button
+              className="btn-primary w-full"
+              onClick={() => {
+                const email = user?.primaryEmailAddress?.emailAddress || '';
+                const subject = encodeURIComponent(`Enterprise Credits — $${customAmount}`);
+                const body = encodeURIComponent(
+                  `Amount: $${customAmount}\nEmail: ${email}\n\n${contactMessage}`
+                );
+                window.open(
+                  `mailto:founders@castari.com?subject=${subject}&body=${body}`,
+                  '_blank'
+                );
+                setContactOpen(false);
+                toast.success('Opening email client...');
+              }}
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Send to founders@castari.com
+            </Button>
+            <p className="caption text-center">
+              Or email us directly at{' '}
+              <a href="mailto:founders@castari.com" className="text-primary hover:underline">
+                founders@castari.com
+              </a>
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Payment History */}
       <Card>

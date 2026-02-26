@@ -53,9 +53,59 @@
   --radius-2xl: 0px;
 }
 
-/* Aligned with landing page: pure black bg, papaya accent */
+/* Light theme (default) */
 :root {
   --radius: 0px;
+  --background: #FFFFFF;
+  --foreground: #0a0a0a;
+  --card: #FFFFFF;
+  --card-foreground: #0a0a0a;
+  --popover: #FFFFFF;
+  --popover-foreground: #0a0a0a;
+  --primary: #E07000;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F5F5F5;
+  --secondary-foreground: #525252;
+  --muted: #F5F5F5;
+  --muted-foreground: #6b6b6b;
+  --accent: #F5F5F5;
+  --accent-foreground: #0a0a0a;
+  --destructive: #DC2626;
+  --border: #E5E5E5;
+  --input: #F5F5F5;
+  --ring: #E07000;
+  --surface: #FAFAFA;
+  --elevated: #F5F5F5;
+  --subtle: #FAFAFA;
+  --border-subtle: #E5E5E5;
+  --border-strong: #D4D4D4;
+  --border-focus: #E07000;
+  --accent-primary: #E07000;
+  --accent-blue: #2563EB;
+  --accent-cyan: #0891B2;
+  --status-success: #16A34A;
+  --status-warning: #D97706;
+  --status-error: #DC2626;
+  --status-info: #2563EB;
+  --chart-1: #E07000;
+  --chart-2: #F59E0B;
+  --chart-3: #B45309;
+  --chart-4: #16A34A;
+  --chart-5: #2563EB;
+  --sidebar: #FAFAFA;
+  --sidebar-foreground: #6b6b6b;
+  --sidebar-primary: #0a0a0a;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F0F0F0;
+  --sidebar-accent-foreground: #0a0a0a;
+  --sidebar-border: #E5E5E5;
+  --sidebar-ring: #E07000;
+  --grid-dot: rgba(0, 0, 0, 0.04);
+  --grid-line: rgba(0, 0, 0, 0.05);
+}
+
+/* Dark theme — aligned with landing page: pure black bg, papaya accent */
+.dark {
   --background: #000000;
   --foreground: #FFFFFF;
   --card: #0f0f0f;
@@ -100,6 +150,8 @@
   --sidebar-accent-foreground: #FFFFFF;
   --sidebar-border: #1c1c1c;
   --sidebar-ring: #FF8700;
+  --grid-dot: rgba(113, 113, 122, 0.06);
+  --grid-line: rgba(63, 63, 70, 0.07);
 }
 
 @layer base {
@@ -111,6 +163,10 @@
     --font-family-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
     --font-family-serif: var(--font-space-grotesk), system-ui, sans-serif;
     --font-family-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+    color-scheme: light;
+  }
+
+  html.dark {
     color-scheme: dark;
   }
 
@@ -119,6 +175,11 @@
   }
 
   ::selection {
+    background: rgba(224, 112, 0, 0.2);
+    color: inherit;
+  }
+
+  .dark ::selection {
     background: rgba(255, 135, 0, 0.3);
     color: #fff;
   }
@@ -160,10 +221,10 @@
   content: "";
   @apply absolute inset-0 pointer-events-none;
   background-image:
-    radial-gradient(ellipse 5px 1px at 6px 0.5px, rgba(113, 113, 122, 0.06) 0%, rgba(113, 113, 122, 0.06) 100%, transparent 100%),
-    radial-gradient(ellipse 1px 5px at 0.5px 6px, rgba(113, 113, 122, 0.06) 0%, rgba(113, 113, 122, 0.06) 100%, transparent 100%),
-    repeating-linear-gradient(to bottom, transparent 0px, transparent 23px, rgba(63, 63, 70, 0.07) 23px, rgba(63, 63, 70, 0.07) 24px, transparent 24px, transparent 47px, rgba(63, 63, 70, 0.07) 47px, rgba(63, 63, 70, 0.07) 48px, transparent 48px, transparent 72px),
-    repeating-linear-gradient(to right, transparent 0px, transparent 23px, rgba(63, 63, 70, 0.07) 23px, rgba(63, 63, 70, 0.07) 24px, transparent 24px, transparent 47px, rgba(63, 63, 70, 0.07) 47px, rgba(63, 63, 70, 0.07) 48px, transparent 48px, transparent 72px);
+    radial-gradient(ellipse 5px 1px at 6px 0.5px, var(--grid-dot) 0%, var(--grid-dot) 100%, transparent 100%),
+    radial-gradient(ellipse 1px 5px at 0.5px 6px, var(--grid-dot) 0%, var(--grid-dot) 100%, transparent 100%),
+    repeating-linear-gradient(to bottom, transparent 0px, transparent 23px, var(--grid-line) 23px, var(--grid-line) 24px, transparent 24px, transparent 47px, var(--grid-line) 47px, var(--grid-line) 48px, transparent 48px, transparent 72px),
+    repeating-linear-gradient(to right, transparent 0px, transparent 23px, var(--grid-line) 23px, var(--grid-line) 24px, transparent 24px, transparent 47px, var(--grid-line) 47px, var(--grid-line) 48px, transparent 48px, transparent 72px);
   background-size: 12px 72px, 72px 12px, 100% 72px, 72px 100%;
   background-position: 0 0, 0 0, 0 0, 0 0;
 }
@@ -223,9 +284,9 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: var(--border-strong);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #404040;
+  background: var(--muted-foreground);
 }

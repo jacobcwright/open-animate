@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSidebar } from './sidebar-provider';
+import { ThemeToggle } from './theme-toggle';
 
 const navItems = [
   { label: 'Home', href: '/dashboard', icon: Home },
@@ -57,12 +58,7 @@ export function Sidebar() {
           {isCollapsed ? (
             <span className="text-base font-serif font-semibold tracking-tight text-foreground">oa</span>
           ) : (
-            <>
-              <span className="text-base font-serif font-semibold tracking-tight text-foreground">open animate</span>
-              <span className="ml-3 text-[10px] font-medium uppercase tracking-widest text-muted-foreground border border-border-strong px-1.5 py-0.5 leading-none">
-                Beta
-              </span>
-            </>
+            <span className="text-base font-serif font-semibold tracking-tight text-foreground">open animate</span>
           )}
         </Link>
       </div>
@@ -137,18 +133,21 @@ export function Sidebar() {
           afterSignOutUrl="/"
           appearance={{ elements: { avatarBox: 'w-8 h-8' } }}
         />
-        <button
-          onClick={toggle}
-          className="p-2 text-muted-foreground transition-colors hover:text-foreground hover:bg-elevated"
-          title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {isCollapsed ? (
-            <PanelLeft className="w-5 h-5" />
-          ) : (
-            <PanelLeftClose className="w-5 h-5" />
-          )}
-        </button>
+        <div className={cn('flex items-center', isCollapsed ? 'flex-col gap-1' : 'gap-1')}>
+          <ThemeToggle />
+          <button
+            onClick={toggle}
+            className="p-2 text-muted-foreground transition-colors hover:text-foreground hover:bg-elevated"
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {isCollapsed ? (
+              <PanelLeft className="w-5 h-5" />
+            ) : (
+              <PanelLeftClose className="w-5 h-5" />
+            )}
+          </button>
+        </div>
       </div>
     </aside>
   );

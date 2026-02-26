@@ -13,12 +13,19 @@ import {
   DollarSign,
   Activity,
   Zap,
+  Terminal,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getBalance, getUsage, type UsageRecord } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
+import { toast } from 'sonner';
+
+const CLAUDE_CODE_SNIPPET = `npx skills add jacobcwright/open-animate`;
+const OPENCLAW_SNIPPET = `clawhub install open-animate`;
 
 export default function DashboardPage() {
   const { getToken } = useAuth();
@@ -26,6 +33,14 @@ export default function DashboardPage() {
   const [usage, setUsage] = useState<UsageRecord[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
+
+  function copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text);
+    setCopiedSnippet(text);
+    toast.success('Copied to clipboard');
+    setTimeout(() => setCopiedSnippet(null), 2000);
+  }
 
   useEffect(() => {
     async function load() {
@@ -225,6 +240,71 @@ export default function DashboardPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Add to Agents */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 flex items-center justify-center bg-accent-primary/15">
+                <Terminal className="h-5 w-5 text-accent-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-foreground">Add to Claude Code</p>
+                <p className="caption mt-0.5">Install as a Claude Code skill</p>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <code className="flex-1 text-xs font-mono text-muted-foreground bg-background p-3 border border-border truncate">
+                {CLAUDE_CODE_SNIPPET}
+              </code>
+              <Button
+                variant="outline"
+                size="sm"
+                className="shrink-0"
+                onClick={() => copyToClipboard(CLAUDE_CODE_SNIPPET)}
+              >
+                {copiedSnippet === CLAUDE_CODE_SNIPPET ? (
+                  <Check className="h-4 w-4 text-status-success" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 flex items-center justify-center bg-chart-5/15">
+                <Terminal className="h-5 w-5 text-chart-5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-foreground">Add to OpenClaw</p>
+                <p className="caption mt-0.5">Install as an OpenClaw skill</p>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <code className="flex-1 text-xs font-mono text-muted-foreground bg-background p-3 border border-border truncate">
+                {OPENCLAW_SNIPPET}
+              </code>
+              <Button
+                variant="outline"
+                size="sm"
+                className="shrink-0"
+                onClick={() => copyToClipboard(OPENCLAW_SNIPPET)}
+              >
+                {copiedSnippet === OPENCLAW_SNIPPET ? (
+                  <Check className="h-4 w-4 text-status-success" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
