@@ -141,6 +141,7 @@ export function Sidebar() {
           onClick={toggle}
           className="p-2 text-muted-foreground transition-colors hover:text-foreground hover:bg-elevated"
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? (
             <PanelLeft className="w-5 h-5" />

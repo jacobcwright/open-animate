@@ -29,6 +29,7 @@ export default function UsagePage() {
   const [usage, setUsage] = useState<UsageRecord[] | null>(null);
   const [records, setRecords] = useState<UsageDetailRecord[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -42,8 +43,9 @@ export default function UsagePage() {
         ]);
         setUsage(usageRes.usage);
         setRecords(recordsRes.records);
+        setError(false);
       } catch {
-        // API unreachable
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -77,6 +79,14 @@ export default function UsagePage() {
           ))}
         </div>
       </div>
+
+      {error && (
+        <Card className="border-destructive">
+          <CardContent className="p-4 text-sm text-destructive">
+            Unable to load usage data. The API may be unreachable.
+          </CardContent>
+        </Card>
+      )}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

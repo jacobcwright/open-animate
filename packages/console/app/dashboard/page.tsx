@@ -25,6 +25,7 @@ export default function DashboardPage() {
   const [balance, setBalance] = useState<number | null>(null);
   const [usage, setUsage] = useState<UsageRecord[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -37,8 +38,9 @@ export default function DashboardPage() {
         ]);
         setBalance(balanceRes.balance);
         setUsage(usageRes.usage);
+        setError(false);
       } catch {
-        // API not reachable — show demo state
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -59,6 +61,14 @@ export default function DashboardPage() {
         </p>
       </div>
 
+      {error && (
+        <Card className="border-destructive">
+          <CardContent className="p-4 text-sm text-destructive">
+            Unable to load account data. The API may be unreachable.
+          </CardContent>
+        </Card>
+      )}
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="card-hover">
@@ -73,7 +83,7 @@ export default function DashboardPage() {
               <Skeleton className="h-8 w-24" />
             ) : (
               <div className="text-2xl font-serif text-foreground">
-                {formatCurrency(balance ?? 5.0)}
+                {balance !== null ? formatCurrency(balance) : '—'}
               </div>
             )}
           </CardContent>

@@ -35,10 +35,13 @@ export default function ApiKeysPage() {
   const [newKeyName, setNewKeyName] = useState('');
   const [revealedSecret, setRevealedSecret] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     loadKeys();
-  }, []);
+  }, [getToken]);
+
+  const [error, setError] = useState(false);
 
   async function loadKeys() {
     try {
@@ -46,8 +49,9 @@ export default function ApiKeysPage() {
       if (!token) return;
       const res = await getApiKeys(token);
       setKeys(res.keys);
+      setError(false);
     } catch {
-      // API unreachable
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -73,6 +77,7 @@ export default function ApiKeysPage() {
 
   async function handleDelete(keyId: string) {
     setDeletingId(keyId);
+    setConfirmDeleteId(null);
     try {
       const token = await getToken();
       if (!token) return;
@@ -86,9 +91,13 @@ export default function ApiKeysPage() {
     }
   }
 
-  function copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard');
+  async function copyToClipboard(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success('Copied to clipboard');
+    } catch {
+      toast.error('Failed to copy to clipboard');
+    }
   }
 
   return (
@@ -99,6 +108,14 @@ export default function ApiKeysPage() {
           Manage your API keys for CLI and programmatic access
         </p>
       </div>
+
+      {error && (
+        <Card className="border-destructive">
+          <CardContent className="p-4 text-sm text-destructive">
+            Unable to load API keys. The API may be unreachable.
+          </CardContent>
+        </Card>
+      )}
 
       {/* Create Key */}
       <Card>
@@ -203,15 +220,36 @@ export default function ApiKeysPage() {
                         : 'Never'}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={() => handleDelete(key.id)}
-                        disabled={deletingId === key.id}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {confirmDeleteId === key.id ? (
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDelete(key.id)}
+                            disabled={deletingId === key.id}
+                          >
+                            Revoke
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setConfirmDeleteId(null)}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={() => setConfirmDeleteId(key.id)}
+                          disabled={deletingId === key.id}
+                          className="text-destructive hover:text-destructive"
+                          aria-label={`Revoke key ${key.name || key.prefix}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

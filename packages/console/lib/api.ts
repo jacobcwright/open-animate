@@ -4,6 +4,7 @@ export class ApiError extends Error {
   status: number;
   constructor(message: string, status: number) {
     super(message);
+    this.name = 'ApiError';
     this.status = status;
   }
 }
@@ -28,7 +29,7 @@ async function fetchApi<T>(
     throw new ApiError(text, res.status);
   }
 
-  if (res.status === 204) return undefined as T;
+  if (res.status === 204) return undefined as unknown as T;
   return res.json();
 }
 

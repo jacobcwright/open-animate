@@ -27,6 +27,7 @@ export default function BillingPage() {
   const [payments, setPayments] = useState<Payment[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<number | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -39,8 +40,9 @@ export default function BillingPage() {
         ]);
         setBalance(balanceRes.balance);
         setPayments(historyRes.payments);
+        setError(false);
       } catch {
-        // API unreachable
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -49,11 +51,17 @@ export default function BillingPage() {
   }, [getToken]);
 
   async function handlePurchase(amount: number) {
+    if (amount < 5) return;
     setPurchasing(amount);
     try {
       const token = await getToken();
       if (!token) return;
       const { url } = await createCheckout(token, amount);
+      // Validate checkout URL points to Stripe
+      const parsed = new URL(url);
+      if (!parsed.hostname.endsWith('.stripe.com')) {
+        throw new Error('Invalid checkout URL');
+      }
       window.location.href = url;
     } catch {
       toast.error('Failed to create checkout session');
@@ -67,6 +75,14 @@ export default function BillingPage() {
         <h1 className="heading-1">Billing</h1>
         <p className="body-text mt-2">Manage your credits and payment history</p>
       </div>
+
+      {error && (
+        <Card className="border-destructive">
+          <CardContent className="p-4 text-sm text-destructive">
+            Unable to load billing data. The API may be unreachable.
+          </CardContent>
+        </Card>
+      )}
 
       {/* Balance Card */}
       <Card>
@@ -83,7 +99,7 @@ export default function BillingPage() {
                 <Skeleton className="h-8 w-32 mt-1" />
               ) : (
                 <div className="text-3xl font-serif text-foreground">
-                  {formatCurrency(balance ?? 5.0)}
+                  {balance !== null ? formatCurrency(balance) : '—'}
                 </div>
               )}
             </div>
