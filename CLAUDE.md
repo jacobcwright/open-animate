@@ -51,6 +51,8 @@ oanim is evolving into an **open-core platform** (Supabase model — all open so
 | Binary | `oanim` |
 | Core package | `@oanim/core` |
 | CLI package | `oanim` |
+| Console package | `@oanim/console` |
+| Console URL | `oanim.dev` |
 | Config file | `animate.json` |
 | Direct provider key (optional) | `ANIMATE_FAL_KEY` |
 | Platform API key | `ANIMATE_API_KEY` |
@@ -64,6 +66,9 @@ open-animate/
   packages/
     core/           # @oanim/core — animation presets + components for Remotion
     cli/            # oanim CLI (bin: oanim)
+    console/        # @oanim/console — Next.js dashboard (Vercel)
+    api/            # Platform API (media gateway, auth, billing)
+    docs/           # Mintlify docs site
     gateway/        # (planned) media gateway — multi-provider routing
     auth/           # (planned) shared auth module (Clerk OAuth)
   skills/
@@ -81,6 +86,14 @@ open-animate/
 ```bash
 pnpm install              # install all workspace deps
 pnpm build                # build core + cli
+```
+
+### Console (dashboard)
+```bash
+cd packages/console
+npm run dev               # next dev → localhost:3100
+npm run build             # production build
+npm run test              # vitest
 ```
 
 ### Link CLI globally for testing
@@ -117,3 +130,10 @@ oanim render              # render to MP4
 - `oanim init [name]` — scaffold Remotion project with @oanim/core
 - `oanim render` — render using animate.json config
 - `oanim assets` — AI asset generation (gen-image, edit-image, remove-bg, upscale)
+
+### @oanim/console
+- Next.js 16 App Router dashboard deployed on Vercel
+- Auth: Clerk OAuth, UI: shadcn/ui + Tailwind CSS v4
+- Routes: `/dashboard` (home), `/dashboard/generate` (media playground), `/dashboard/api-keys`, `/dashboard/billing`, `/dashboard/usage`, `/dashboard/templates`, `/dashboard/renders`, `/dashboard/animate`, `/dashboard/settings`
+- API client in `lib/api.ts`, model catalog in `lib/models.ts`
+- Dev port: 3100
