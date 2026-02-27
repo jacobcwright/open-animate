@@ -41,7 +41,30 @@ export const Hook: React.FC = () => {
 ```
 
 ### 6. Add generated media assets (optional)
-Generate images, video, or audio, then use them in scenes:
+
+**MCP tools** (preferred — works in Cowork and sandboxed environments):
+```
+Tool: gen_image
+Input: { "prompt": "dark abstract gradient" }
+→ returns { "url": "https://...", "model": "fal-ai/flux/schnell", "estimatedCostUsd": 0.0042 }
+
+Tool: gen_video
+Input: { "prompt": "cinematic abstract motion", "duration": "5" }
+→ returns { "url": "https://...", "model": "fal-ai/kling-video/v1/standard/text-to-video", "estimatedCostUsd": 0.315 }
+
+Tool: gen_audio
+Input: { "prompt": "ambient electronic, no vocals", "duration_in_seconds": 30 }
+→ returns { "url": "https://...", "model": "fal-ai/stable-audio", "estimatedCostUsd": 0.0 }
+```
+
+Download generated assets to `public/`:
+```bash
+curl -o public/bg.png "<url>"
+curl -o public/clip.mp4 "<url>"
+curl -o public/music.mp3 "<url>"
+```
+
+**CLI** (fallback — requires outbound HTTP):
 ```bash
 oanim assets gen-image --prompt "dark abstract gradient" --out public/bg.png
 oanim assets run --model fal-ai/kling-video/v1/standard/text-to-video \

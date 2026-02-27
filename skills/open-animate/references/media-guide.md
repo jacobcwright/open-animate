@@ -1,18 +1,30 @@
 # Working with Media
 
-## The pattern: Generate → Place → Use
+## The pattern: Generate → Download → Use
 
 Every media type follows the same workflow:
-1. **Generate** with `oanim assets`
-2. **Place** in `public/`
+1. **Generate** with MCP tools or `oanim assets`
+2. **Download** to `public/` (MCP: `curl -o`, CLI: `--out` flag)
 3. **Use** via `staticFile()` in Remotion
 
 ## Images
 
+### MCP tool: `gen_image`
+```
+Tool: gen_image
+Input: { "prompt": "abstract warm gradient, dark bg, 16:9" }
+→ { "url": "https://...", "model": "fal-ai/flux/schnell", "estimatedCostUsd": 0.0042 }
+```
+```bash
+curl -o public/bg.png "<url>"
+```
+
+### CLI
 ```bash
 oanim assets gen-image --prompt "abstract warm gradient, dark bg, 16:9" --out public/bg.png
 ```
 
+### Use in Remotion
 ```tsx
 import { Img, staticFile } from 'remotion';
 
@@ -24,6 +36,27 @@ import { Img, staticFile } from 'remotion';
 
 ## Video
 
+### MCP tool: `gen_video`
+```
+Tool: gen_video
+Input: { "prompt": "cinematic zoom, flowing shapes, warm tones", "duration": "5" }
+→ { "url": "https://...", "model": "fal-ai/kling-video/v1/standard/text-to-video", "estimatedCostUsd": 0.315 }
+```
+```bash
+curl -o public/clip.mp4 "<url>"
+```
+
+### MCP tool: `run_model` (for specific video models)
+```
+Tool: run_model
+Input: {
+  "model": "fal-ai/minimax-video/video-01-live",
+  "input": { "prompt": "cinematic zoom, flowing shapes" },
+  "async": true
+}
+```
+
+### CLI
 ```bash
 oanim assets run \
   --model fal-ai/kling-video/v1/standard/text-to-video \
@@ -31,6 +64,7 @@ oanim assets run \
   --out public/clip.mp4
 ```
 
+### Use in Remotion
 ```tsx
 import { OffthreadVideo, staticFile } from 'remotion';
 
@@ -50,6 +84,17 @@ Available video models:
 
 ## Audio
 
+### MCP tool: `gen_audio`
+```
+Tool: gen_audio
+Input: { "prompt": "minimal ambient electronic, warm pads, no vocals", "duration_in_seconds": 30 }
+→ { "url": "https://...", "model": "fal-ai/stable-audio", "estimatedCostUsd": 0.0 }
+```
+```bash
+curl -o public/bg-music.mp3 "<url>"
+```
+
+### CLI
 ```bash
 oanim assets run \
   --model fal-ai/stable-audio \
@@ -57,6 +102,7 @@ oanim assets run \
   --out public/bg-music.mp3
 ```
 
+### Use in Remotion
 ```tsx
 import { Audio, staticFile } from 'remotion';
 

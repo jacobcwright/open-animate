@@ -885,3 +885,58 @@ Built a full dashboard web app at `packages/console/` for oanim users.
 **Build:** `next build` succeeds (10 routes), `vitest run` 30/30 pass
 
 **PR:** #3 on `feat/console` branch — 41 files, +5155 lines
+
+---
+
+## Session 16 — 2026-02-26
+
+### Cowork Plugin + MCP Endpoint (OANIM-053)
+
+Added MCP endpoint to the existing API and packaged the repo as a Cowork plugin.
+
+**Problem:** The open-animate skill works in Claude Code (terminal) but not in Cowork — the sandbox blocks outbound HTTP. CLI asset generation commands fail.
+
+**Solution:** MCP endpoint on the existing API at `api.oanim.dev/mcp` + `.mcp.json` plugin config + slash commands.
+
+**Step 1 — Extract fal.ai helpers:**
+- New `packages/api/src/lib/fal.ts` — extracted all fal.ai helpers (types, auth, request functions, usage tracking) from `media.ts`
+- Added `submitAndPoll(model, input, userId)` — combines queue submit + exponential backoff polling (2s initial, 10s max, 1.5x multiplier, 10min timeout) + result fetch
+- Updated `packages/api/src/routes/media.ts` to import from `../lib/fal.js`
+
+**Step 2 — MCP SDK + server:**
+- Added `@modelcontextprotocol/sdk` + `zod` dependencies
+- New `packages/api/src/mcp/server.ts` — `createMcpServer(user)` factory that creates a stateless McpServer with 7 tools:
+  - `gen_image` — text-to-image (sync via `falRequest`)
+  - `edit_image` — image editing (sync)
+  - `remove_bg` — background removal (sync)
+  - `upscale` — image upscaling (sync)
+  - `gen_video` — text-to-video (async via `submitAndPoll`)
+  - `gen_audio` — text-to-audio (async via `submitAndPoll`)
+  - `run_model` — any fal.ai model (sync or async)
+- All tools track usage and deduct credits via shared helpers
+
+**Step 3 — MCP HTTP handler:**
+- New `packages/api/src/mcp/handler.ts` — raw Node.js HTTP handler for `/mcp`
+  - Authenticates via `Authorization: Bearer <ANIMATE_API_KEY>`
+  - Creates fresh stateless McpServer per request
+  - Uses `StreamableHTTPServerTransport` (stateless, no sessions)
+  - Handles body parsing, auth errors, cleanup
+- Updated `packages/api/src/index.ts` — intercepts `/mcp` at Node HTTP level via `createServer` + `getRequestListener`, delegates all other routes to Hono
+
+**Step 4 — Plugin config:**
+- New `.mcp.json` — points to `https://api.oanim.dev/mcp` with `ANIMATE_API_KEY` auth
+- New `commands/animate.md` — `/animate` slash command (full video creation workflow)
+- New `commands/gen-image.md` — `/gen-image` slash command (quick image gen)
+- New `commands/render.md` — `/render` slash command (render project)
+
+**Step 5 — Skill updates:**
+- Updated `SKILL.md` — added MCP tools table alongside CLI commands, 3-column capabilities table (Capability, MCP Tool, CLI Command)
+- Updated `references/asset-generation.md` — MCP tool examples above each CLI section
+- Updated `references/workflow.md` — MCP tools as primary method in step 6
+- Updated `references/media-guide.md` — MCP tool examples for all media types
+
+**Step 6 — Documentation:**
+- New `CONNECTORS.md` — full parameter documentation for all 7 MCP tools
+- Updated `README.md` — added Cowork Plugin section with MCP tools table and slash commands
+
+**Build verified:** `pnpm build` succeeds (all packages including console)

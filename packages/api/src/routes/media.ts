@@ -1,152 +1,21 @@
 import { Hono } from 'hono';
-import { eq, sql } from 'drizzle-orm';
-import { db, users, usageRecords } from '../db/index.js';
 import { requireAuth, type AuthUser } from '../lib/auth.js';
 import { getModelCost } from '../lib/costs.js';
 import { mediaRateLimit } from '../lib/rate-limit.js';
+import {
+  falRequest,
+  falQueueSubmit,
+  falQueueStatus,
+  falQueueResult,
+  getMediaUrl,
+  trackUsage,
+  makeResponse,
+} from '../lib/fal.js';
 
 const media = new Hono<{ Variables: { user: AuthUser } }>();
 
 media.use('*', requireAuth);
 media.use('*', mediaRateLimit);
-
-// -- fal.ai helpers --
-
-interface FalResult {
-  images?: Array<{ url: string }>;
-  image?: { url: string };
-  [key: string]: unknown;
-}
-
-function getMediaUrl(result: FalResult): string | null {
-  if (result.images?.[0]?.url) return result.images[0].url;
-  if (result.image?.url) return result.image.url;
-  // Video models (kling, minimax, hunyuan)
-  const video = result.video as { url?: string } | undefined;
-  if (video?.url) return video.url;
-  // Audio models (stable-audio)
-  const audioFile = result.audio_file as { url?: string } | undefined;
-  if (audioFile?.url) return audioFile.url;
-  return null;
-}
-
-function getFalKey(): string {
-  const key = process.env.FAL_KEY;
-  if (!key) throw new Error('FAL_KEY not configured on server');
-  return key;
-}
-
-function falAuthHeader(): Record<string, string> {
-  return { Authorization: `Key ${getFalKey()}` };
-}
-
-function falHeaders(): Record<string, string> {
-  return {
-    ...falAuthHeader(),
-    'Content-Type': 'application/json',
-  };
-}
-
-async function falRequest(model: string, input: Record<string, unknown>): Promise<FalResult> {
-  const res = await fetch(`https://fal.run/${model}`, {
-    method: 'POST',
-    headers: falHeaders(),
-    body: JSON.stringify(input),
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`fal.ai error (${res.status}): ${text}`);
-  }
-
-  return res.json() as Promise<FalResult>;
-}
-
-// -- fal.ai queue helpers (for long-running models) --
-
-interface FalQueueSubmitResponse {
-  request_id: string;
-  status_url?: string;
-  response_url?: string;
-  cancel_url?: string;
-}
-
-interface FalQueueStatusResponse {
-  status: 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETED';
-  queue_position?: number;
-  response_url?: string;
-  logs?: Array<{ message: string; level: string; source: string; timestamp: string }>;
-}
-
-async function falQueueSubmit(model: string, input: Record<string, unknown>): Promise<FalQueueSubmitResponse> {
-  const res = await fetch(`https://queue.fal.run/${model}`, {
-    method: 'POST',
-    headers: falHeaders(),
-    body: JSON.stringify(input),
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`fal.ai queue submit error (${res.status}): ${text}`);
-  }
-
-  return (await res.json()) as FalQueueSubmitResponse;
-}
-
-async function falQueueStatus(statusUrl: string): Promise<FalQueueStatusResponse> {
-  const res = await fetch(statusUrl, { headers: falAuthHeader() });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`fal.ai queue status error (${res.status}): ${text}`);
-  }
-
-  return (await res.json()) as FalQueueStatusResponse;
-}
-
-async function falQueueResult(responseUrl: string): Promise<FalResult> {
-  const res = await fetch(responseUrl, { headers: falAuthHeader() });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`fal.ai queue result error (${res.status}): ${text}`);
-  }
-
-  // Queue result may wrap output in a `response` key
-  const data = (await res.json()) as { response?: FalResult } & FalResult;
-  return data.response ?? data;
-}
-
-async function trackUsage(
-  userId: string,
-  provider: string,
-  model: string,
-  operation: string,
-  cost: number,
-): Promise<void> {
-  await db.insert(usageRecords).values({
-    userId,
-    provider,
-    model,
-    operation,
-    estimatedCostUsd: String(cost),
-  });
-  await db
-    .update(users)
-    .set({
-      creditBalanceUsd: sql`GREATEST(${users.creditBalanceUsd} - ${String(cost)}, 0)`,
-    })
-    .where(eq(users.id, userId));
-}
-
-function makeResponse(model: string, url: string) {
-  return {
-    url,
-    provider: 'fal.ai',
-    model,
-    estimatedCostUsd: getModelCost(model),
-  };
-}
 
 // -- Routes --
 

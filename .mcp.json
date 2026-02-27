@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "open-animate": {
+      "type": "http",
+      "url": "https://api.oanim.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer ${ANIMATE_API_KEY}"
+      }
+    }
+  }
+}
