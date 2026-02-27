@@ -122,7 +122,7 @@ media.post('/generate', async (c) => {
 
   if (!prompt) return c.json({ error: 'Missing prompt' }, 400);
 
-  const model = 'fal-ai/flux/schnell';
+  const model = 'fal-ai/flux-2-flex';
   const result = await falRequest(model, {
     prompt,
     image_size: imageSize ?? 'landscape_16_9',
@@ -144,7 +144,7 @@ media.post('/edit', async (c) => {
 
   if (!imageUrl || !prompt) return c.json({ error: 'Missing imageUrl or prompt' }, 400);
 
-  const model = 'fal-ai/flux/dev/image-to-image';
+  const model = 'fal-ai/flux-pro/kontext';
   const result = await falRequest(model, {
     image_url: imageUrl,
     prompt,
@@ -181,7 +181,7 @@ media.post('/upscale', async (c) => {
 
   if (!imageUrl) return c.json({ error: 'Missing imageUrl' }, 400);
 
-  const model = 'fal-ai/creative-upscaler';
+  const model = 'fal-ai/bria/upscale/creative';
   const result = await falRequest(model, {
     image_url: imageUrl,
     scale: scale ?? 2,

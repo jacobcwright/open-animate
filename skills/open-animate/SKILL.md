@@ -70,9 +70,9 @@ npx oanim render
 **CLI** (fallback — requires outbound HTTP):
 ```bash
 npx oanim assets gen-image --prompt "dark gradient abstract" --out public/bg.png
-npx oanim assets run --model fal-ai/kling-video/v1/standard/text-to-video \
+npx oanim assets run --model fal-ai/kling-video/v2.5-turbo/pro/text-to-video \
   --input '{"prompt":"cinematic abstract motion","duration":"5"}' --out public/clip.mp4
-npx oanim assets run --model fal-ai/stable-audio \
+npx oanim assets run --model beatoven/music-generation \
   --input '{"prompt":"ambient electronic, no vocals","duration_in_seconds":30}' --out public/music.mp3
 ```
 

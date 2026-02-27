@@ -36,11 +36,11 @@ describe('FalProvider', () => {
       );
       const result = await provider.generateImage('a cat');
       expect(result.url).toBe('https://fal.ai/img.png');
-      expect(result.model).toBe('fal-ai/flux/schnell');
+      expect(result.model).toBe('fal-ai/flux-2-flex');
       expect(result.provider).toBe('fal.ai');
       expect(result.estimatedCostUsd).toBeGreaterThan(0);
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://fal.run/fal-ai/flux/schnell',
+        'https://fal.run/fal-ai/flux-2-flex',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -54,9 +54,9 @@ describe('FalProvider', () => {
       mockFetch.mockResolvedValue(
         falResponse({ images: [{ url: 'https://fal.ai/img.png' }] }),
       );
-      await provider.generateImage('a cat', { model: 'fal-ai/flux/dev' });
+      await provider.generateImage('a cat', { model: 'fal-ai/nano-banana-2' });
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://fal.run/fal-ai/flux/dev',
+        'https://fal.run/fal-ai/nano-banana-2',
         expect.any(Object),
       );
     });
@@ -82,9 +82,9 @@ describe('FalProvider', () => {
       mockFetch.mockResolvedValue(
         falResponse({ images: [{ url: 'https://fal.ai/x.png' }] }),
       );
-      await provider.editImage('https://img.png', 'edit', 'fal-ai/flux-pro/v1/fill');
+      await provider.editImage('https://img.png', 'edit', 'fal-ai/reve/edit');
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://fal.run/fal-ai/flux-pro/v1/fill',
+        'https://fal.run/fal-ai/reve/edit',
         expect.any(Object),
       );
     });
@@ -119,7 +119,7 @@ describe('FalProvider', () => {
       mockFetch.mockResolvedValue(
         falResponse({ video: { url: 'https://fal.ai/video.mp4' }, seed: 42 }),
       );
-      const result = await provider.run('fal-ai/kling-video/v1/standard/text-to-video', {
+      const result = await provider.run('fal-ai/kling-video/v2.5-turbo/pro/text-to-video', {
         prompt: 'a wave',
       });
       expect(result.url).toBe('https://fal.ai/video.mp4');
@@ -138,7 +138,7 @@ describe('FalProvider', () => {
       mockFetch.mockResolvedValue(
         falResponse({ audio_file: { url: 'https://fal.ai/audio.mp3' } }),
       );
-      const result = await provider.run('fal-ai/stable-audio', {
+      const result = await provider.run('beatoven/music-generation', {
         prompt: 'music',
       });
       expect(result.url).toBe('https://fal.ai/audio.mp3');

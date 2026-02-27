@@ -13,7 +13,7 @@ Every media type follows the same workflow:
 ```
 Tool: gen_image
 Input: { "prompt": "abstract warm gradient, dark bg, 16:9" }
-→ { "url": "https://...", "model": "fal-ai/flux/schnell", "estimatedCostUsd": 0.0042 }
+→ { "url": "https://...", "model": "fal-ai/flux-2-flex", "estimatedCostUsd": 0.07 }
 ```
 ```bash
 curl -o public/bg.png "<url>"
@@ -40,7 +40,7 @@ import { Img, staticFile } from 'remotion';
 ```
 Tool: gen_video
 Input: { "prompt": "cinematic zoom, flowing shapes, warm tones", "duration": "5" }
-→ { "url": "https://...", "model": "fal-ai/kling-video/v1/standard/text-to-video", "estimatedCostUsd": 0.315 }
+→ { "url": "https://...", "model": "fal-ai/kling-video/v2.5-turbo/pro/text-to-video", "estimatedCostUsd": 0.49 }
 ```
 ```bash
 curl -o public/clip.mp4 "<url>"
@@ -50,7 +50,7 @@ curl -o public/clip.mp4 "<url>"
 ```
 Tool: run_model
 Input: {
-  "model": "fal-ai/minimax-video/video-01-live",
+  "model": "fal-ai/minimax/hailuo-02/standard/text-to-video",
   "input": { "prompt": "cinematic zoom, flowing shapes" },
   "async": true
 }
@@ -59,7 +59,7 @@ Input: {
 ### CLI
 ```bash
 oanim assets run \
-  --model fal-ai/kling-video/v1/standard/text-to-video \
+  --model fal-ai/kling-video/v2.5-turbo/pro/text-to-video \
   --input '{"prompt":"cinematic zoom, flowing shapes, warm tones","duration":"5"}' \
   --out public/clip.mp4
 ```
@@ -77,10 +77,11 @@ import { OffthreadVideo, staticFile } from 'remotion';
 Available video models:
 | Model | Notes |
 |-------|-------|
-| `fal-ai/kling-video/v1/standard/text-to-video` | Good quality, 5s clips |
-| `fal-ai/kling-video/v1.5/pro/text-to-video` | Higher quality |
-| `fal-ai/minimax-video/video-01-live` | Fast generation |
-| `fal-ai/hunyuan-video` | High quality |
+| `fal-ai/minimax/hailuo-02/standard/text-to-video` | Fast, budget-friendly |
+| `fal-ai/kling-video/v2.5-turbo/pro/text-to-video` | Great mid-tier quality |
+| `fal-ai/kling-video/v3/pro/text-to-video` | Cinematic visuals, native audio |
+| `fal-ai/veo3.1` | Google's best, up to 4K, audio |
+| `fal-ai/sora-2/text-to-video/pro` | OpenAI, up to 25s, native audio |
 
 ## Audio
 
@@ -88,7 +89,7 @@ Available video models:
 ```
 Tool: gen_audio
 Input: { "prompt": "minimal ambient electronic, warm pads, no vocals", "duration_in_seconds": 30 }
-→ { "url": "https://...", "model": "fal-ai/stable-audio", "estimatedCostUsd": 0.0 }
+→ { "url": "https://...", "model": "beatoven/music-generation", "estimatedCostUsd": 0.07 }
 ```
 ```bash
 curl -o public/bg-music.mp3 "<url>"
@@ -97,7 +98,7 @@ curl -o public/bg-music.mp3 "<url>"
 ### CLI
 ```bash
 oanim assets run \
-  --model fal-ai/stable-audio \
+  --model beatoven/music-generation \
   --input '{"prompt":"minimal ambient electronic, warm pads, no vocals","duration_in_seconds":30}' \
   --out public/bg-music.mp3
 ```

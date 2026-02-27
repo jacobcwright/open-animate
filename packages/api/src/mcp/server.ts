@@ -28,7 +28,7 @@ export function createMcpServer(user: AuthUser): McpServer {
       model: z
         .string()
         .optional()
-        .describe('fal.ai model ID (default: fal-ai/flux/schnell)'),
+        .describe('fal.ai model ID (default: fal-ai/flux-2-flex)'),
       image_size: z
         .string()
         .optional()
@@ -39,7 +39,7 @@ export function createMcpServer(user: AuthUser): McpServer {
         .describe('Number of images to generate (default: 1)'),
     },
     async ({ prompt, model, image_size, num_images }) => {
-      const m = model ?? 'fal-ai/flux/schnell';
+      const m = model ?? 'fal-ai/flux-2-flex';
       const result = await falRequest(m, {
         prompt,
         image_size: image_size ?? 'landscape_16_9',
@@ -69,10 +69,10 @@ export function createMcpServer(user: AuthUser): McpServer {
       model: z
         .string()
         .optional()
-        .describe('fal.ai model ID (default: fal-ai/flux/dev/image-to-image)'),
+        .describe('fal.ai model ID (default: fal-ai/flux-pro/kontext)'),
     },
     async ({ image_url, prompt, model }) => {
-      const m = model ?? 'fal-ai/flux/dev/image-to-image';
+      const m = model ?? 'fal-ai/flux-pro/kontext';
       const result = await falRequest(m, {
         image_url,
         prompt,
@@ -130,10 +130,10 @@ export function createMcpServer(user: AuthUser): McpServer {
       model: z
         .string()
         .optional()
-        .describe('fal.ai model ID (default: fal-ai/creative-upscaler)'),
+        .describe('fal.ai model ID (default: fal-ai/bria/upscale/creative)'),
     },
     async ({ image_url, scale, model }) => {
-      const m = model ?? 'fal-ai/creative-upscaler';
+      const m = model ?? 'fal-ai/bria/upscale/creative';
       const result = await falRequest(m, {
         image_url,
         scale: scale ?? 2,
@@ -162,7 +162,7 @@ export function createMcpServer(user: AuthUser): McpServer {
         .string()
         .optional()
         .describe(
-          'fal.ai model ID (default: fal-ai/kling-video/v1/standard/text-to-video)',
+          'fal.ai model ID (default: fal-ai/kling-video/v2.5-turbo/pro/text-to-video)',
         ),
       duration: z
         .string()
@@ -170,7 +170,7 @@ export function createMcpServer(user: AuthUser): McpServer {
         .describe('Video duration in seconds (default: "5")'),
     },
     async ({ prompt, model, duration }) => {
-      const m = model ?? 'fal-ai/kling-video/v1/standard/text-to-video';
+      const m = model ?? 'fal-ai/kling-video/v2.5-turbo/pro/text-to-video';
       const { url, estimatedCostUsd } = await submitAndPoll(
         m,
         { prompt, duration: duration ?? '5' },
@@ -196,14 +196,14 @@ export function createMcpServer(user: AuthUser): McpServer {
       model: z
         .string()
         .optional()
-        .describe('fal.ai model ID (default: fal-ai/stable-audio)'),
+        .describe('fal.ai model ID (default: beatoven/music-generation)'),
       duration_in_seconds: z
         .number()
         .optional()
         .describe('Audio duration in seconds (default: 30)'),
     },
     async ({ prompt, model, duration_in_seconds }) => {
-      const m = model ?? 'fal-ai/stable-audio';
+      const m = model ?? 'beatoven/music-generation';
       const { url, estimatedCostUsd } = await submitAndPoll(
         m,
         { prompt, duration_in_seconds: duration_in_seconds ?? 30 },

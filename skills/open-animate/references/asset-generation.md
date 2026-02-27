@@ -105,17 +105,17 @@ curl -o public/clip.mp4 "<returned-url>"
 ### MCP tool: `run_model` (alternative, for specific models)
 ```
 Tool: run_model
-Input: { "model": "fal-ai/minimax-video/video-01-live", "input": {"prompt": "..."}, "async": true }
+Input: { "model": "fal-ai/minimax/hailuo-02/standard/text-to-video", "input": {"prompt": "..."}, "async": true }
 ```
 
 ### CLI
 ```bash
-oanim assets run --model fal-ai/kling-video/v1/standard/text-to-video \
+oanim assets run --model fal-ai/kling-video/v2.5-turbo/pro/text-to-video \
   --input '{"prompt":"slow cinematic zoom, abstract flowing shapes, warm tones","duration":"5"}' \
   --out public/clip.mp4
 ```
 
-Other video models: `fal-ai/minimax-video/video-01-live`, `fal-ai/hunyuan-video`, `fal-ai/kling-video/v1.5/pro/text-to-video`
+Other video models: `fal-ai/minimax/hailuo-02/standard/text-to-video`, `fal-ai/kling-video/v3/pro/text-to-video`, `fal-ai/veo3.1`, `fal-ai/sora-2/text-to-video/pro`
 
 ## Audio Generation
 
@@ -131,7 +131,7 @@ curl -o public/bg-music.mp3 "<returned-url>"
 
 ### CLI
 ```bash
-oanim assets run --model fal-ai/stable-audio \
+oanim assets run --model beatoven/music-generation \
   --input '{"prompt":"minimal ambient electronic, warm pads, no vocals","duration_in_seconds":30}' \
   --out public/bg-music.mp3
 ```

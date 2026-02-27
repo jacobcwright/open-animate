@@ -62,7 +62,7 @@ export class FalProvider implements MediaProvider {
   }
 
   async generateImage(prompt: string, opts?: GenerateOpts): Promise<MediaResult> {
-    const model = opts?.model ?? 'fal-ai/flux/schnell';
+    const model = opts?.model ?? 'fal-ai/flux-2-flex';
     const result = await this.request(model, {
       prompt,
       image_size: opts?.imageSize ?? 'landscape_16_9',
@@ -74,7 +74,7 @@ export class FalProvider implements MediaProvider {
   }
 
   async editImage(imageUrl: string, prompt: string, model?: string): Promise<MediaResult> {
-    model = model ?? 'fal-ai/flux/dev/image-to-image';
+    model = model ?? 'fal-ai/flux-pro/kontext';
     const result = await this.request(model, {
       image_url: imageUrl,
       prompt,
@@ -96,7 +96,7 @@ export class FalProvider implements MediaProvider {
   }
 
   async upscale(imageUrl: string, scale = 2, model?: string): Promise<MediaResult> {
-    model = model ?? 'fal-ai/creative-upscaler';
+    model = model ?? 'fal-ai/bria/upscale/creative';
     const result = await this.request(model, {
       image_url: imageUrl,
       scale,

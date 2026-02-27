@@ -23,7 +23,7 @@ assetsCommand
   .description('Generate an image from a text prompt')
   .requiredOption('--prompt <text>', 'image generation prompt')
   .requiredOption('--out <path>', 'output file path')
-  .option('--model <id>', 'override model (default: fal-ai/flux/schnell)')
+  .option('--model <id>', 'override model (default: fal-ai/flux-2-flex)')
   .action(async (opts) => {
     const spinner = ora('Generating image...').start();
     try {
@@ -44,7 +44,7 @@ assetsCommand
   .requiredOption('--in <path>', 'input image path')
   .requiredOption('--prompt <text>', 'edit prompt')
   .requiredOption('--out <path>', 'output file path')
-  .option('--model <id>', 'override model (default: fal-ai/flux/dev/image-to-image)')
+  .option('--model <id>', 'override model (default: fal-ai/flux-pro/kontext)')
   .action(async (opts) => {
     const spinner = ora('Editing image...').start();
     try {
@@ -84,7 +84,7 @@ assetsCommand
   .description('Upscale an image 2x')
   .requiredOption('--in <path>', 'input image path')
   .requiredOption('--out <path>', 'output file path')
-  .option('--model <id>', 'override model (default: fal-ai/creative-upscaler)')
+  .option('--model <id>', 'override model (default: fal-ai/bria/upscale/creative)')
   .action(async (opts) => {
     const spinner = ora('Upscaling image...').start();
     try {

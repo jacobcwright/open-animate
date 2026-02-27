@@ -7,41 +7,36 @@ export const PLATFORM_MARGIN = 0.4; // 40%
 export const FAL_MODEL_COSTS: Record<string, number> = {
   // Image generation
   'fal-ai/flux/schnell': 0.003,
-  'fal-ai/flux/dev': 0.025,
-  'fal-ai/flux-pro/v1.1': 0.04,
-  'fal-ai/flux-pro/v1.1-ultra': 0.06,
-  'fal-ai/flux-realism': 0.025,
-  'fal-ai/stable-diffusion-v35-large': 0.035,
-  'fal-ai/stable-diffusion-v35-medium': 0.02,
-  'fal-ai/recraft-v3': 0.04,
-  'fal-ai/ideogram/v2': 0.08,
-  'fal-ai/aura-flow': 0.01,
+  'fal-ai/flux-2-flex': 0.05,
+  'fal-ai/recraft/v4/text-to-image': 0.04,
+  'fal-ai/recraft/v4/pro/text-to-image': 0.06,
+  'fal-ai/ideogram/v3': 0.06, // balanced tier
+  'fal-ai/nano-banana-2': 0.08,
 
   // Image editing / manipulation
-  'fal-ai/flux/dev/image-to-image': 0.025,
-  'fal-ai/flux-pro/v1/fill': 0.05,
-  'fal-ai/flux/dev/inpainting': 0.03,
+  'fal-ai/flux-pro/kontext': 0.04,
+  'fal-ai/nano-banana-2/edit': 0.08,
+  'fal-ai/reve/edit': 0.04,
 
   // Background removal / segmentation
   'fal-ai/birefnet': 0.005,
-  'fal-ai/imageutils/rembg': 0.005,
+  'fal-ai/bria/background/remove': 0.018,
 
   // Upscaling / enhancement
-  'fal-ai/creative-upscaler': 0.025,
-  'fal-ai/clarity-upscaler': 0.025,
+  'fal-ai/bria/upscale/creative': 0.03,
+  'fal-ai/topaz/upscale/image': 0.08, // up to 24MP
 
   // Video generation (per-second models use 5s default)
-  'fal-ai/kling-video/v1/standard/text-to-video': 0.225, // $0.045/sec × 5s
-  'fal-ai/kling-video/v1/pro/text-to-video': 0.50, // $0.10/sec × 5s
-  'fal-ai/kling-video/v1.5/pro/text-to-video': 0.50, // $0.10/sec × 5s
-  'fal-ai/minimax-video/video-01-live': 0.50, // flat per video
-  'fal-ai/hunyuan-video': 0.40, // flat per video
-  'fal-ai/luma-dream-machine': 0.50, // flat per video (v1.5)
-  'fal-ai/runway-gen3/turbo/image-to-video': 0.25, // may be discontinued
-  'fal-ai/veo2': 2.50, // $0.50/sec × 5s
+  'fal-ai/minimax/hailuo-02/standard/text-to-video': 0.27, // $0.045/sec × 6s
+  'fal-ai/kling-video/v2.5-turbo/pro/text-to-video': 0.35, // $0.07/sec × 5s
+  'fal-ai/kling-video/v3/pro/text-to-video': 1.12, // $0.224/sec × 5s
+  'fal-ai/veo3.1': 1.00, // $0.20/sec × 5s (no audio, 1080p)
+  'fal-ai/sora-2/text-to-video/pro': 1.50, // $0.30/sec × 5s (720p)
 
-  // Audio / music
-  'fal-ai/stable-audio': 0.0, // free on fal.ai
+  // Audio / music / speech
+  'beatoven/music-generation': 0.05,
+  'beatoven/sound-effect-generation': 0.05,
+  'minimax/speech-02-hd': 0.05,
 
   // ControlNet / IP-Adapter
   'fal-ai/flux/dev/controlnet': 0.03,
