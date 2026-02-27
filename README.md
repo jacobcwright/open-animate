@@ -45,6 +45,10 @@ Claude Code &middot; Cursor &middot; Codex &middot; Windsurf &middot; any agent 
 | [OA Launch](examples/oa-launch) | AI-generated image, video, and audio backgrounds | 28s |
 | [Meme Caption](examples/meme-caption) | Vertical 1080x1920 — bold text, shake, zoom | 6s |
 
+## Console
+
+The [Console](https://oanim.dev) is a web dashboard for managing your account, generating media, viewing usage, and creating API keys.
+
 ## Packages
 
 ```bash
@@ -56,6 +60,7 @@ npx oanim init             # CLI — scaffolding, rendering, asset generation
 |---------|-----|
 | `@oanim/core` | [![npm](https://img.shields.io/npm/v/@oanim/core)](https://www.npmjs.com/package/@oanim/core) |
 | `oanim` | [![npm](https://img.shields.io/npm/v/oanim)](https://www.npmjs.com/package/oanim) |
+| `@oanim/console` | [oanim.dev](https://oanim.dev) |
 
 ## Agent Skill
 
@@ -100,6 +105,10 @@ See the [Platform docs](https://docs.open-animate.com/platform/overview) for det
 ```bash
 pnpm install          # install workspace deps
 pnpm build            # build core + cli
+
+# Console (dashboard)
+cd packages/console
+npm run dev           # localhost:3100
 ```
 
 ## Contributing

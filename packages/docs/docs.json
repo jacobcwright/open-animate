@@ -15,6 +15,10 @@
   "navbar": {
     "links": [
       {
+        "label": "Console",
+        "href": "https://oanim.dev"
+      },
+      {
         "label": "GitHub",
         "href": "https://github.com/jacobcwright/open-animate"
       }
@@ -62,6 +66,7 @@
             "group": "Platform",
             "pages": [
               "platform/overview",
+              "platform/console",
               "platform/authentication",
               "platform/api-keys",
               "platform/cloud-rendering",

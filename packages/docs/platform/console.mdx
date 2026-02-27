@@ -1,0 +1,63 @@
+---
+title: Console
+description: Web dashboard for managing your Open Animate account
+---
+
+The Console at [oanim.dev](https://oanim.dev) is a web dashboard for the Open Animate platform. Everything you can do with the CLI, you can also do from the console.
+
+## Features
+
+<CardGroup cols={2}>
+  <Card title="Media Playground" icon="wand-magic-sparkles">
+    Generate images, edit photos, remove backgrounds, upscale, generate video, and audio — all from the browser. Supports 30+ AI models.
+  </Card>
+  <Card title="API Keys" icon="key">
+    Create and manage API keys (prefixed `anim_`) for programmatic access. View last-used timestamps and revoke keys instantly.
+  </Card>
+  <Card title="Usage & Billing" icon="chart-bar">
+    Track per-model costs, daily API call breakdowns, and aggregate spending. Purchase credits via Stripe.
+  </Card>
+  <Card title="Templates" icon="film">
+    Browse video templates (Product Launch, Explainer, Logo Reveal, and more) with links to source code.
+  </Card>
+</CardGroup>
+
+## Getting started
+
+1. Sign in at [oanim.dev](https://oanim.dev) with your GitHub or Google account
+2. Your account starts with **$5.00 in free credits**
+3. Head to the **Generate** page to try image and video generation
+4. Create an **API key** to use with the CLI or SDK
+
+## Agent integration
+
+The dashboard home page includes install snippets for popular coding agents:
+
+```bash
+# Claude Code
+npx skills add jacobcwright/open-animate
+
+# OpenClaw
+clawhub install oanim
+```
+
+## Self-hosting
+
+The console is a standard Next.js app. To self-host:
+
+```bash
+cd packages/console
+cp .env.local.example .env.local
+# Fill in Clerk keys and API URL
+npm install
+npm run build
+npm start
+```
+
+Environment variables:
+
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key |
+| `CLERK_SECRET_KEY` | Clerk secret key |
+| `NEXT_PUBLIC_API_URL` | Backend API URL (default: `https://api.oanim.dev`) |
