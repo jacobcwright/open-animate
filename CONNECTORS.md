@@ -20,7 +20,7 @@ Generate an image from a text prompt.
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `prompt` | string | yes | — | Text description of the image |
-| `model` | string | no | `fal-ai/flux/schnell` | fal.ai model ID |
+| `model` | string | no | `fal-ai/flux-2-flex` | fal.ai model ID |
 | `image_size` | string | no | `landscape_16_9` | Image size preset |
 | `num_images` | number | no | `1` | Number of images |
 
@@ -36,7 +36,7 @@ Edit an existing image with a text prompt.
 |-----------|------|----------|---------|-------------|
 | `image_url` | string | yes | — | URL of the source image |
 | `prompt` | string | yes | — | Text description of edits |
-| `model` | string | no | `fal-ai/flux/dev/image-to-image` | fal.ai model ID |
+| `model` | string | no | `fal-ai/flux-pro/kontext` | fal.ai model ID |
 
 **Returns:** `{ url, model, estimatedCostUsd }`
 
@@ -63,7 +63,7 @@ Upscale an image to higher resolution.
 |-----------|------|----------|---------|-------------|
 | `image_url` | string | yes | — | URL of the image |
 | `scale` | number | no | `2` | Scale factor |
-| `model` | string | no | `fal-ai/creative-upscaler` | fal.ai model ID |
+| `model` | string | no | `fal-ai/bria/upscale/creative` | fal.ai model ID |
 
 **Returns:** `{ url, model, estimatedCostUsd }`
 
@@ -76,7 +76,7 @@ Generate a video from a text prompt. Long-running — polls until complete.
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `prompt` | string | yes | — | Text description of the video |
-| `model` | string | no | `fal-ai/kling-video/v1/standard/text-to-video` | fal.ai model ID |
+| `model` | string | no | `fal-ai/kling-video/v2.5-turbo/pro/text-to-video` | fal.ai model ID |
 | `duration` | string | no | `"5"` | Video duration in seconds |
 
 **Returns:** `{ url, model, estimatedCostUsd }`
@@ -90,7 +90,7 @@ Generate audio/music from a text prompt. Long-running — polls until complete.
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `prompt` | string | yes | — | Text description of the audio |
-| `model` | string | no | `fal-ai/stable-audio` | fal.ai model ID |
+| `model` | string | no | `beatoven/music-generation` | fal.ai model ID |
 | `duration_in_seconds` | number | no | `30` | Audio duration in seconds |
 
 **Returns:** `{ url, model, estimatedCostUsd }`
