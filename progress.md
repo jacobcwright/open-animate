@@ -940,3 +940,46 @@ Added MCP endpoint to the existing API and packaged the repo as a Cowork plugin.
 - Updated `README.md` — added Cowork Plugin section with MCP tools table and slash commands
 
 **Build verified:** `pnpm build` succeeds (all packages including console)
+
+---
+
+## Session 8 — 2026-02-26
+
+### Upgrade model catalog to latest fal.ai models (PR #6)
+
+Researched fal.ai's current model gallery and replaced outdated models with best-in-class options across all 6 categories. Updated 18 files across the entire codebase.
+
+**New model lineup:**
+- **Image Gen (5):** Flux Schnell (fast/cheap), Flux 2 Flex (mid-tier, best typography), Recraft V4 (design), Ideogram V3 (typography tiers), Nano Banana 2 (Google Gemini 3.1 Flash, premium)
+- **Image Edit (3):** Flux Kontext Pro (best editing, character consistency), Nano Banana 2 Edit, Reve Edit
+- **BG Removal (2):** BiRefNet (kept, cheap), BRIA RMBG 2.0 (licensed data, pro)
+- **Upscale (2):** BRIA Creative, Topaz Upscale (industry standard)
+- **Video (5):** MiniMax Hailuo-02 (budget), Kling 2.5 Turbo Pro (mid), Kling V3 Pro (cinematic + audio), Veo 3.1 (Google, 4K + audio), Sora 2 Pro (OpenAI, 25s + audio)
+- **Audio (3):** Beatoven Music, Beatoven SFX, MiniMax Speech-02 HD
+
+**Removed deprecated models:** Flux Dev/Pro v1.1/Ultra, Flux Realism, SD 3.5, AuraFlow, Flux img2img/fill/inpainting, rembg, Creative/Clarity Upscaler, Kling v1/v1.5, Minimax video-01-live, Hunyuan Video, Luma Dream Machine, Runway Gen-3, Veo 2, Stable Audio
+
+**Default model changes:**
+- Image gen: `fal-ai/flux/schnell` → `fal-ai/flux-2-flex`
+- Image edit: `fal-ai/flux/dev/image-to-image` → `fal-ai/flux-pro/kontext`
+- Upscale: `fal-ai/creative-upscaler` → `fal-ai/bria/upscale/creative`
+- Video: `fal-ai/kling-video/v1/standard/text-to-video` → `fal-ai/kling-video/v2.5-turbo/pro/text-to-video`
+- Audio: `fal-ai/stable-audio` → `beatoven/music-generation`
+
+**Files updated (18):**
+- `packages/console/lib/models.ts` — model catalog with pricing
+- `packages/cli/src/lib/costs.ts` + `packages/api/src/lib/costs.ts` — cost entries
+- `packages/api/src/routes/media.ts` — API route defaults
+- `packages/api/src/mcp/server.ts` — MCP tool defaults
+- `packages/cli/src/lib/providers/fal.ts` — CLI provider defaults
+- `packages/cli/src/commands/assets.ts` — help text defaults
+- `skills/open-animate/SKILL.md`, `references/workflow.md`, `references/media-guide.md`, `references/asset-generation.md` — agent skill docs
+- `packages/docs/cli/assets.mdx`, `packages/docs/platform/credits-and-billing.mdx`, `packages/docs/guides/media.mdx` — Mintlify docs
+- 4 test files updated to match new model IDs
+- `CONNECTORS.md` — MCP tool parameter defaults
+
+**Bug fixes (PR review):**
+- Console AudioTab: replaced hardcoded "Free" badge/label with dynamic `formatModelCost(model.cost)` — now correctly shows $0.070
+- Console AudioTab: changed `seconds_total` → `duration_in_seconds` parameter name for Beatoven model compatibility
+
+**Build verified:** `pnpm build` succeeds, 202/202 CLI + console tests pass

@@ -987,6 +987,32 @@
       ],
       "status": "done",
       "notes": "MCP endpoint added directly to existing API (no separate service). Handler intercepts /mcp at Node HTTP level (createServer + getRequestListener) to give StreamableHTTPServerTransport raw Node.js req/res. Fresh McpServer created per request (stateless). All 7 tools use shared fal.ai helpers with usage tracking and credit deduction."
+    },
+    {
+      "id": "OANIM-025",
+      "title": "Upgrade model catalog to latest fal.ai models",
+      "description": "Replace outdated fal.ai models with current best-in-class options across all categories. Update defaults, pricing, docs, skill references, and tests.",
+      "requirements": [
+        "Research fal.ai model gallery for latest models per category",
+        "Update console model catalog (models.ts) with new lineup and pricing",
+        "Update CLI and API costs.ts with matching entries",
+        "Update default models in API routes, MCP server, CLI provider, and CLI commands",
+        "Update agent skill references (SKILL.md, workflow.md, media-guide.md, asset-generation.md)",
+        "Update Mintlify docs (assets.mdx, credits-and-billing.mdx, media.mdx)",
+        "Update CONNECTORS.md with new default model IDs",
+        "Fix AudioTab hardcoded 'Free' labels to use dynamic formatModelCost()",
+        "Fix AudioTab duration parameter name (seconds_total → duration_in_seconds)",
+        "Update all tests to reference new model IDs"
+      ],
+      "tests": [
+        "pnpm build succeeds (all packages)",
+        "202/202 CLI + console tests pass",
+        "Console generate page renders correct model names and costs",
+        "AudioTab shows $0.070 instead of Free",
+        "Audio duration slider sends duration_in_seconds to Beatoven API"
+      ],
+      "status": "done",
+      "notes": "PR #6. New lineup: Image Gen (Flux Schnell, Flux 2 Flex, Recraft V4, Ideogram V3, Nano Banana 2), Image Edit (Flux Kontext Pro, Nano Banana 2 Edit, Reve Edit), BG Removal (BiRefNet, BRIA RMBG 2.0), Upscale (BRIA Creative, Topaz), Video (MiniMax Hailuo-02, Kling 2.5 Turbo Pro, Kling V3 Pro, Veo 3.1, Sora 2 Pro), Audio (Beatoven Music, Beatoven SFX, MiniMax Speech-02 HD). 18 files changed."
     }
   ]
 }
