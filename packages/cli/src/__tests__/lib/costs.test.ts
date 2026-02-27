@@ -15,12 +15,12 @@ describe('PLATFORM_MARGIN', () => {
 describe('FAL_MODEL_COSTS', () => {
   it('has entries for major image models', () => {
     expect(FAL_MODEL_COSTS['fal-ai/flux/schnell']).toBe(0.003);
-    expect(FAL_MODEL_COSTS['fal-ai/flux/dev']).toBe(0.025);
-    expect(FAL_MODEL_COSTS['fal-ai/flux-pro/v1.1']).toBe(0.04);
+    expect(FAL_MODEL_COSTS['fal-ai/flux-2-flex']).toBe(0.05);
+    expect(FAL_MODEL_COSTS['fal-ai/recraft/v4/text-to-image']).toBe(0.04);
   });
 
   it('has entries for video models', () => {
-    expect(FAL_MODEL_COSTS['fal-ai/kling-video/v1/standard/text-to-video']).toBe(0.225);
+    expect(FAL_MODEL_COSTS['fal-ai/kling-video/v2.5-turbo/pro/text-to-video']).toBe(0.35);
   });
 
   it('has entries for background removal', () => {
@@ -52,8 +52,8 @@ describe('getModelCost', () => {
     expect(cost).toBeCloseTo(DEFAULT_COST * (1 + PLATFORM_MARGIN), 6);
   });
 
-  it('returns 0 for free models (stable-audio)', () => {
-    const cost = getModelCost('fal-ai/stable-audio');
-    expect(cost).toBe(0);
+  it('applies margin to audio models', () => {
+    const cost = getModelCost('beatoven/music-generation');
+    expect(cost).toBeCloseTo(0.05 * 1.4, 6);
   });
 });

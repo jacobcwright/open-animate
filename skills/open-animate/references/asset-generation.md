@@ -1,59 +1,137 @@
 # Asset Generation
 
-Generate images for your videos using the oanim CLI.
+Generate images, video, and audio for your videos. Two methods are available: **MCP tools** (preferred, works in sandboxed environments) and **CLI** (requires outbound HTTP).
 
 ## Setup
 
+### MCP (Cowork / plugin)
+Set `ANIMATE_API_KEY` environment variable. The MCP server authenticates automatically.
+
+### CLI
 Sign in to the oanim platform:
 ```bash
 oanim login
 ```
 
-## Commands
+## Image Generation
 
-### Generate an image
+### MCP tool: `gen_image`
+```
+Tool: gen_image
+Input: { "prompt": "dark abstract gradient with purple and blue tones, 16:9" }
+```
+Then download the returned URL:
+```bash
+curl -o public/bg.png "<returned-url>"
+```
+
+### CLI
 ```bash
 oanim assets gen-image --prompt "dark abstract gradient with purple and blue tones, 16:9" --out public/bg.png
 ```
 
-### Edit an existing image
+## Image Editing
+
+### MCP tool: `edit_image`
+```
+Tool: edit_image
+Input: { "image_url": "https://...", "prompt": "add subtle grid pattern" }
+```
+Then download:
+```bash
+curl -o public/bg-grid.png "<returned-url>"
+```
+
+### CLI
 ```bash
 oanim assets edit-image --in public/bg.png --prompt "add subtle grid pattern" --out public/bg-grid.png
 ```
 
-### Remove background
+## Background Removal
+
+### MCP tool: `remove_bg`
+```
+Tool: remove_bg
+Input: { "image_url": "https://..." }
+```
+Then download:
+```bash
+curl -o public/product-cutout.png "<returned-url>"
+```
+
+### CLI
 ```bash
 oanim assets remove-bg --in public/product.png --out public/product-cutout.png
 ```
 
-### Upscale 2x
+## Upscaling
+
+### MCP tool: `upscale`
+```
+Tool: upscale
+Input: { "image_url": "https://..." }
+```
+Then download:
+```bash
+curl -o public/logo-2x.png "<returned-url>"
+```
+
+### CLI
 ```bash
 oanim assets upscale --in public/logo-small.png --out public/logo-2x.png
 ```
 
 ## When to use asset generation
 
-| Scenario | Command |
-|----------|---------|
-| Background textures/gradients | `gen-image` |
-| Product screenshots with edits | `edit-image` |
-| Product photos for compositing | `remove-bg` |
-| Low-res logos or icons | `upscale` |
+| Scenario | MCP Tool | CLI Command |
+|----------|----------|-------------|
+| Background textures/gradients | `gen_image` | `gen-image` |
+| Product screenshots with edits | `edit_image` | `edit-image` |
+| Product photos for compositing | `remove_bg` | `remove-bg` |
+| Low-res logos or icons | `upscale` | `upscale` |
 
-## Video generation
+## Video Generation
 
+### MCP tool: `gen_video`
+```
+Tool: gen_video
+Input: { "prompt": "slow cinematic zoom, abstract flowing shapes, warm tones", "duration": "5" }
+```
+This tool polls until the video is ready (may take several minutes). Download the result:
 ```bash
-oanim assets run --model fal-ai/kling-video/v1/standard/text-to-video \
+curl -o public/clip.mp4 "<returned-url>"
+```
+
+### MCP tool: `run_model` (alternative, for specific models)
+```
+Tool: run_model
+Input: { "model": "fal-ai/minimax/hailuo-02/standard/text-to-video", "input": {"prompt": "..."}, "async": true }
+```
+
+### CLI
+```bash
+oanim assets run --model fal-ai/kling-video/v2.5-turbo/pro/text-to-video \
   --input '{"prompt":"slow cinematic zoom, abstract flowing shapes, warm tones","duration":"5"}' \
   --out public/clip.mp4
 ```
 
-Other video models: `fal-ai/minimax-video/video-01-live`, `fal-ai/hunyuan-video`, `fal-ai/kling-video/v1.5/pro/text-to-video`
+Other video models: `fal-ai/minimax/hailuo-02/standard/text-to-video`, `fal-ai/kling-video/v3/pro/text-to-video`, `fal-ai/veo3.1`, `fal-ai/sora-2/text-to-video/pro`
 
-## Audio generation
+## Audio Generation
 
+### MCP tool: `gen_audio`
+```
+Tool: gen_audio
+Input: { "prompt": "minimal ambient electronic, warm pads, no vocals", "duration_in_seconds": 30 }
+```
+Download the result:
 ```bash
-oanim assets run --model fal-ai/stable-audio \
+curl -o public/bg-music.mp3 "<returned-url>"
+```
+
+### CLI
+```bash
+oanim assets run --model beatoven/music-generation \
   --input '{"prompt":"minimal ambient electronic, warm pads, no vocals","duration_in_seconds":30}' \
   --out public/bg-music.mp3
 ```

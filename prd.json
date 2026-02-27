@@ -963,6 +963,30 @@
       ],
       "status": "done",
       "notes": "Launched on LinkedIn and X on 2026-02-24. All infrastructure live: oanim.dev (landing), docs.open-animate.com (docs), api.oanim.dev (API), npm (@oanim/core@0.1.0, oanim@0.1.0), skills (npx skills add, ClawHub)."
+    },
+    {
+      "id": "OANIM-053",
+      "title": "Cowork plugin + MCP endpoint",
+      "description": "Add MCP endpoint to the existing API and package the repo as a Cowork plugin with slash commands. Enables the open-animate skill to work in sandboxed environments (Cowork) where outbound HTTP is blocked.",
+      "requirements": [
+        "Extract fal.ai helpers into shared lib/fal.ts module",
+        "Add submitAndPoll() for long-running models (exponential backoff, 10min timeout)",
+        "MCP server with 7 tools: gen_image, edit_image, remove_bg, upscale, gen_video, gen_audio, run_model",
+        "Stateless HTTP MCP endpoint at /mcp with API key auth",
+        ".mcp.json plugin config pointing to api.oanim.dev/mcp",
+        "Slash commands: /animate, /gen-image, /render",
+        "Updated skill references with MCP tool examples",
+        "CONNECTORS.md with full tool parameter documentation"
+      ],
+      "tests": [
+        "pnpm build succeeds (all packages)",
+        "POST /mcp with valid API key and MCP protocol payload returns tool list",
+        "gen_image tool generates image and returns URL",
+        "gen_video tool polls until complete and returns URL",
+        "Slash commands reference correct MCP tools"
+      ],
+      "status": "done",
+      "notes": "MCP endpoint added directly to existing API (no separate service). Handler intercepts /mcp at Node HTTP level (createServer + getRequestListener) to give StreamableHTTPServerTransport raw Node.js req/res. Fresh McpServer created per request (stateless). All 7 tools use shared fal.ai helpers with usage tracking and credit deduction."
     }
   ]
 }

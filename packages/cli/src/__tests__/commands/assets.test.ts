@@ -79,12 +79,12 @@ describe('assets gen-image', () => {
 
   it('passes custom model', async () => {
     await assetsCommand.parseAsync(
-      ['gen-image', '--prompt', 'x', '--out', 'y', '--model', 'fal-ai/flux/dev'],
+      ['gen-image', '--prompt', 'x', '--out', 'y', '--model', 'fal-ai/nano-banana-2'],
       { from: 'user' },
     );
 
     expect(mockGw.generateImage).toHaveBeenCalledWith('x', 'y', {
-      model: 'fal-ai/flux/dev',
+      model: 'fal-ai/nano-banana-2',
     });
   });
 

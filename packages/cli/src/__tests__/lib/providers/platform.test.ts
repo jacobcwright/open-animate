@@ -59,9 +59,9 @@ describe('PlatformProvider', () => {
       mockFetch.mockResolvedValueOnce(
         jsonResponse({
           requestId: 'req-1',
-          model: 'fal-ai/flux/dev',
+          model: 'fal-ai/nano-banana-2',
           provider: 'fal.ai',
-          estimatedCostUsd: 0.035,
+          estimatedCostUsd: 0.112,
         }),
       );
       mockFetch.mockResolvedValueOnce(
@@ -69,14 +69,14 @@ describe('PlatformProvider', () => {
           status: 'COMPLETED',
           url: 'https://cdn/custom.png',
           provider: 'fal.ai',
-          model: 'fal-ai/flux/dev',
-          estimatedCostUsd: 0.035,
+          model: 'fal-ai/nano-banana-2',
+          estimatedCostUsd: 0.112,
         }),
       );
 
       const provider = new PlatformProvider();
       const result = await withTimerAdvance(
-        provider.generateImage('a cat', { model: 'fal-ai/flux/dev' }),
+        provider.generateImage('a cat', { model: 'fal-ai/nano-banana-2' }),
       );
       expect(result.url).toBe('https://cdn/custom.png');
     });

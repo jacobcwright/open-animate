@@ -62,6 +62,37 @@ npx oanim init             # CLI — scaffolding, rendering, asset generation
 | `oanim` | [![npm](https://img.shields.io/npm/v/oanim)](https://www.npmjs.com/package/oanim) |
 | `@oanim/console` | [oanim.dev](https://oanim.dev) |
 
+## Cowork Plugin
+
+Open Animate works as a **Cowork plugin** with MCP tools for media generation — no outbound HTTP from the sandbox required.
+
+### Setup
+
+1. Set your `ANIMATE_API_KEY` environment variable
+2. The `.mcp.json` in this repo configures the MCP server automatically
+
+### MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `gen_image` | Generate image from text prompt |
+| `edit_image` | Edit existing image with prompt |
+| `remove_bg` | Remove background from image |
+| `upscale` | Upscale image 2x |
+| `gen_video` | Generate video from text (async) |
+| `gen_audio` | Generate audio from text (async) |
+| `run_model` | Run any fal.ai model |
+
+See [CONNECTORS.md](./CONNECTORS.md) for full parameter documentation.
+
+### Slash Commands
+
+| Command | Description |
+|---------|-------------|
+| `/animate [brief]` | Full video creation workflow |
+| `/gen-image [prompt]` | Quick image generation |
+| `/render` | Render current project |
+
 ## Agent Skill
 
 Install the skill so your agent knows how to use Open Animate:

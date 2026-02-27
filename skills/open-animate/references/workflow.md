@@ -41,12 +41,35 @@ export const Hook: React.FC = () => {
 ```
 
 ### 6. Add generated media assets (optional)
-Generate images, video, or audio, then use them in scenes:
+
+**MCP tools** (preferred — works in Cowork and sandboxed environments):
+```
+Tool: gen_image
+Input: { "prompt": "dark abstract gradient" }
+→ returns { "url": "https://...", "model": "fal-ai/flux-2-flex", "estimatedCostUsd": 0.07 }
+
+Tool: gen_video
+Input: { "prompt": "cinematic abstract motion", "duration": "5" }
+→ returns { "url": "https://...", "model": "fal-ai/kling-video/v2.5-turbo/pro/text-to-video", "estimatedCostUsd": 0.49 }
+
+Tool: gen_audio
+Input: { "prompt": "ambient electronic, no vocals", "duration_in_seconds": 30 }
+→ returns { "url": "https://...", "model": "beatoven/music-generation", "estimatedCostUsd": 0.07 }
+```
+
+Download generated assets to `public/`:
+```bash
+curl -o public/bg.png "<url>"
+curl -o public/clip.mp4 "<url>"
+curl -o public/music.mp3 "<url>"
+```
+
+**CLI** (fallback — requires outbound HTTP):
 ```bash
 oanim assets gen-image --prompt "dark abstract gradient" --out public/bg.png
-oanim assets run --model fal-ai/kling-video/v1/standard/text-to-video \
+oanim assets run --model fal-ai/kling-video/v2.5-turbo/pro/text-to-video \
   --input '{"prompt":"cinematic abstract motion","duration":"5"}' --out public/clip.mp4
-oanim assets run --model fal-ai/stable-audio \
+oanim assets run --model beatoven/music-generation \
   --input '{"prompt":"ambient electronic, no vocals","duration_in_seconds":30}' --out public/music.mp3
 ```
 

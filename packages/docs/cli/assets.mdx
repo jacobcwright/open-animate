@@ -7,7 +7,7 @@ description: Generate images, video, audio, and more with AI
 oanim assets <command> [options]
 ```
 
-Generate and manipulate media using AI models routed through the Open Animate media gateway. Supports 30+ models for image generation, video generation, audio, upscaling, and more.
+Generate and manipulate media using AI models routed through the Open Animate media gateway. Supports 25+ models for image generation, video generation, audio, upscaling, and more.
 
 <Note>
 Asset commands require authentication. Run `oanim login` to sign in, or set `ANIMATE_API_KEY`. You can also set `ANIMATE_FAL_KEY` to use your own fal.ai key directly.
@@ -27,7 +27,7 @@ oanim assets gen-image --prompt "dark abstract gradient with purple and blue ton
 |---|---|---|
 | `--prompt <text>` | Yes | Image generation prompt |
 | `--out <path>` | Yes | Output file path |
-| `--model <id>` | No | Override model (default: `fal-ai/flux/schnell`) |
+| `--model <id>` | No | Override model (default: `fal-ai/flux-2-flex`) |
 
 ### edit-image
 
@@ -42,7 +42,7 @@ oanim assets edit-image --in public/bg.png --prompt "add subtle grid pattern" --
 | `--in <path>` | Yes | Input image path |
 | `--prompt <text>` | Yes | Edit prompt |
 | `--out <path>` | Yes | Output file path |
-| `--model <id>` | No | Override model (default: `fal-ai/flux/dev/image-to-image`) |
+| `--model <id>` | No | Override model (default: `fal-ai/flux-pro/kontext`) |
 
 ### remove-bg
 
@@ -70,7 +70,7 @@ oanim assets upscale --in public/logo-small.png --out public/logo-2x.png
 |---|---|---|
 | `--in <path>` | Yes | Input image path |
 | `--out <path>` | Yes | Output file path |
-| `--model <id>` | No | Override model (default: `fal-ai/creative-upscaler`) |
+| `--model <id>` | No | Override model (default: `fal-ai/bria/upscale/creative`) |
 
 ## run — any model
 
@@ -89,29 +89,35 @@ oanim assets run --model <model-id> --input '<json>' [--out <path>]
 ### Video generation
 
 ```bash
-# Generate a video with Kling
+# Generate a video with Kling 2.5 Turbo Pro
 oanim assets run \
-  --model fal-ai/kling-video/v1.5/pro/text-to-video \
+  --model fal-ai/kling-video/v2.5-turbo/pro/text-to-video \
   --input '{"prompt": "a slow zoom into a neon city at night"}' \
   --out public/city.mp4
 
-# Generate with Runway Gen-3
+# Generate with Veo 3.1 (Google's best, supports audio)
 oanim assets run \
-  --model fal-ai/runway-gen3/turbo/image-to-video \
-  --input '{"prompt": "camera slowly pans right", "image_url": "https://..."}' \
-  --out public/pan.mp4
+  --model fal-ai/veo3.1 \
+  --input '{"prompt": "camera slowly pans across a mountain landscape at sunrise"}' \
+  --out public/landscape.mp4
 
-# Other video models: hunyuan-video, luma-dream-machine, minimax-video, veo2
+# Other video models: kling-video/v3/pro, minimax/hailuo-02, sora-2/text-to-video/pro
 ```
 
 ### Audio generation
 
 ```bash
-# Generate audio with Stable Audio
+# Generate music with Beatoven
 oanim assets run \
-  --model fal-ai/stable-audio \
+  --model beatoven/music-generation \
   --input '{"prompt": "upbeat electronic background music, 120 bpm", "duration_in_seconds": 15}' \
   --out public/music.mp3
+
+# Generate sound effects
+oanim assets run \
+  --model beatoven/sound-effect-generation \
+  --input '{"prompt": "whoosh transition sound effect"}' \
+  --out public/whoosh.mp3
 ```
 
 ### Other models
@@ -147,23 +153,23 @@ If `--out` is provided and the model returns a URL, the file is downloaded. Othe
 | Product photos for compositing | `remove-bg` |
 | Low-res logos or icons | `upscale` |
 | Video clips for compositions | `run` with a video model |
-| Background music or sound effects | `run` with `stable-audio` |
+| Background music or sound effects | `run` with a music/SFX model |
 | Any other fal.ai model | `run` |
 
 ## Supported models
 
-30+ models across image, video, audio, and more. See [Credits & Billing](/platform/credits-and-billing) for the full model list and per-operation costs.
+25+ models across image, video, audio, and more. See [Credits & Billing](/platform/credits-and-billing) for the full model list and per-operation costs.
 
 ### Highlights
 
 | Category | Models |
 |---|---|
-| Image generation | Flux Schnell, Flux Dev, Flux Pro, Recraft v3, Ideogram v2, Stable Diffusion 3.5 |
-| Image editing | Flux image-to-image, Flux inpainting, Flux fill |
-| Video generation | Kling v1/v1.5, Runway Gen-3, Hunyuan Video, Luma Dream Machine, MiniMax, Veo2 |
-| Audio | Stable Audio |
-| Upscaling | Creative Upscaler, Clarity Upscaler |
-| Background removal | BiRefNet, rembg |
+| Image generation | Flux Schnell, Flux 2 Flex, Recraft V4, Ideogram V3, Nano Banana 2 |
+| Image editing | Flux Kontext Pro, Nano Banana 2 Edit, Reve Edit |
+| Video generation | Kling V3 Pro, Kling 2.5 Turbo Pro, MiniMax Hailuo-02, Veo 3.1, Sora 2 Pro |
+| Audio | Beatoven Music, Beatoven SFX, MiniMax Speech-02 HD |
+| Upscaling | BRIA Creative, Topaz Upscale |
+| Background removal | BiRefNet, BRIA RMBG 2.0 |
 | Other | ControlNet, IP Adapter, LoRA |
 
 ## Tips
@@ -171,8 +177,8 @@ If `--out` is provided and the model returns a URL, the file is downloaded. Othe
 - Generate backgrounds at your video resolution (1920x1080 by default)
 - Use `staticFile()` in Remotion to reference files in `public/`
 - Remove backgrounds on product shots so they composite cleanly over gradient backgrounds
-- Generate short video clips with Kling/Runway and composite them into your Remotion project
-- Use Stable Audio for background music, then add it with Remotion's `<Audio>` component
+- Generate short video clips with Kling/Veo and composite them into your Remotion project
+- Use Beatoven for background music, then add it with Remotion's `<Audio>` component
 
 ## Pricing
 

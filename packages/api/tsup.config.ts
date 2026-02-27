@@ -14,5 +14,8 @@ export default defineConfig({
     '@aws-sdk/client-s3',
     '@aws-sdk/s3-request-presigner',
     '@remotion/lambda',
+    '@modelcontextprotocol/sdk',
+    'zod',
+    'zod/v4',
   ],
 });

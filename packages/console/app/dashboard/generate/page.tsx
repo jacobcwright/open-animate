@@ -591,7 +591,7 @@ function AudioTab() {
       const token = await getToken();
       if (!token) throw new Error('Not authenticated');
 
-      const submit = await submitJob(token, model.id, { prompt, seconds_total: duration });
+      const submit = await submitJob(token, model.id, { prompt, duration_in_seconds: duration });
       setLoading(false);
       setPolling(true);
       setStatus('IN_QUEUE');
@@ -634,8 +634,8 @@ function AudioTab() {
           <label className="label mb-1.5 block">Model</label>
           <div className="flex items-center gap-2">
             <span className="text-sm text-foreground">{model.name}</span>
-            <span className="text-xs font-medium text-status-success bg-status-success/10 px-1.5 py-0.5">
-              Free
+            <span className="text-xs font-medium text-muted-foreground">
+              {formatModelCost(model.cost)}
             </span>
           </div>
         </div>
@@ -652,7 +652,7 @@ function AudioTab() {
           ))}
         </SelectField>
         <div className="flex items-center justify-between">
-          <span className="caption">Est. cost: Free</span>
+          <span className="caption">Est. cost: {formatModelCost(model.cost)}</span>
           <Button onClick={handleGenerate} disabled={loading || polling || !prompt.trim()} className="btn-primary">
             {loading || polling ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Music className="w-4 h-4 mr-2" />}
             {polling ? 'Generating...' : 'Generate Audio'}

@@ -56,14 +56,16 @@ export const Scene: React.FC = () => {
 
 ```bash
 oanim assets run \
-  --model fal-ai/kling-video/v1/standard/text-to-video \
+  --model fal-ai/kling-video/v2.5-turbo/pro/text-to-video \
   --input '{"prompt":"slow cinematic zoom, flowing shapes, warm tones on dark bg","duration":"5"}' \
   --out public/clip.mp4
 ```
 
 Other video models:
-- `fal-ai/minimax-video/video-01-live` — fast generation
-- `fal-ai/hunyuan-video` — high quality
+- `fal-ai/minimax/hailuo-02/standard/text-to-video` — fast, budget-friendly
+- `fal-ai/kling-video/v3/pro/text-to-video` — cinematic visuals, native audio
+- `fal-ai/veo3.1` — Google's best, up to 4K, audio
+- `fal-ai/sora-2/text-to-video/pro` — OpenAI, up to 25s, native audio
 
 ### Use in a composition
 
@@ -98,7 +100,7 @@ export const Scene: React.FC = () => {
 
 ```bash
 oanim assets run \
-  --model fal-ai/stable-audio \
+  --model beatoven/music-generation \
   --input '{"prompt":"minimal ambient electronic, warm pads, cinematic, no vocals","duration_in_seconds":30}' \
   --out public/bg-music.mp3
 ```
