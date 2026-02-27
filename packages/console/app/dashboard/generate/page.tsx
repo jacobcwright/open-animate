@@ -25,8 +25,6 @@ import {
 } from '@/lib/models';
 import {
   runModel,
-  removeBackground,
-  upscaleImage,
   submitJob,
   getJobStatus,
   getBalance,
@@ -331,9 +329,9 @@ function RemoveBgTab() {
       const token = await getToken();
       if (!token) throw new Error('Not authenticated');
 
-      const res = await removeBackground(token, imageUrl);
+      const res = await runModel(token, model, { image_url: imageUrl });
       if (res.url) {
-        setResult({ url: res.url, model: selectedModel.name, cost: selectedModel.cost });
+        setResult({ url: res.url, model: selectedModel.name, cost: res.estimatedCostUsd ?? selectedModel.cost });
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Background removal failed');
@@ -407,9 +405,9 @@ function UpscaleTab() {
       const token = await getToken();
       if (!token) throw new Error('Not authenticated');
 
-      const res = await upscaleImage(token, imageUrl);
+      const res = await runModel(token, model, { image_url: imageUrl, scale: 2 });
       if (res.url) {
-        setResult({ url: res.url, model: selectedModel.name, cost: selectedModel.cost });
+        setResult({ url: res.url, model: selectedModel.name, cost: res.estimatedCostUsd ?? selectedModel.cost });
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Upscale failed');
