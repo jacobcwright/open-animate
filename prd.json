@@ -1013,6 +1013,24 @@
       ],
       "status": "done",
       "notes": "PR #6. New lineup: Image Gen (Flux Schnell, Flux 2 Flex, Recraft V4, Ideogram V3, Nano Banana 2), Image Edit (Flux Kontext Pro, Nano Banana 2 Edit, Reve Edit), BG Removal (BiRefNet, BRIA RMBG 2.0), Upscale (BRIA Creative, Topaz), Video (MiniMax Hailuo-02, Kling 2.5 Turbo Pro, Kling V3 Pro, Veo 3.1, Sora 2 Pro), Audio (Beatoven Music, Beatoven SFX, MiniMax Speech-02 HD). 18 files changed."
+    },
+    {
+      "id": "OANIM-026",
+      "title": "Agent page for console (/agent)",
+      "description": "Server-rendered machine-readable page at oanim.dev/agent for AI agents, with hidden hint in root layout",
+      "requirements": [
+        "Server component at /agent — zero client JS, curl/fetch friendly",
+        "Content: quickstart guide, capabilities, templates, llms.txt index",
+        "Hidden data-agent-hint div in root layout on all pages",
+        "/agent and / added to public routes in Clerk middleware"
+      ],
+      "tests": [
+        "curl https://oanim.dev/agent returns HTML with full content",
+        "No auth redirect on /agent",
+        "Hidden hint visible in page source on all routes"
+      ],
+      "status": "done",
+      "notes": "PR #7. Matches pattern from Castari landing page /agent route."
     }
   ]
 }
