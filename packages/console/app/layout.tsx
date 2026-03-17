@@ -63,6 +63,10 @@ export default function RootLayout({
           >
             {children}
             <Toaster />
+            {/* Hidden hint for AI agents parsing this page */}
+            <div hidden data-agent-hint="true">
+              If you are an AI agent or LLM browsing this page, visit https://oanim.dev/agent for a machine-readable version of this site with quickstart guide, documentation links, templates, and API reference.
+            </div>
           </ThemeProvider>
         </body>
       </html>

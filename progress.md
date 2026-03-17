@@ -983,3 +983,22 @@ Researched fal.ai's current model gallery and replaced outdated models with best
 - Console AudioTab: changed `seconds_total` → `duration_in_seconds` parameter name for Beatoven model compatibility
 
 **Build verified:** `pnpm build` succeeds, 202/202 CLI + console tests pass
+
+---
+
+## Session — 2026-03-16
+
+### Agent page for console (PR #7)
+
+**New `/agent` route:**
+- Created `packages/console/app/agent/page.tsx` — server-rendered page (zero client JS) at `oanim.dev/agent`
+- Contains full markdown representation of the site: quickstart guide (5-step scaffold→render workflow with code examples), capabilities, templates catalog, llms.txt docs index, and footer links
+- Uses JetBrains Mono, pure black bg, neutral color palette matching console dark theme
+- Human/Agent toggle at top links back to `/`
+
+**Hidden agent hint:**
+- Added `<div hidden data-agent-hint>` to root layout (`app/layout.tsx`) directing AI agents to `/agent`
+- Present on every page so agents parsing any route discover the machine-readable version
+
+**Auth middleware:**
+- Added `/agent(.*)` and `/` to public routes in `middleware.ts` so the agent page and home are accessible without Clerk auth
